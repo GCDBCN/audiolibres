@@ -552,5 +552,80 @@
   </div>
 </footer>
 
+<script>
+// Fetch real book covers from Google Books API for all cards
+(async () => {
+  const coverCache = {};
+  async function fetchCover(title, author) {
+    const key = (title + '|' + author).toLowerCase();
+    if (key in coverCache) return coverCache[key];
+    const tries = [
+      `intitle:"${title}" inauthor:"${author}"`,
+      `${title} ${author}`
+    ];
+    for (const q of tries) {
+      try {
+        const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=1&langRestrict=es`);
+        const data = await r.json();
+        const img = data?.items?.[0]?.volumeInfo?.imageLinks;
+        if (img) {
+          const url = (img.extraLarge || img.large || img.medium || img.thumbnail || img.smallThumbnail || '')
+            .replace('http:', 'https:').replace('&edge=curl', '').replace('zoom=1', 'zoom=3');
+          coverCache[key] = url;
+          return url;
+        }
+      } catch {}
+    }
+    coverCache[key] = '';
+    return '';
+  }
+  function applyImage(target, url, title) {
+    const imgEl = new Image();
+    imgEl.onload = () => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = title || '';
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;';
+      target.style.position = 'relative';
+      target.style.overflow = 'hidden';
+      target.insertBefore(img, target.firstChild);
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.10) 100%);z-index:1;';
+      target.insertBefore(overlay, target.children[1]);
+      target.querySelectorAll('.play-chip, .cover-text, .cover-label, .cover-sub, > div:not(img):not([style*="gradient"])').forEach(el => {
+        el.style.position = 'relative'; el.style.zIndex = '2';
+      });
+      // Text children that are direct descendants
+      Array.from(target.children).forEach(c => {
+        if (c.tagName !== 'IMG' && !c.style.cssText.includes('gradient')) {
+          c.style.position = 'relative'; c.style.zIndex = '2';
+        }
+      });
+    };
+    imgEl.src = url;
+  }
+
+  // Featured post cover
+  document.querySelectorAll('.featured-cover').forEach(async (el) => {
+    const h3 = el.querySelector('h3')?.textContent?.trim() || '';
+    const p = el.querySelector('p')?.textContent?.trim() || '';
+    if (h3 && p) {
+      const url = await fetchCover(h3, p.split('·')[0].trim());
+      if (url) applyImage(el, url, h3);
+    }
+  });
+
+  // Post cards
+  document.querySelectorAll('.post-card .cover').forEach(async (el) => {
+    const label = el.querySelector('.cover-label')?.textContent?.trim() || '';
+    const sub = el.querySelector('.cover-sub')?.textContent?.trim() || '';
+    const author = sub.split('·')[0].trim();
+    if (label && author) {
+      const url = await fetchCover(label, author);
+      if (url) applyImage(el, url, label);
+    }
+  });
+})();
+</script>
 </body>
 </html>
