@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Audiolibros — Reproductor</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     --bg: #0b0f14;
@@ -60,7 +61,71 @@
     display:inline-flex; align-items:center; justify-content:center;
     color:#0b0f14; font-weight:900;
   }
-  .brand-actions { display:flex; gap:8px; }
+  .brand-actions { display:flex; gap:8px; align-items: center; }
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 10px 5px 5px;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px; color: var(--text-muted);
+    cursor: pointer; transition: background .15s;
+  }
+  .user-chip:hover { background: #202c3f; color: var(--text); }
+  .user-chip .avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #0b0f14; font-weight: 800; font-size: 11px;
+  }
+  .auth-content { display: flex; flex-direction: column; gap: 12px; }
+  .auth-tabs { display: flex; gap: 4px; background: var(--bg-elev-2); padding: 4px; border-radius: 8px; margin-bottom: 6px; }
+  .auth-tab {
+    flex: 1; padding: 8px; text-align: center; cursor: pointer;
+    border-radius: 6px; font-size: 13px; font-weight: 600; color: var(--text-muted);
+  }
+  .auth-tab.active { background: var(--bg-elev); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .google-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 11px;
+    background: white; color: #1a1a1a; border: 0;
+    border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
+    font-family: inherit;
+  }
+  .google-btn:hover { background: #f5f5f5; }
+  .google-btn svg { width: 18px; height: 18px; }
+  .auth-divider {
+    text-align: center; font-size: 11px; color: var(--text-muted);
+    position: relative; margin: 4px 0;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border);
+  }
+  .auth-divider::before { left: 0; } .auth-divider::after { right: 0; }
+  .auth-error {
+    font-size: 12px; color: var(--danger); margin-top: 4px; min-height: 16px;
+  }
+  .auth-success {
+    font-size: 12px; color: var(--success, #6bd39a); margin-top: 4px;
+  }
+  .popover {
+    position: absolute; right: 24px; top: 68px;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px;
+    box-shadow: var(--shadow); min-width: 240px;
+    display: none; z-index: 40;
+  }
+  .popover.open { display: block; }
+  .popover .user-info { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .popover .user-email { font-size: 13px; font-weight: 600; word-break: break-all; }
+  .popover .user-sync { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .popover button.signout {
+    width: 100%; padding: 8px;
+    background: transparent; color: var(--danger);
+    border: 1px solid var(--border);
+    border-radius: 6px; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .popover button.signout:hover { background: rgba(255,107,107,0.1); }
 
   .panel {
     background: linear-gradient(180deg, var(--bg-elev) 0%, #0f1520 100%);
@@ -275,10 +340,22 @@
       <span>Audiolibros</span>
     </div>
     <div class="brand-actions">
+      <button class="btn" id="btn-signin">Entrar</button>
+      <div class="user-chip" id="user-chip" style="display:none;">
+        <span class="avatar" id="user-avatar">·</span>
+        <span id="user-email-short">—</span>
+      </div>
       <button class="btn" id="btn-sleep" title="Temporizador de sueño">💤 Sleep</button>
       <button class="btn primary" id="btn-add">+ Añadir audiolibro</button>
     </div>
   </header>
+  <div class="popover" id="user-popover">
+    <div class="user-info">
+      <div class="user-email" id="user-email">—</div>
+      <div class="user-sync" id="user-sync">Biblioteca sincronizada en la nube</div>
+    </div>
+    <button class="signout" id="btn-signout">Cerrar sesión</button>
+  </div>
 
   <aside class="panel sidebar">
     <div class="search">
@@ -402,11 +479,55 @@
   </div>
 </div>
 
+<!-- Auth modal -->
+<div class="modal-backdrop" id="auth-modal">
+  <div class="modal">
+    <h2 id="auth-title">Entra en tu cuenta</h2>
+    <p style="font-size:13px; color: var(--text-muted); margin: -6px 0 14px;">
+      Sincroniza tu biblioteca entre móvil y ordenador.
+    </p>
+    <div class="auth-content">
+      <button class="google-btn" id="btn-google">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
+      <div class="auth-divider">o con email</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-mode="login">Iniciar sesión</div>
+        <div class="auth-tab" data-mode="signup">Crear cuenta</div>
+      </div>
+      <div class="field">
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" placeholder="tu@email.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="auth-password">Contraseña</label>
+        <input id="auth-password" type="password" placeholder="mínimo 6 caracteres" autocomplete="current-password" />
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <div class="row" style="margin-top:4px;">
+        <button class="btn" id="cancel-auth">Cancelar</button>
+        <button class="btn primary" id="confirm-auth">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
   'use strict';
+
+  /* ===== SUPABASE ===== */
+  const SUPA_URL = 'https://rjqtakxtamlwnogoueyu.supabase.co';
+  const SUPA_KEY = 'sb_publishable_lwoYecXZJPbt0L6FCKwWWQ_MZUZORvb';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: { persistSession: true, detectSessionInUrl: true }
+  });
+  let currentUser = null;
+  let cloudPushTimer = null;
+  let cloudPushInFlight = false;
 
   /* ===== STATE ===== */
   const STORAGE_KEY = 'audiolibros.v1';
@@ -420,7 +541,65 @@
       state.speed = p.speed || 1;
     }
   } catch(e){}
-  function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+  function saveLocal() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+  function save() {
+    saveLocal();
+    if (currentUser) schedulePushToCloud();
+  }
+  function schedulePushToCloud() {
+    clearTimeout(cloudPushTimer);
+    cloudPushTimer = setTimeout(pushToCloud, 1200);
+  }
+  async function pushToCloud() {
+    if (!currentUser || cloudPushInFlight) return;
+    cloudPushInFlight = true;
+    try {
+      await sb.from('libraries').upsert({
+        user_id: currentUser.id,
+        data: { library: state.library, currentId: state.currentId, speed: state.speed }
+      }, { onConflict: 'user_id' });
+      updateSyncStatus('Sincronizado hace un instante');
+    } catch (e) { console.warn('cloud push', e); updateSyncStatus('Error al sincronizar'); }
+    finally { cloudPushInFlight = false; }
+  }
+  async function loadFromCloud() {
+    if (!currentUser) return;
+    try {
+      const { data, error } = await sb.from('libraries')
+        .select('data')
+        .eq('user_id', currentUser.id).maybeSingle();
+      if (error) { console.warn(error); return; }
+      if (data && data.data) {
+        const remote = data.data;
+        const remoteHas = Array.isArray(remote.library) && remote.library.length > 0;
+        const localHas = state.library.length > 0;
+        if (remoteHas) {
+          // merge: remote is base, add books from local not present remotely
+          const remoteIds = new Set(remote.library.map(b => b.videoId));
+          const missing = state.library.filter(b => !remoteIds.has(b.videoId));
+          state.library = [...remote.library, ...missing];
+          state.currentId = remote.currentId || state.currentId;
+          state.speed = remote.speed || state.speed;
+          saveLocal();
+          if (missing.length > 0) { toast(`Merge: ${missing.length} libros locales añadidos`); schedulePushToCloud(); }
+          else { updateSyncStatus('Sincronizado'); }
+        } else if (localHas) {
+          // Remote is empty, upload local library
+          await pushToCloud();
+          toast('Biblioteca subida a la nube ☁️');
+        }
+      } else {
+        // No row yet - create one if we have local data
+        if (state.library.length > 0) { await pushToCloud(); toast('Biblioteca subida a la nube ☁️'); }
+        else { updateSyncStatus('Sincronizado'); }
+      }
+      renderLibrary(); renderPlayer();
+    } catch (e) { console.warn('cloud load', e); }
+  }
+  function updateSyncStatus(msg) {
+    const el = document.getElementById('user-sync');
+    if (el) el.textContent = msg;
+  }
 
   /* ===== HELPERS ===== */
   const $ = s => document.querySelector(s);
@@ -824,12 +1003,121 @@
     else if (e.code === 'ArrowRight') seekBy(30);
   });
 
+  /* ===== AUTH UI ===== */
+  let authMode = 'login';
+  function openAuth() {
+    $('#auth-error').textContent = '';
+    $('#auth-email').value = ''; $('#auth-password').value = '';
+    switchAuthMode('login');
+    openModal('auth-modal');
+    setTimeout(()=>$('#auth-email').focus(), 80);
+  }
+  function switchAuthMode(mode) {
+    authMode = mode;
+    document.querySelectorAll('.auth-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.mode === mode);
+    });
+    $('#auth-title').textContent = mode === 'login' ? 'Entra en tu cuenta' : 'Crea tu cuenta';
+    $('#confirm-auth').textContent = mode === 'login' ? 'Entrar' : 'Crear cuenta';
+  }
+  document.querySelectorAll('.auth-tab').forEach(t => {
+    t.addEventListener('click', () => switchAuthMode(t.dataset.mode));
+  });
+  $('#btn-signin').addEventListener('click', openAuth);
+  $('#cancel-auth').addEventListener('click', () => closeModal('auth-modal'));
+  $('#confirm-auth').addEventListener('click', async () => {
+    const email = $('#auth-email').value.trim();
+    const password = $('#auth-password').value;
+    if (!email || !password) { $('#auth-error').textContent = 'Email y contraseña requeridos'; return; }
+    $('#confirm-auth').disabled = true;
+    $('#auth-error').textContent = '';
+    try {
+      if (authMode === 'signup') {
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data.user && !data.session) {
+          $('#auth-error').innerHTML = '<span style="color:var(--warning);">Revisa tu email para confirmar la cuenta</span>';
+        } else {
+          closeModal('auth-modal');
+          toast('Cuenta creada ✓');
+        }
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        closeModal('auth-modal');
+        toast('Bienvenido ✓');
+      }
+    } catch (e) {
+      $('#auth-error').textContent = e.message || 'Error de autenticación';
+    } finally {
+      $('#confirm-auth').disabled = false;
+    }
+  });
+  $('#btn-google').addEventListener('click', async () => {
+    try {
+      await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + window.location.pathname }
+      });
+    } catch (e) {
+      $('#auth-error').textContent = e.message || 'Error con Google';
+    }
+  });
+  $('#user-chip').addEventListener('click', (e) => {
+    e.stopPropagation();
+    $('#user-popover').classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#user-popover') && !e.target.closest('#user-chip')) {
+      $('#user-popover').classList.remove('open');
+    }
+  });
+  $('#btn-signout').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    $('#user-popover').classList.remove('open');
+    toast('Sesión cerrada');
+  });
+
+  function updateAuthUI() {
+    if (currentUser) {
+      $('#btn-signin').style.display = 'none';
+      $('#user-chip').style.display = 'flex';
+      const email = currentUser.email || 'Usuario';
+      $('#user-email-short').textContent = email.split('@')[0];
+      $('#user-email').textContent = email;
+      $('#user-avatar').textContent = (email[0] || '·').toUpperCase();
+    } else {
+      $('#btn-signin').style.display = '';
+      $('#user-chip').style.display = 'none';
+      $('#user-popover').classList.remove('open');
+    }
+  }
+
+  /* Listen to auth state */
+  sb.auth.onAuthStateChange(async (event, session) => {
+    const prevUser = currentUser;
+    currentUser = session ? session.user : null;
+    updateAuthUI();
+    if (currentUser && (!prevUser || prevUser.id !== currentUser.id)) {
+      await loadFromCloud();
+    }
+  });
+
   /* ===== INIT ===== */
   renderLibrary();
   renderPlayer();
   if (state.currentId && currentBook()) {
     loadBook(state.currentId, false);
   }
+  // Check for existing session
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      updateAuthUI();
+      await loadFromCloud();
+    }
+  })();
 })();
 </script>
 </body>
