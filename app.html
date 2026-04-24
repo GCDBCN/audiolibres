@@ -264,16 +264,142 @@
     font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em;
     margin: 4px 0;
   }
-  .bookmarks { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow:auto; }
-  .bm {
-    display:flex; justify-content: space-between; align-items: center;
-    padding: 8px 10px; background: var(--bg-elev-2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); font-size: 13px;
+
+  /* Sidebar tabs (Mi biblioteca / Descubrir) */
+  .side-tabs {
+    display: flex; gap: 4px; background: var(--bg-elev-2); padding: 4px;
+    border-radius: 10px; margin-bottom: 10px;
   }
-  .bm .left { display:flex; gap:10px; align-items: center; overflow:hidden; }
-  .bm .time { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
-  .bm .note { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;}
-  .bm .actions { display:flex; gap: 4px; }
+  .side-tab {
+    flex: 1; padding: 8px; text-align: center; cursor: pointer;
+    border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);
+    transition: all .15s;
+  }
+  .side-tab.active { background: var(--bg-elev); color: var(--text); }
+  .side-tab:hover:not(.active) { color: var(--text); }
+
+  /* Category filter chips */
+  .chips {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .chip {
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    background: var(--bg-elev-2); color: var(--text-muted);
+    border: 1px solid var(--border); transition: all .15s;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0f14; border-color: transparent; }
+
+  /* YouTube-style bookmarks/comments bar */
+  .yt-bar {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .yt-bar-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .yt-bar-title {
+    font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .yt-bar-count {
+    font-size: 12px; color: var(--text-muted); font-weight: 500;
+  }
+  .yt-bar-add {
+    display: flex; gap: 10px; align-items: center;
+    padding: 10px 0; margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .yt-bar-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex; align-items: center; justify-content: center;
+    color: #0b0f14; font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .yt-bar-input-wrap {
+    flex: 1; display: flex; gap: 8px; align-items: center;
+  }
+  .yt-bar-input {
+    flex: 1; background: transparent; border: 0; outline: none;
+    color: var(--text); font-size: 14px;
+    border-bottom: 1px solid var(--border); padding: 6px 0;
+    font-family: inherit;
+  }
+  .yt-bar-input:focus { border-color: var(--accent); }
+  .yt-bar-time-chip {
+    background: var(--bg-elev-2); color: var(--accent);
+    padding: 4px 10px; border-radius: 999px; font-size: 11px;
+    font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+  .yt-bar-list {
+    display: flex; flex-direction: column; gap: 14px;
+    max-height: 300px; overflow-y: auto;
+    padding-right: 4px;
+  }
+  .yt-bar-item {
+    display: grid; grid-template-columns: 34px 1fr auto; gap: 12px;
+    align-items: flex-start;
+  }
+  .yt-bar-item:hover .yt-bar-del { opacity: 1; }
+  .yt-bar-item-body { overflow: hidden; }
+  .yt-bar-item-meta {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px;
+  }
+  .yt-bar-item-user { font-weight: 600; color: var(--text); }
+  .yt-bar-item-time {
+    color: var(--accent); font-weight: 600; cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    padding: 2px 8px; border-radius: 999px;
+    background: rgba(124,196,255,0.12); border: 1px solid rgba(124,196,255,0.2);
+    transition: background .15s;
+  }
+  .yt-bar-item-time:hover { background: rgba(124,196,255,0.22); }
+  .yt-bar-item-note {
+    font-size: 14px; color: var(--text); line-height: 1.4;
+    word-wrap: break-word;
+  }
+  .yt-bar-del {
+    background: transparent; border: 0; color: var(--text-muted);
+    cursor: pointer; padding: 4px; opacity: 0; transition: opacity .15s;
+    font-size: 12px;
+  }
+  .yt-bar-del:hover { color: var(--danger); }
+
+  /* Discover / catalog cards */
+  .catalog-grid { display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 280px); overflow:auto; }
+  .catalog-card {
+    display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; padding: 8px;
+    border-radius: var(--radius-sm); border: 1px solid transparent;
+    align-items: center; transition: background .15s;
+  }
+  .catalog-card:hover { background: var(--bg-elev-2); }
+  .catalog-card .cat-thumb {
+    width: 54px; height: 54px; border-radius: 8px;
+    background: linear-gradient(135deg, #1c2a40, #2a1f40);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: rgba(255,255,255,.7);
+  }
+  .catalog-card .cat-info { overflow: hidden; }
+  .catalog-card .cat-title { font-size: 13px; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .catalog-card .cat-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .catalog-card .cat-cat { display: inline-block; font-size: 10px; color: var(--accent); margin-top: 2px; text-transform: uppercase; letter-spacing: .05em; }
+  .catalog-card button.add {
+    background: var(--accent); color: #0b0f14; border: 0;
+    padding: 6px 10px; font-size: 11px; font-weight: 700;
+    border-radius: 999px; cursor: pointer;
+  }
+  .catalog-card button.add.added { background: var(--bg-elev-2); color: var(--text-muted); cursor: default; }
+  .catalog-card button.add:hover:not(.added) { filter: brightness(1.1); }
+
+  .book .cat-badge {
+    display: inline-block; font-size: 10px;
+    color: var(--accent); text-transform: uppercase; letter-spacing: .05em;
+    margin-top: 2px;
+  }
 
   .empty {
     text-align: center; color: var(--text-muted); padding: 40px 20px;
@@ -358,12 +484,18 @@
   </div>
 
   <aside class="panel sidebar">
+    <div class="side-tabs">
+      <div class="side-tab active" data-tab="library">📚 Mi biblioteca</div>
+      <div class="side-tab" data-tab="discover">✨ Descubrir</div>
+    </div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="search-input" placeholder="Buscar en mi biblioteca…" />
+      <input id="search-input" placeholder="Buscar…" />
     </div>
+    <div class="chips" id="chips"></div>
     <div class="section-title" id="library-count">Biblioteca</div>
     <div class="list" id="library"></div>
+    <div class="catalog-grid" id="catalog" style="display:none;"></div>
   </aside>
 
   <main class="panel main">
@@ -404,9 +536,19 @@
         </div>
       </div>
 
-      <div>
-        <div class="section-title">Marcadores</div>
-        <div class="bookmarks" id="bookmarks-list"></div>
+      <div class="yt-bar" id="yt-bar">
+        <div class="yt-bar-header">
+          <div class="yt-bar-title">💬 Marcadores y comentarios <span class="yt-bar-count" id="yt-bar-count">0</span></div>
+        </div>
+        <div class="yt-bar-add">
+          <div class="yt-bar-avatar" id="yt-bar-me">·</div>
+          <div class="yt-bar-input-wrap">
+            <input class="yt-bar-input" id="yt-bar-input" placeholder="Añade un marcador en el momento actual…" />
+            <span class="yt-bar-time-chip" id="yt-bar-time">0:00</span>
+            <button class="btn primary" id="yt-bar-save" style="padding: 6px 14px; font-size: 12px;">Publicar</button>
+          </div>
+        </div>
+        <div class="yt-bar-list" id="yt-bar-list"></div>
       </div>
     </div>
   </main>
@@ -529,9 +671,29 @@
   let cloudPushTimer = null;
   let cloudPushInFlight = false;
 
+  /* ===== CATÁLOGO ===== */
+  // 10 audiolibros populares en YouTube, por categoría.
+  // Cada entry tiene title, author, category, videoId (YouTube ID probable).
+  // Si un videoId no carga, el user puede buscarlo manualmente desde + Añadir.
+  const CATALOG = [
+    { title: 'El Acto de Crear', author: 'Rick Rubin', category: 'Autoayuda', videoId: '0iOTQcVY6Qs' },
+    { title: 'Meditaciones', author: 'Marco Aurelio', category: 'Filosofía', videoId: 'nt4yy-0jIyM' },
+    { title: 'Sapiens', author: 'Yuval Noah Harari', category: 'Historia', videoId: 'E6o7Lz35Uyc' },
+    { title: 'El Alquimista', author: 'Paulo Coelho', category: 'Novela', videoId: 'p0xgq1N_NMY' },
+    { title: 'Padre Rico, Padre Pobre', author: 'Robert Kiyosaki', category: 'Finanzas', videoId: 'TGx4iizmlhU' },
+    { title: 'El Príncipe', author: 'Nicolás Maquiavelo', category: 'Política', videoId: 'OjlQcBEM09o' },
+    { title: 'Hábitos Atómicos', author: 'James Clear', category: 'Autoayuda', videoId: '2Pul6yTFQYc' },
+    { title: 'El Arte de la Guerra', author: 'Sun Tzu', category: 'Filosofía', videoId: 'Rw_9oMfPaEw' },
+    { title: '1984', author: 'George Orwell', category: 'Novela', videoId: '1WD1bZFc3pI' },
+    { title: 'El Poder del Ahora', author: 'Eckhart Tolle', category: 'Autoayuda', videoId: 'fQC5KcW-xvE' },
+  ];
+  const CATEGORIES = ['Todas', 'Novela', 'Autoayuda', 'Filosofía', 'Historia', 'Finanzas', 'Política'];
+
   /* ===== STATE ===== */
   const STORAGE_KEY = 'audiolibros.v1';
   let state = { library: [], currentId: null, speed: 1 };
+  let sidebarMode = 'library'; // 'library' | 'discover'
+  let activeCategory = 'Todas';
   try {
     const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('audiolibros.v2');
     if (raw) {
@@ -593,7 +755,7 @@
         if (state.library.length > 0) { await pushToCloud(); toast('Biblioteca subida a la nube ☁️'); }
         else { updateSyncStatus('Sincronizado'); }
       }
-      renderLibrary(); renderPlayer();
+      renderSidebar(); renderPlayer();
     } catch (e) { console.warn('cloud load', e); }
   }
   function updateSyncStatus(msg) {
@@ -749,19 +911,52 @@
   }
 
   /* ===== RENDER ===== */
+  function renderChips() {
+    const el = $('#chips');
+    el.innerHTML = CATEGORIES.map(c =>
+      `<div class="chip ${c === activeCategory ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</div>`
+    ).join('');
+    el.querySelectorAll('[data-cat]').forEach(n => n.addEventListener('click', () => {
+      activeCategory = n.dataset.cat;
+      renderChips();
+      if (sidebarMode === 'library') renderLibrary();
+      else renderCatalog();
+    }));
+  }
+
+  function renderSidebar() {
+    const libEl = $('#library');
+    const catEl = $('#catalog');
+    if (sidebarMode === 'library') {
+      libEl.style.display = '';
+      catEl.style.display = 'none';
+      $('#search-input').placeholder = 'Buscar en mi biblioteca…';
+      renderLibrary();
+    } else {
+      libEl.style.display = 'none';
+      catEl.style.display = '';
+      $('#search-input').placeholder = 'Buscar en el catálogo…';
+      renderCatalog();
+    }
+    document.querySelectorAll('.side-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === sidebarMode);
+    });
+  }
+
   function renderLibrary() {
     const q = ($('#search-input').value || '').toLowerCase();
     const list = state.library
       .filter(b => !q || b.title.toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q))
+      .filter(b => activeCategory === 'Todas' || b.category === activeCategory)
       .sort((a,b) => b.addedAt - a.addedAt);
     $('#library-count').textContent = `Biblioteca · ${state.library.length} ${state.library.length === 1 ? 'libro' : 'libros'}`;
     const el = $('#library');
     if (state.library.length === 0) {
-      el.innerHTML = '<div class="empty" style="margin-top:8px;"><h3>Biblioteca vacía</h3><p>Pulsa <b>+ Añadir</b> para empezar.</p></div>';
+      el.innerHTML = '<div class="empty" style="margin-top:8px;"><h3>Biblioteca vacía</h3><p>Ve a <b>Descubrir</b> para añadir audiolibros.</p></div>';
       return;
     }
     if (list.length === 0) {
-      el.innerHTML = `<div class="empty" style="margin-top:8px;"><p>Sin resultados para "${esc(q)}"</p></div>`;
+      el.innerHTML = `<div class="empty" style="margin-top:8px;"><p>Sin resultados</p></div>`;
       return;
     }
     el.innerHTML = list.map(b => {
@@ -773,6 +968,7 @@
           <div class="info">
             <div class="title">${esc(b.title)}</div>
             <div class="meta">${esc(b.author || 'YouTube')}${b.duration ? ' · ' + fmtTime(b.duration) : ''}</div>
+            ${b.category ? `<div class="cat-badge">${esc(b.category)}</div>` : ''}
             <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
           </div>
           <button class="kebab" data-del="${b.id}" title="Eliminar">✕</button>
@@ -797,6 +993,55 @@
         renderPlayer();
       }
       save(); renderLibrary();
+    }));
+  }
+
+  function categoryIcon(cat) {
+    return ({
+      'Novela': '📖', 'Autoayuda': '🌱', 'Filosofía': '🏛️',
+      'Historia': '📜', 'Finanzas': '💰', 'Política': '⚖️'
+    })[cat] || '📚';
+  }
+
+  function renderCatalog() {
+    const q = ($('#search-input').value || '').toLowerCase();
+    const filtered = CATALOG
+      .filter(c => !q || c.title.toLowerCase().includes(q) || c.author.toLowerCase().includes(q))
+      .filter(c => activeCategory === 'Todas' || c.category === activeCategory);
+    const el = $('#catalog');
+    if (filtered.length === 0) {
+      el.innerHTML = `<div class="empty" style="margin-top:8px;"><p>Sin resultados</p></div>`;
+      return;
+    }
+    const haveIds = new Set(state.library.map(b => b.videoId));
+    el.innerHTML = filtered.map(c => {
+      const already = haveIds.has(c.videoId);
+      return `
+        <div class="catalog-card" data-vid="${c.videoId}">
+          <div class="cat-thumb">${categoryIcon(c.category)}</div>
+          <div class="cat-info">
+            <div class="cat-title">${esc(c.title)}</div>
+            <div class="cat-meta">${esc(c.author)}</div>
+            <div class="cat-cat">${esc(c.category)}</div>
+          </div>
+          <button class="add ${already ? 'added' : ''}" data-add="${c.videoId}">${already ? '✓ Añadido' : '+ Añadir'}</button>
+        </div>`;
+    }).join('');
+    el.querySelectorAll('[data-add]').forEach(n => n.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (n.classList.contains('added')) return;
+      const entry = CATALOG.find(c => c.videoId === n.dataset.add);
+      if (!entry) return;
+      n.classList.add('added');
+      n.textContent = '✓ Añadiendo…';
+      const book = await addBook(`https://www.youtube.com/watch?v=${entry.videoId}`, entry.title, entry.author, entry.category);
+      if (book) {
+        n.textContent = '✓ Añadido';
+        renderSidebar();
+      } else {
+        n.classList.remove('added');
+        n.textContent = '+ Añadir';
+      }
     }));
   }
 
@@ -825,21 +1070,30 @@
 
   function renderBookmarks() {
     const b = currentBook();
-    const list = $('#bookmarks-list');
+    const list = $('#yt-bar-list');
+    const count = $('#yt-bar-count');
+    const avatar = $('#yt-bar-me');
+    // User avatar (email initial or generic)
+    const initial = (currentUser && currentUser.email) ? currentUser.email[0].toUpperCase() : '🔖';
+    avatar.textContent = initial;
     if (!b || !b.bookmarks || b.bookmarks.length === 0) {
-      list.innerHTML = '<div class="empty" style="padding:16px;"><p>Sin marcadores. Usa 🔖 para guardar un momento.</p></div>';
+      count.textContent = '0';
+      list.innerHTML = '<div class="empty" style="padding:24px 16px;"><p>Aún no hay marcadores. Escribe arriba algo y pulsa Publicar para guardar un momento.</p></div>';
       return;
     }
+    count.textContent = b.bookmarks.length;
+    const displayUser = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : 'Yo';
     list.innerHTML = b.bookmarks.slice().sort((a,z)=>a.t-z.t).map(bm => `
-      <div class="bm">
-        <div class="left">
-          <span class="time">${fmtTime(bm.t)}</span>
-          <span class="note">${esc(bm.note || 'Sin nota')}</span>
+      <div class="yt-bar-item">
+        <div class="yt-bar-avatar">${esc(initial)}</div>
+        <div class="yt-bar-item-body">
+          <div class="yt-bar-item-meta">
+            <span class="yt-bar-item-user">${esc(displayUser)}</span>
+            <span class="yt-bar-item-time" data-seek="${bm.t}">${fmtTime(bm.t)}</span>
+          </div>
+          <div class="yt-bar-item-note">${esc(bm.note || '')}</div>
         </div>
-        <div class="actions">
-          <button class="btn icon" data-seek="${bm.t}" title="Ir">▶</button>
-          <button class="btn icon danger" data-delbm="${bm.id}" title="Eliminar">✕</button>
-        </div>
+        <button class="yt-bar-del" data-delbm="${bm.id}" title="Eliminar">✕</button>
       </div>
     `).join('');
     list.querySelectorAll('[data-seek]').forEach(n => n.addEventListener('click', () => {
@@ -876,7 +1130,7 @@
   }
 
   /* ===== ADD BOOK ===== */
-  async function addBook(url, title, author) {
+  async function addBook(url, title, author, category) {
     const videoId = parseYouTubeId(url);
     if (!videoId) { toast('URL de YouTube no válida'); return null; }
     if (state.library.some(b => b.videoId === videoId)) { toast('Ya está en tu biblioteca'); return null; }
@@ -891,6 +1145,7 @@
     const book = {
       id: (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random()),
       videoId, title: t || 'Audiolibro', author: a,
+      category: category || null,
       thumb: thumbUrl(videoId),
       duration: 0, position: 0, addedAt: Date.now(),
       bookmarks: [],
@@ -980,7 +1235,40 @@
     toast('Marcador guardado');
   });
 
-  $('#search-input').addEventListener('input', renderLibrary);
+  $('#search-input').addEventListener('input', () => {
+    if (sidebarMode === 'library') renderLibrary();
+    else renderCatalog();
+  });
+
+  /* Sidebar tabs */
+  document.querySelectorAll('.side-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      sidebarMode = t.dataset.tab;
+      $('#search-input').value = '';
+      renderSidebar();
+    });
+  });
+
+  /* YouTube-style bookmark bar: save via input or button */
+  function saveBookmarkFromInput() {
+    const b = currentBook(); if (!b) return;
+    const note = $('#yt-bar-input').value.trim();
+    if (!note) return;
+    const t = ytState.currentTime || 0;
+    b.bookmarks = b.bookmarks || [];
+    b.bookmarks.push({ id: (crypto.randomUUID?crypto.randomUUID():'bm-'+Date.now()), t, note });
+    $('#yt-bar-input').value = '';
+    save(); renderBookmarks();
+  }
+  $('#yt-bar-save').addEventListener('click', saveBookmarkFromInput);
+  $('#yt-bar-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); saveBookmarkFromInput(); }
+  });
+  // Update the time chip every second so user knows where they're bookmarking
+  setInterval(() => {
+    const chip = $('#yt-bar-time');
+    if (chip && currentBook()) chip.textContent = fmtTime(ytState.currentTime || 0);
+  }, 500);
 
   $('#btn-sleep').addEventListener('click', () => openModal('sleep-modal'));
   $('#cancel-sleep-modal').addEventListener('click', () => closeModal('sleep-modal'));
@@ -1104,7 +1392,8 @@
   });
 
   /* ===== INIT ===== */
-  renderLibrary();
+  renderChips();
+  renderSidebar();
   renderPlayer();
   if (state.currentId && currentBook()) {
     loadBook(state.currentId, false);
