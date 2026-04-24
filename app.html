@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Audiolibros — Reproductor</title>
+<title>Audiolibres — Reproductor</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
-    --bg: #0b0f14;
-    --bg-elev: #121821;
-    --bg-elev-2: #1a2330;
-    --border: #1f2a3a;
-    --text: #e6edf3;
-    --text-muted: #8b99a8;
-    --accent: #7cc4ff;
-    --accent-2: #a688ff;
+    --bg: #0F0F0F;
+    --bg-elev: #1A1A1A;
+    --bg-elev-2: #272727;
+    --border: #2a2a2a;
+    --text: #F1F1F1;
+    --text-muted: #AAAAAA;
+    --accent: #FF0033;
+    --accent-2: #FF4F66;
     --danger: #ff6b6b;
     --warning: #ffd166;
+    --yt-red-soft: rgba(255,0,51,0.12);
     --radius: 12px;
     --radius-sm: 8px;
     --shadow: 0 10px 30px rgba(0,0,0,0.35);
@@ -24,9 +25,7 @@
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0;
-    background: radial-gradient(1200px 600px at 20% -10%, #15253a 0%, transparent 60%),
-                radial-gradient(900px 500px at 100% 110%, #2a1a3a 0%, transparent 55%),
-                var(--bg);
+    background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
@@ -56,10 +55,10 @@
   }
   .logo .dot {
     width: 28px; height: 28px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 6px 18px rgba(124,196,255,0.35);
+    background: var(--accent);
+    box-shadow: 0 4px 12px rgba(255,0,51,0.35);
     display:inline-flex; align-items:center; justify-content:center;
-    color:#0b0f14; font-weight:900;
+    color:white; font-weight:900;
   }
   .brand-actions { display:flex; gap:8px; align-items: center; }
   .user-chip {
@@ -76,7 +75,7 @@
     width: 24px; height: 24px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     display: inline-flex; align-items: center; justify-content: center;
-    color: #0b0f14; font-weight: 800; font-size: 11px;
+    color: #ffffff; font-weight: 800; font-size: 11px;
   }
   .auth-content { display: flex; flex-direction: column; gap: 12px; }
   .auth-tabs { display: flex; gap: 4px; background: var(--bg-elev-2); padding: 4px; border-radius: 8px; margin-bottom: 6px; }
@@ -160,7 +159,7 @@
   .btn:active { transform: translateY(1px); }
   .btn.primary {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    border-color: transparent; color: #0b0f14; font-weight: 700;
+    border-color: transparent; color: #ffffff; font-weight: 700;
   }
   .btn.primary:hover { filter: brightness(1.05); }
   .btn.icon { padding: 8px; width: 36px; height: 36px; justify-content:center; }
@@ -243,9 +242,9 @@
   .play-btn {
     width: 56px; height: 56px; border-radius: 999px;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    border: 0; color: #0b0f14; cursor: pointer;
+    border: 0; color: #ffffff; cursor: pointer;
     display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 10px 24px rgba(124,196,255,.35);
+    box-shadow: 0 10px 24px rgba(255,0,51,.35);
   }
   .play-btn:hover { filter: brightness(1.05); }
 
@@ -289,7 +288,7 @@
     border: 1px solid var(--border); transition: all .15s;
   }
   .chip:hover { color: var(--text); }
-  .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0f14; border-color: transparent; }
+  .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #ffffff; border-color: transparent; }
 
   /* YouTube-style bookmarks/comments bar */
   .yt-bar {
@@ -318,7 +317,7 @@
     width: 34px; height: 34px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     display: flex; align-items: center; justify-content: center;
-    color: #0b0f14; font-weight: 800; font-size: 13px; flex-shrink: 0;
+    color: #ffffff; font-weight: 800; font-size: 13px; flex-shrink: 0;
   }
   .yt-bar-input-wrap {
     flex: 1; display: flex; gap: 8px; align-items: center;
@@ -354,10 +353,10 @@
     color: var(--accent); font-weight: 600; cursor: pointer;
     font-variant-numeric: tabular-nums;
     padding: 2px 8px; border-radius: 999px;
-    background: rgba(124,196,255,0.12); border: 1px solid rgba(124,196,255,0.2);
+    background: rgba(255,0,51,0.12); border: 1px solid rgba(255,0,51,0.2);
     transition: background .15s;
   }
-  .yt-bar-item-time:hover { background: rgba(124,196,255,0.22); }
+  .yt-bar-item-time:hover { background: rgba(255,0,51,0.22); }
   .yt-bar-item-note {
     font-size: 14px; color: var(--text); line-height: 1.4;
     word-wrap: break-word;
@@ -386,9 +385,22 @@
   .catalog-card .cat-info { overflow: hidden; }
   .catalog-card .cat-title { font-size: 13px; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .catalog-card .cat-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .catalog-card .cat-cat { display: inline-block; font-size: 10px; color: var(--accent); margin-top: 2px; text-transform: uppercase; letter-spacing: .05em; }
+  .catalog-card .cat-desc {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 4px; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .catalog-card .cat-cat { display: inline-block; font-size: 10px; color: var(--accent); margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+  .catalog-card {
+    grid-template-columns: 60px 1fr auto !important;
+  }
+  .catalog-card .cat-thumb {
+    width: 60px !important; height: 80px !important;
+    border-radius: 6px !important;
+  }
   .catalog-card button.add {
-    background: var(--accent); color: #0b0f14; border: 0;
+    background: var(--accent); color: #ffffff; border: 0;
     padding: 6px 10px; font-size: 11px; font-weight: 700;
     border-radius: 999px; cursor: pointer;
   }
@@ -462,8 +474,8 @@
 <div class="app">
   <header class="brand">
     <div class="logo">
-      <span class="dot">📖</span>
-      <span>Audiolibros</span>
+      <span class="dot">▶</span>
+      <span>audio<b style="color:var(--accent);">libres</b></span>
     </div>
     <div class="brand-actions">
       <button class="btn" id="btn-signin">Entrar</button>
@@ -671,23 +683,117 @@
   let cloudPushTimer = null;
   let cloudPushInFlight = false;
 
-  /* ===== CATÁLOGO ===== */
-  // 10 audiolibros populares en YouTube, por categoría.
-  // Cada entry tiene title, author, category, videoId (YouTube ID probable).
-  // Si un videoId no carga, el user puede buscarlo manualmente desde + Añadir.
+  /* ===== CATÁLOGO (~70 audiolibros con descripción) ===== */
+  // Si videoId es null, el botón "+ Añadir" se convierte en "🔍 Buscar en YouTube".
   const CATALOG = [
-    { title: 'El Acto de Crear', author: 'Rick Rubin', category: 'Autoayuda', videoId: '0iOTQcVY6Qs' },
-    { title: 'Meditaciones', author: 'Marco Aurelio', category: 'Filosofía', videoId: 'nt4yy-0jIyM' },
-    { title: 'Sapiens', author: 'Yuval Noah Harari', category: 'Historia', videoId: 'E6o7Lz35Uyc' },
-    { title: 'El Alquimista', author: 'Paulo Coelho', category: 'Novela', videoId: 'p0xgq1N_NMY' },
-    { title: 'Padre Rico, Padre Pobre', author: 'Robert Kiyosaki', category: 'Finanzas', videoId: 'TGx4iizmlhU' },
-    { title: 'El Príncipe', author: 'Nicolás Maquiavelo', category: 'Política', videoId: 'OjlQcBEM09o' },
-    { title: 'Hábitos Atómicos', author: 'James Clear', category: 'Autoayuda', videoId: '2Pul6yTFQYc' },
-    { title: 'El Arte de la Guerra', author: 'Sun Tzu', category: 'Filosofía', videoId: 'Rw_9oMfPaEw' },
-    { title: '1984', author: 'George Orwell', category: 'Novela', videoId: '1WD1bZFc3pI' },
-    { title: 'El Poder del Ahora', author: 'Eckhart Tolle', category: 'Autoayuda', videoId: 'fQC5KcW-xvE' },
+    // === Autoayuda / Desarrollo personal ===
+    { title: 'El Acto de Crear', author: 'Rick Rubin', category: 'Autoayuda', description: 'El productor detrás de Johnny Cash y Adele enseña a crear desde la escucha y la presencia.', videoId: '0iOTQcVY6Qs' },
+    { title: 'Hábitos Atómicos', author: 'James Clear', category: 'Autoayuda', description: 'Pequeños cambios del 1% diario que, compuestos en el tiempo, transforman tu vida entera.', videoId: null },
+    { title: 'El Poder del Ahora', author: 'Eckhart Tolle', category: 'Autoayuda', description: 'La mente es una máquina de pensar sin parar; vivir en el presente es la única libertad real.', videoId: null },
+    { title: 'Un Nuevo Mundo Ahora', author: 'Eckhart Tolle', category: 'Autoayuda', description: 'Despertar al propósito de tu vida dejando atrás el ego y viviendo con conciencia.', videoId: null },
+    { title: 'Los 7 Hábitos de la Gente Altamente Efectiva', author: 'Stephen Covey', category: 'Autoayuda', description: 'Siete principios que organizan tu vida alrededor de lo que realmente importa.', videoId: null },
+    { title: 'Piense y Hágase Rico', author: 'Napoleon Hill', category: 'Autoayuda', description: 'La filosofía del éxito destilada de entrevistas con los magnates de principios del siglo XX.', videoId: null },
+    { title: 'Cómo Ganar Amigos e Influir sobre las Personas', author: 'Dale Carnegie', category: 'Autoayuda', description: 'El manual clásico de habilidades sociales: escuchar, mostrar interés genuino, sonreír.', videoId: null },
+    { title: 'El Monje que Vendió su Ferrari', author: 'Robin Sharma', category: 'Autoayuda', description: 'Un abogado exitoso colapsa y aprende de un sabio del Himalaya cómo vivir con sentido.', videoId: null },
+    { title: 'Los Cuatro Acuerdos', author: 'Miguel Ruiz', category: 'Autoayuda', description: 'Sabiduría tolteca: no te tomes nada personal, impecable con tus palabras, no supongas.', videoId: null },
+    { title: 'El Hombre en Busca de Sentido', author: 'Viktor Frankl', category: 'Autoayuda', description: 'Superviviente de Auschwitz reflexiona sobre cómo el propósito sostiene al ser humano.', videoId: null },
+
+    // === Filosofía ===
+    { title: 'Meditaciones', author: 'Marco Aurelio', category: 'Filosofía', description: 'Diario privado del emperador romano estoico: cómo vivir con virtud cuando el mundo arde.', videoId: null },
+    { title: 'El Arte de la Guerra', author: 'Sun Tzu', category: 'Filosofía', description: 'Tratado militar chino del siglo V a.C. aplicable a cualquier conflicto, incluido el interior.', videoId: null },
+    { title: 'Así Habló Zaratustra', author: 'Friedrich Nietzsche', category: 'Filosofía', description: 'El libro más poético del filósofo alemán: el superhombre, el eterno retorno, la muerte de Dios.', videoId: null },
+    { title: 'Más Allá del Bien y del Mal', author: 'Friedrich Nietzsche', category: 'Filosofía', description: 'Crítica a la moralidad convencional y propuesta de una nueva ética más allá de dualismos.', videoId: null },
+    { title: 'El Contrato Social', author: 'Jean-Jacques Rousseau', category: 'Filosofía', description: 'El hombre nace libre y sin embargo vive encadenado. ¿Cómo legitimar la autoridad?', videoId: null },
+    { title: 'La República', author: 'Platón', category: 'Filosofía', description: 'Diálogo sobre la justicia, el estado ideal y la célebre alegoría de la caverna.', videoId: null },
+    { title: 'Cartas a Lucilio', author: 'Séneca', category: 'Filosofía', description: '124 cartas del estoico romano sobre cómo vivir, aceptar la muerte y valorar el presente.', videoId: null },
+    { title: 'Sobre la Brevedad de la Vida', author: 'Séneca', category: 'Filosofía', description: 'Ensayo corto y devastador: no vivimos poco; desperdiciamos mucho.', videoId: null },
+    { title: 'Tao Te Ching', author: 'Lao Tse', category: 'Filosofía', description: 'Texto fundacional del taoísmo. La sabiduría del vacío, del fluir, del no-hacer.', videoId: null },
+    { title: 'El Libro de los Cinco Anillos', author: 'Miyamoto Musashi', category: 'Filosofía', description: 'Testamento filosófico-marcial del samurái más famoso de Japón, escrito antes de morir.', videoId: null },
+
+    // === Novela ===
+    { title: 'Don Quijote de la Mancha', author: 'Miguel de Cervantes', category: 'Novela', description: 'El hidalgo que enloquece leyendo y sale al mundo a restaurar una caballería inexistente.', videoId: null },
+    { title: 'Cien Años de Soledad', author: 'Gabriel García Márquez', category: 'Novela', description: 'La saga de los Buendía en Macondo: realismo mágico, amor, política y olvido.', videoId: null },
+    { title: 'Crónica de una Muerte Anunciada', author: 'Gabriel García Márquez', category: 'Novela', description: 'Todo el pueblo sabe que van a matar a Santiago Nasar. Nadie hace nada por evitarlo.', videoId: null },
+    { title: 'El Coronel no Tiene Quien le Escriba', author: 'Gabriel García Márquez', category: 'Novela', description: 'Un veterano espera durante décadas una pensión que nunca llega. La paciencia como dignidad.', videoId: null },
+    { title: 'Pedro Páramo', author: 'Juan Rulfo', category: 'Novela', description: 'Un hijo viaja a Comala a buscar a su padre. Lo que encuentra es un pueblo de fantasmas.', videoId: null },
+    { title: 'La Casa de los Espíritus', author: 'Isabel Allende', category: 'Novela', description: 'Saga familiar chilena que atraviesa el siglo XX entre política, amor y lo sobrenatural.', videoId: null },
+    { title: 'Rayuela', author: 'Julio Cortázar', category: 'Novela', description: 'Novela experimental sobre Horacio Oliveira entre París y Buenos Aires que se puede leer en cualquier orden.', videoId: null },
+    { title: 'La Ciudad y los Perros', author: 'Mario Vargas Llosa', category: 'Novela', description: 'La violencia de un colegio militar limeño como microcosmos de la sociedad peruana.', videoId: null },
+    { title: '1984', author: 'George Orwell', category: 'Novela', description: 'Estado totalitario, vigilancia masiva, reescritura del pasado. 1949 y más vigente que nunca.', videoId: null },
+    { title: 'Rebelión en la Granja', author: 'George Orwell', category: 'Novela', description: 'Los animales derrocan al granjero. Al poco tiempo, los cerdos caminan en dos patas.', videoId: null },
+    { title: 'Un Mundo Feliz', author: 'Aldous Huxley', category: 'Novela', description: 'Distopía del placer y el conformismo: nadie sufre, nadie piensa, nadie es realmente libre.', videoId: null },
+    { title: 'El Proceso', author: 'Franz Kafka', category: 'Novela', description: 'Josef K. es arrestado sin que le digan el motivo. Pesadilla burocrática hecha literatura.', videoId: null },
+    { title: 'La Metamorfosis', author: 'Franz Kafka', category: 'Novela', description: 'Gregor Samsa despierta convertido en un insecto gigante. Alegoría sobre alienación familiar.', videoId: null },
+    { title: 'Crimen y Castigo', author: 'Fiódor Dostoyevski', category: 'Novela', description: 'Un estudiante mata a una usurera por una teoría moral. Lo que sigue es la conciencia.', videoId: null },
+    { title: 'Los Hermanos Karamázov', author: 'Fiódor Dostoyevski', category: 'Novela', description: 'La gran novela sobre fe, duda, parricidio y libertad del alma rusa.', videoId: null },
+    { title: 'Anna Karenina', author: 'León Tolstói', category: 'Novela', description: 'La tragedia de una mujer que sigue su pasión en una sociedad que la castigará por ello.', videoId: null },
+    { title: 'Frankenstein', author: 'Mary Shelley', category: 'Novela', description: 'El primer monstruo moderno fue creado por un hombre que quiso ser como Dios. 1818.', videoId: null },
+    { title: 'Drácula', author: 'Bram Stoker', category: 'Novela', description: 'El conde transilvano que inauguró la figura del vampiro moderno, contado en cartas y diarios.', videoId: null },
+    { title: 'El Extranjero', author: 'Albert Camus', category: 'Novela', description: 'Meursault asiste al funeral de su madre sin llorar. Días después mata a un árabe bajo el sol.', videoId: null },
+    { title: 'El Alquimista', author: 'Paulo Coelho', category: 'Novela', description: 'Un pastor andaluz persigue su sueño hasta las pirámides. La parábola más vendida del siglo XX.', videoId: null },
+    { title: 'El Guardián entre el Centeno', author: 'J.D. Salinger', category: 'Novela', description: 'Holden Caulfield, adolescente expulsado del colegio, vaga por Nueva York detestando a los farsantes.', videoId: null },
+    { title: 'El Retrato de Dorian Gray', author: 'Oscar Wilde', category: 'Novela', description: 'Un joven mantiene su belleza mientras el retrato envejece por él. Estética y pacto con el diablo.', videoId: null },
+    { title: 'Los Miserables', author: 'Victor Hugo', category: 'Novela', description: 'Jean Valjean roba pan, cumple presidio, se redime. Francia del XIX como gran tapiz moral.', videoId: null },
+    { title: 'Madame Bovary', author: 'Gustave Flaubert', category: 'Novela', description: 'Emma se casa con un médico aburrido y se destruye buscando la vida novelesca que leyó de niña.', videoId: null },
+
+    // === Historia / Ciencia ===
+    { title: 'Sapiens', author: 'Yuval Noah Harari', category: 'Historia', description: '70.000 años de historia humana en 15 horas. Redefinió cómo vemos nuestra especie.', videoId: null },
+    { title: 'Homo Deus', author: 'Yuval Noah Harari', category: 'Historia', description: 'Una breve historia del mañana. Tras vencer hambre y guerra, ¿qué persigue la humanidad?', videoId: null },
+    { title: '21 Lecciones para el Siglo XXI', author: 'Yuval Noah Harari', category: 'Historia', description: 'Guía para entender el presente: IA, trabajo, fake news, libertad, religión.', videoId: null },
+    { title: 'Una Breve Historia del Tiempo', author: 'Stephen Hawking', category: 'Historia', description: 'Del Big Bang a los agujeros negros, sin una sola ecuación. Ciencia accesible para todos.', videoId: null },
+    { title: 'Cosmos', author: 'Carl Sagan', category: 'Historia', description: 'El libro-serie mítico sobre el universo, la ciencia y el lugar de la humanidad en él.', videoId: null },
+    { title: 'El Mundo y sus Demonios', author: 'Carl Sagan', category: 'Historia', description: 'Defensa apasionada del pensamiento científico frente a la superchería. Kit antimanipulación.', videoId: null },
+    { title: 'Armas, Gérmenes y Acero', author: 'Jared Diamond', category: 'Historia', description: 'Por qué algunas civilizaciones dominaron y otras no. La respuesta no es genética: es geográfica.', videoId: null },
+    { title: 'El Gen Egoísta', author: 'Richard Dawkins', category: 'Historia', description: 'La biología desde el punto de vista del gen: somos máquinas de supervivencia para el ADN.', videoId: null },
+
+    // === Finanzas ===
+    { title: 'Padre Rico, Padre Pobre', author: 'Robert Kiyosaki', category: 'Finanzas', description: 'La diferencia entre activo y pasivo. El libro de finanzas personales más vendido del mundo.', videoId: null },
+    { title: 'El Hombre Más Rico de Babilonia', author: 'George Clason', category: 'Finanzas', description: 'Parábolas de la antigua Babilonia que contienen las leyes eternas del dinero. Corto y potente.', videoId: null },
+    { title: 'Los Secretos de la Mente Millonaria', author: 'T. Harv Eker', category: 'Finanzas', description: 'Tu "plano mental del dinero" determina cuánto ganas. Cómo reprogramarlo.', videoId: null },
+    { title: 'De Cero a Uno', author: 'Peter Thiel', category: 'Finanzas', description: 'Notas sobre startups: cómo construir algo de la nada. El futuro pertenece a los monopolios.', videoId: null },
+    { title: 'Empresas que Sobresalen', author: 'Jim Collins', category: 'Finanzas', description: 'Por qué algunas empresas pasan de buenas a excelentes y la mayoría nunca lo consigue.', videoId: null },
+    { title: 'El Arte de Pensar', author: 'Rolf Dobelli', category: 'Finanzas', description: '52 sesgos cognitivos en capítulos de 3 páginas. Te salva de malas decisiones a diario.', videoId: null },
+
+    // === Política ===
+    { title: 'El Príncipe', author: 'Nicolás Maquiavelo', category: 'Política', description: 'Manual frío y lúcido sobre el poder. Quinientos años después sigue sin ser superado.', videoId: null },
+    { title: 'El Capital', author: 'Karl Marx', category: 'Política', description: 'Crítica de la economía política más influyente de la historia. Plusvalía, capital, alienación.', videoId: null },
+    { title: 'Sobre la Libertad', author: 'John Stuart Mill', category: 'Política', description: 'Defensa clásica de la libertad individual frente a la tiranía de la mayoría y la opinión pública.', videoId: null },
+
+    // === Psicología ===
+    { title: 'Pensar Rápido, Pensar Despacio', author: 'Daniel Kahneman', category: 'Psicología', description: 'Sistema 1 (rápido, intuitivo) vs Sistema 2 (lento, analítico). Cómo nos engaña nuestra mente.', videoId: null },
+    { title: 'Inteligencia Emocional', author: 'Daniel Goleman', category: 'Psicología', description: 'Por qué el CI no basta. El libro que puso la inteligencia emocional en el mapa.', videoId: null },
+    { title: 'Fluir', author: 'Mihály Csíkszentmihályi', category: 'Psicología', description: 'El estado de concentración plena que hace que trabajar sea como jugar. Cómo entrar en él.', videoId: null },
+    { title: 'Mindset', author: 'Carol Dweck', category: 'Psicología', description: 'Mentalidad fija vs mentalidad de crecimiento. La creencia sobre ti mismo que lo cambia todo.', videoId: null },
+
+    // === Biografía ===
+    { title: 'Steve Jobs', author: 'Walter Isaacson', category: 'Biografía', description: 'La biografía autorizada del fundador de Apple. Genial, cruel, perfeccionista, irreemplazable.', videoId: null },
+    { title: 'Elon Musk', author: 'Walter Isaacson', category: 'Biografía', description: 'El empresario más polarizador de nuestra época, contado por el biógrafo de Jobs y Einstein.', videoId: null },
+    { title: 'Autobiografía', author: 'Benjamin Franklin', category: 'Biografía', description: 'El padre fundador contando cómo se hizo a sí mismo. Las 13 virtudes que intentó cultivar.', videoId: null },
+
+    // === Espiritualidad ===
+    { title: 'Autobiografía de un Yogui', author: 'Paramahansa Yogananda', category: 'Espiritualidad', description: 'El libro que Steve Jobs regalaba en su funeral. Un místico indio en el siglo XX.', videoId: null },
+    { title: 'El Camino del Artista', author: 'Julia Cameron', category: 'Espiritualidad', description: 'Programa de 12 semanas para desbloquear la creatividad. Páginas matutinas y citas contigo.', videoId: null },
+    { title: 'Siddhartha', author: 'Hermann Hesse', category: 'Espiritualidad', description: 'Un joven brahmán abandona todo para buscar el despertar. La iluminación no está en los libros.', videoId: null },
   ];
-  const CATEGORIES = ['Todas', 'Novela', 'Autoayuda', 'Filosofía', 'Historia', 'Finanzas', 'Política'];
+  const CATEGORIES = ['Todas', 'Novela', 'Autoayuda', 'Filosofía', 'Historia', 'Finanzas', 'Política', 'Psicología', 'Biografía', 'Espiritualidad'];
+
+  /* Google Books cover fetch (cached) */
+  const coverCache = {};
+  async function fetchBookCover(title, author) {
+    const key = (title + '|' + (author||'')).toLowerCase();
+    if (key in coverCache) return coverCache[key];
+    try {
+      const q = encodeURIComponent(`intitle:"${title}" inauthor:"${author}"`);
+      const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1&langRestrict=es`);
+      const data = await r.json();
+      const img = data?.items?.[0]?.volumeInfo?.imageLinks;
+      if (!img) { coverCache[key] = ''; return ''; }
+      let url = img.thumbnail || img.smallThumbnail || '';
+      url = url.replace('http:', 'https:').replace('&edge=curl', '').replace('zoom=1', 'zoom=2');
+      coverCache[key] = url;
+      return url;
+    } catch { coverCache[key] = ''; return ''; }
+  }
 
   /* ===== STATE ===== */
   const STORAGE_KEY = 'audiolibros.v1';
@@ -964,7 +1070,7 @@
       const active = b.id === state.currentId ? 'active' : '';
       return `
         <div class="book ${active}" data-id="${b.id}">
-          <div class="thumb"><img src="${b.thumb}" loading="lazy" onerror="this.style.display='none'"/></div>
+          <div class="thumb" data-lib-title="${esc(b.title)}" data-lib-author="${esc(b.author||'')}"><img src="${b.coverUrl || b.thumb}" loading="lazy" onerror="this.style.display='none'"/></div>
           <div class="info">
             <div class="title">${esc(b.title)}</div>
             <div class="meta">${esc(b.author || 'YouTube')}${b.duration ? ' · ' + fmtTime(b.duration) : ''}</div>
@@ -974,6 +1080,22 @@
           <button class="kebab" data-del="${b.id}" title="Eliminar">✕</button>
         </div>`;
     }).join('');
+    // Auto-fetch covers from Google Books for library items that don't have one yet
+    list.forEach(async (b) => {
+      if (!b.coverUrl && b.title) {
+        const url = await fetchBookCover(b.title, b.author || '');
+        if (url) {
+          b.coverUrl = url;
+          save();
+          // Update the img src for this card
+          const card = el.querySelector(`[data-id="${b.id}"]`);
+          if (card) {
+            const img = card.querySelector('img');
+            if (img) img.src = url;
+          }
+        }
+      }
+    });
     el.querySelectorAll('[data-id]').forEach(n => n.addEventListener('click', e => {
       if (e.target.closest('[data-del]')) return;
       loadBook(n.dataset.id, true);
@@ -1006,37 +1128,66 @@
   function renderCatalog() {
     const q = ($('#search-input').value || '').toLowerCase();
     const filtered = CATALOG
-      .filter(c => !q || c.title.toLowerCase().includes(q) || c.author.toLowerCase().includes(q))
+      .filter(c => !q || c.title.toLowerCase().includes(q) || c.author.toLowerCase().includes(q) || (c.description||'').toLowerCase().includes(q))
       .filter(c => activeCategory === 'Todas' || c.category === activeCategory);
     const el = $('#catalog');
+    const countEl = $('#library-count');
+    if (countEl) countEl.textContent = `Descubre · ${filtered.length} audiolibro${filtered.length === 1 ? '' : 's'}`;
     if (filtered.length === 0) {
       el.innerHTML = `<div class="empty" style="margin-top:8px;"><p>Sin resultados</p></div>`;
       return;
     }
     const haveIds = new Set(state.library.map(b => b.videoId));
-    el.innerHTML = filtered.map(c => {
-      const already = haveIds.has(c.videoId);
+    el.innerHTML = filtered.map((c, i) => {
+      const key = `${c.title}__${i}`;
+      const already = c.videoId && haveIds.has(c.videoId);
+      const btnLabel = already ? '✓ Añadido' : (c.videoId ? '+ Añadir' : '🔍 Buscar');
+      const btnClass = already ? 'add added' : 'add';
       return `
-        <div class="catalog-card" data-vid="${c.videoId}">
-          <div class="cat-thumb">${categoryIcon(c.category)}</div>
+        <div class="catalog-card" data-key="${esc(key)}">
+          <div class="cat-thumb" data-cover-title="${esc(c.title)}" data-cover-author="${esc(c.author)}">${categoryIcon(c.category)}</div>
           <div class="cat-info">
             <div class="cat-title">${esc(c.title)}</div>
             <div class="cat-meta">${esc(c.author)}</div>
+            ${c.description ? `<div class="cat-desc">${esc(c.description)}</div>` : ''}
             <div class="cat-cat">${esc(c.category)}</div>
           </div>
-          <button class="add ${already ? 'added' : ''}" data-add="${c.videoId}">${already ? '✓ Añadido' : '+ Añadir'}</button>
+          <button class="${btnClass}" data-key="${esc(key)}" ${c.videoId ? `data-vid="${c.videoId}"` : ''}>${btnLabel}</button>
         </div>`;
     }).join('');
-    el.querySelectorAll('[data-add]').forEach(n => n.addEventListener('click', async (e) => {
+
+    // Lazy-load covers from Google Books
+    el.querySelectorAll('[data-cover-title]').forEach(async (thumb) => {
+      const title = thumb.dataset.coverTitle;
+      const author = thumb.dataset.coverAuthor;
+      const url = await fetchBookCover(title, author);
+      if (url) {
+        thumb.style.background = `url('${url}') center/cover #111`;
+        thumb.textContent = '';
+      }
+    });
+
+    el.querySelectorAll('button.add').forEach(n => n.addEventListener('click', async (e) => {
       e.stopPropagation();
       if (n.classList.contains('added')) return;
-      const entry = CATALOG.find(c => c.videoId === n.dataset.add);
+      const key = n.dataset.key;
+      const entry = filtered.find((c, i) => `${c.title}__${i}` === key);
       if (!entry) return;
+      if (!entry.videoId) {
+        // Open YouTube search for this book in new tab
+        const searchQ = encodeURIComponent(`audiolibro completo español ${entry.title} ${entry.author}`);
+        window.open(`https://www.youtube.com/results?search_query=${searchQ}`, '_blank');
+        toast('Busca en YouTube y pega la URL con + Añadir audiolibro');
+        return;
+      }
       n.classList.add('added');
       n.textContent = '✓ Añadiendo…';
       const book = await addBook(`https://www.youtube.com/watch?v=${entry.videoId}`, entry.title, entry.author, entry.category);
       if (book) {
         n.textContent = '✓ Añadido';
+        // Fetch cover and attach to book
+        const coverUrl = await fetchBookCover(entry.title, entry.author);
+        if (coverUrl) { book.coverUrl = coverUrl; save(); }
         renderSidebar();
       } else {
         n.classList.remove('added');
