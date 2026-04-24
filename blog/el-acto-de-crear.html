@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Reseña de 'El Acto de Crear' de Rick Rubin. Hablamos del autor, la obra y la calidad de la versión narrada disponible en YouTube." />
+<title>El Acto de Crear (Rick Rubin) — Reseña del audiolibro | Audiolibres</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23FF0033'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white'%3E📖%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yt-red: #FF0033;
+    --yt-red-dark: #CC0028;
+    --yt-red-soft: #FFE8EC;
+    --ink: #1a1a1a;
+    --ink-soft: #3a3a3a;
+    --gray-700: #5a5a5a;
+    --gray-500: #8a8a8a;
+    --gray-300: #c9c9c9;
+    --gray-100: #EFECE6;
+    --gray-50: #F7F4EF;
+    --cream: #FAF7F2;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--yt-red); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  img { max-width: 100%; display: block; }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  .container-wide { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 247, 242, 0.92);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  nav.top .inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; max-width: 1100px; margin: 0 auto; padding: 0 24px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 20px; letter-spacing: -0.01em;
+    color: var(--ink); text-decoration: none;
+  }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--yt-red); color: white;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .brand-name b { color: var(--yt-red); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--gray-700); font-size: 14px; font-weight: 500; text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+  @media (max-width: 780px) {
+    .nav-links a:not(.btn) { display: none; }
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 20px; font-size: 14px; font-weight: 600;
+    border-radius: 999px; border: 0; cursor: pointer;
+    white-space: nowrap; text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--yt-red); color: white !important;
+    box-shadow: 0 6px 16px rgba(255, 0, 51, 0.22);
+  }
+  .btn-primary:hover {
+    background: var(--yt-red-dark); text-decoration: none;
+  }
+
+  /* ARTICLE HEADER */
+  .article-header {
+    padding: 60px 0 40px;
+  }
+  .breadcrumb {
+    font-size: 13px; color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+  .breadcrumb a { color: var(--gray-700); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--yt-red); }
+  .category {
+    display: inline-block;
+    background: var(--yt-red-soft);
+    color: var(--yt-red);
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  h1.article-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 54px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0 0 20px;
+    color: var(--ink);
+  }
+  h1.article-title em { font-style: italic; color: var(--yt-red); }
+  .article-sub {
+    font-size: 20px; color: var(--gray-700);
+    line-height: 1.5;
+    margin: 0 0 28px;
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+  }
+  .article-meta {
+    display: flex; gap: 16px; align-items: center;
+    font-size: 13px; color: var(--gray-500);
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .article-meta .dot { color: var(--gray-300); }
+
+  /* BOOK COVER BLOCK */
+  .book-cover {
+    margin: 40px 0;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #8B4513 0%, #3E1F0C 100%);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+  }
+  .book-cover .content {
+    text-align: center; padding: 40px;
+  }
+  .book-cover h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 500;
+    margin: 0 0 8px;
+    line-height: 1.05;
+  }
+  .book-cover p { margin: 0; opacity: .75; font-size: 16px; }
+  .book-cover .play-chip {
+    position: absolute; top: 20px; right: 20px;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--yt-red);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(255,0,51,.6);
+    font-size: 18px;
+  }
+
+  /* BODY CONTENT */
+  .article-body {
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+  .article-body p { margin: 0 0 24px; }
+  .article-body p:first-child::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 68px;
+    float: left;
+    line-height: 0.9;
+    margin: 6px 10px 0 -2px;
+    color: var(--yt-red);
+    font-weight: 500;
+  }
+  .article-body h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 56px 0 20px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .article-body h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 40px 0 14px;
+    color: var(--ink);
+  }
+  .article-body blockquote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 26px;
+    line-height: 1.35;
+    color: var(--ink);
+    margin: 36px 0;
+    padding: 0 0 0 28px;
+    border-left: 3px solid var(--yt-red);
+  }
+  .article-body blockquote cite {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    color: var(--gray-500);
+    margin-top: 12px;
+  }
+  .article-body ul {
+    padding-left: 24px; margin: 0 0 24px;
+  }
+  .article-body li { margin-bottom: 10px; }
+  .article-body strong { color: var(--ink); font-weight: 700; }
+
+  /* QUALITY CARD */
+  .quality-card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+  }
+  .quality-card .title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .quality-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 28px;
+    font-size: 15px;
+  }
+  @media (max-width: 540px) { .quality-grid { grid-template-columns: 1fr; } }
+  .quality-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 10px; border-bottom: 1px dashed var(--gray-100);
+  }
+  .quality-row:last-child, .quality-row:nth-last-child(2) { border-bottom: 0; }
+  .quality-label { color: var(--gray-500); }
+  .quality-value { color: var(--ink); font-weight: 600; }
+  .stars { color: var(--yt-red); letter-spacing: 1px; }
+
+  /* CTA BOX */
+  .cta-box {
+    background: var(--ink);
+    color: white;
+    border-radius: 20px;
+    padding: 48px;
+    margin: 56px 0;
+    text-align: center;
+  }
+  .cta-box h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: white;
+  }
+  .cta-box p {
+    color: #c9c9c9;
+    margin: 0 0 24px;
+    font-size: 16px;
+  }
+  .cta-box .btn-primary {
+    background: white;
+    color: var(--yt-red) !important;
+    box-shadow: 0 8px 24px rgba(255,255,255,.2);
+  }
+  .cta-box .btn-primary:hover {
+    background: var(--yt-red-soft);
+  }
+
+  /* RELATED */
+  .related {
+    padding: 80px 0 120px;
+    border-top: 1px solid var(--gray-100);
+    margin-top: 80px;
+  }
+  .related h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0 0 32px;
+    letter-spacing: -0.01em;
+  }
+  .related-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  @media (max-width: 780px) { .related-grid { grid-template-columns: 1fr; } }
+  .related-card {
+    background: white; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    text-decoration: none; color: var(--ink); display: block;
+    transition: transform .2s;
+  }
+  .related-card:hover { transform: translateY(-3px); text-decoration: none; }
+  .related-card .mini-cover {
+    aspect-ratio: 16/10; padding: 16px;
+    display: flex; align-items: flex-end;
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+  }
+  .related-card .body { padding: 16px 18px 18px; }
+  .related-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+  .related-card p {
+    font-size: 13px; color: var(--gray-700);
+    margin: 0;
+  }
+
+  footer {
+    padding: 40px 0; background: var(--cream);
+    border-top: 1px solid var(--gray-100);
+    text-align: center;
+    color: var(--gray-500); font-size: 13px;
+  }
+  footer a { color: var(--gray-700); margin: 0 12px; }
+
+  .grad-marco { background: linear-gradient(135deg, #2C3E50 0%, #0a1420 100%); }
+  .grad-sapiens { background: linear-gradient(135deg, #1a1a3e 0%, #0a0520 100%); }
+  .grad-coelho { background: linear-gradient(135deg, #D4A574 0%, #7A4A1F 100%); }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <a href="/" class="brand">
+      <span class="brand-mark">▶</span>
+      <span class="brand-name">audio<b>libres</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="/#features">Características</a>
+      <a href="/blog">Blog</a>
+      <a href="/#faq">Preguntas</a>
+      <a href="/app" class="btn btn-primary">Abrir app</a>
+    </div>
+  </div>
+</nav>
+
+<article>
+  <header class="article-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Inicio</a> → <a href="/blog">Blog</a> → El Acto de Crear
+      </div>
+      <span class="category">Creatividad</span>
+      <h1 class="article-title">El productor más influyente del rock te explica <em>cómo crear</em>.</h1>
+      <p class="article-sub">Rick Rubin ha trabajado con Johnny Cash, Adele, Jay-Z y los Red Hot Chili Peppers. Su libro no va de música. Va de aprender a escuchar.</p>
+      <div class="article-meta">
+        <span>7 min de lectura</span>
+        <span class="dot">•</span>
+        <span>Abril 2026</span>
+        <span class="dot">•</span>
+        <span>Por Audiolibres</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-cover">
+      <div class="play-chip">▶</div>
+      <div class="content">
+        <h2>El Acto de Crear</h2>
+        <p>Rick Rubin · 2023 · 10h 20min</p>
+      </div>
+    </div>
+
+    <div class="article-body">
+      <p>Rick Rubin lleva cuarenta años en estudios de grabación escuchando a otros artistas. Ha producido más de 300 álbumes. Ha ganado nueve Grammys. Y ahora, con 60 años, ha escrito un libro donde no habla prácticamente de música. Habla de atención, de paciencia y de cómo cualquier persona —barista, programador, madre, diseñador— puede trabajar con la actitud de un artista.</p>
+
+      <p>"El Acto de Crear" (título original: <em>The Creative Act: A Way of Being</em>) es probablemente el libro más citado por creadores desde que salió en 2023. Adele dijo que le cambió cómo compone. Malcolm Gladwell lo recomendó en su podcast. Y lo mejor: existe una versión completa en español narrada en YouTube que vale enormemente la pena escuchar.</p>
+
+      <h2>Quién es Rick Rubin</h2>
+
+      <p>Nació en Long Island en 1963. Fundó Def Jam Recordings en su habitación de universidad con apenas 20 años. Produjo los primeros álbumes de Run-DMC, los Beastie Boys y LL Cool J. En los noventa, cuando todos lo consideraban una figura exclusiva del hip-hop, produjo <em>American Recordings</em> de Johnny Cash, los álbumes más aclamados del final de la carrera del legendario músico country.</p>
+
+      <p>Su lista de productos es vertiginosa: Slayer, Red Hot Chili Peppers, Eminem, Metallica, Neil Diamond, Lady Gaga, Adele, Kanye West, Strokes. Lo que une a todos esos artistas tan dispares es una manera de trabajar: Rubin no toca instrumentos, no compone, no canta. Se sienta en el estudio, cierra los ojos, y escucha. Hace preguntas. Elimina. Simplifica.</p>
+
+      <blockquote>
+        El artista no <em>crea</em> nada, descubre lo que ya estaba ahí.
+        <cite>— Rick Rubin</cite>
+      </blockquote>
+
+      <h2>De qué trata el libro</h2>
+
+      <p>Son 78 capítulos, algunos de dos páginas, otros de una sola línea. Juntos forman una especie de manual de estado mental. No te enseña técnica de escritura ni pintura ni música. Te propone una forma de estar en el mundo donde todo —desde el tráfico hasta una taza de café— se convierte en material potencial.</p>
+
+      <p>Los temas que atraviesa son pocos y recurrentes: <strong>la importancia de empezar antes de saber</strong>, <strong>cómo el juicio mata la creatividad en sus etapas iniciales</strong>, <strong>por qué los grandes artistas son primero grandes espectadores</strong>, y <strong>cómo convivir con la duda sin dejar que te paralice</strong>.</p>
+
+      <p>Lo que hace especial al libro no es que diga cosas nuevas. Es que las dice de una manera en que se quedan. Cada capítulo es corto, contundente, y muchos terminan con una especie de aforismo que se te queda rondando horas después.</p>
+
+      <h2>La versión narrada en YouTube</h2>
+
+      <p>Hay varias versiones del audiolibro subidas a YouTube. La más completa y escuchable está publicada por el canal <strong>GONZOWAV</strong>, dura algo más de 10 horas, y tiene la ventaja de estar narrada a un ritmo pausado que respeta la estructura contemplativa del libro. El narrador —una voz masculina cálida, grave, sin énfasis innecesarios— encaja perfectamente con el tono del texto.</p>
+
+      <div class="quality-card">
+        <div class="title">📊 Calidad de esta versión</div>
+        <div class="quality-grid">
+          <div class="quality-row"><span class="quality-label">Narración</span><span class="quality-value">Muy buena <span class="stars">★★★★★</span></span></div>
+          <div class="quality-row"><span class="quality-label">Calidad de audio</span><span class="quality-value">Buena <span class="stars">★★★★☆</span></span></div>
+          <div class="quality-row"><span class="quality-label">Completitud</span><span class="quality-value">Íntegro</span></div>
+          <div class="quality-row"><span class="quality-label">Duración</span><span class="quality-value">10h 20min</span></div>
+          <div class="quality-row"><span class="quality-label">Anuncios</span><span class="quality-value">Mínimos</span></div>
+          <div class="quality-row"><span class="quality-label">Canal</span><span class="quality-value">GONZOWAV</span></div>
+        </div>
+      </div>
+
+      <h2>Cuándo escucharlo</h2>
+
+      <p>No es un libro para maratones. Al contrario: su estructura en capítulos cortísimos invita a escucharlo en pequeñas dosis — veinte minutos mientras caminas, media hora antes de dormir, un capítulo en la pausa del café. De hecho, muchos lectores lo tratan como un texto para releer/reescuchar en bucle: empiezas desde cero cada seis meses y te sigue diciendo cosas nuevas.</p>
+
+      <p>Ideal para:</p>
+      <ul>
+        <li>Personas bloqueadas en un proyecto creativo que no saben cómo avanzar.</li>
+        <li>Cualquiera que trabaje con la imaginación: escritores, diseñadores, músicos, programadores, cocineros.</li>
+        <li>Quienes sientan que están "consumiendo" demasiado y creando demasiado poco.</li>
+      </ul>
+
+      <h2>Qué esperar y qué no esperar</h2>
+
+      <p><strong>Lo que vas a encontrar:</strong> un acompañante sereno, honesto, que no te grita recetas ni te vende un sistema en siete pasos. Rubin escribe como alguien que ha pasado mucho tiempo en silencio observando a gente crear, y lo transmite con esa calma.</p>
+
+      <p><strong>Lo que no vas a encontrar:</strong> técnicas específicas. Si buscas "cómo estructurar una novela" o "cómo componer un hit", este no es tu libro. Su propósito es anterior: te coloca en el estado mental correcto para que luego tú apliques tus técnicas con sentido.</p>
+
+      <blockquote>
+        La mejor manera de aprender a ser artista es estudiar a otros artistas.
+        Pero no cómo hacen las cosas. Cómo las miran.
+        <cite>— Rick Rubin, capítulo 14</cite>
+      </blockquote>
+
+      <div class="cta-box">
+        <h3>Escúchalo ahora, sin anuncios</h3>
+        <p>Añádelo a tu biblioteca de Audiolibres y empieza cuando quieras. Tu progreso se guarda automáticamente.</p>
+        <a href="/app" class="btn btn-primary">Abrir Audiolibres →</a>
+      </div>
+
+      <h2>Veredicto</h2>
+
+      <p>Un libro que mucha gente vuelve a empezar al día siguiente de terminarlo. La versión en YouTube es completa, está bien narrada, y el formato audio le sienta incluso mejor que el papel: los capítulos cortos funcionan como micro-meditaciones, perfectos para escucharlo caminando o antes de dormir. <strong>Muy recomendado</strong>, especialmente si sientes que has perdido la conexión con tu propia curiosidad.</p>
+
+    </div>
+  </div>
+
+  <section class="related">
+    <div class="container-wide">
+      <h3>Otras reseñas que podrían interesarte</h3>
+      <div class="related-grid">
+        <a href="/blog/meditaciones" class="related-card">
+          <div class="mini-cover grad-marco">Meditaciones</div>
+          <div class="body">
+            <h4>Por qué Marco Aurelio sigue siendo actual</h4>
+            <p>Dieciocho siglos después, el diario privado del emperador sigue siendo uno de los textos más lúcidos sobre cómo vivir.</p>
+          </div>
+        </a>
+        <a href="/blog/sapiens" class="related-card">
+          <div class="mini-cover grad-sapiens">Sapiens</div>
+          <div class="body">
+            <h4>70.000 años de humanidad en 15 horas</h4>
+            <p>La obra que Obama y Gates recomendaron. La narración íntegra en YouTube está a la altura.</p>
+          </div>
+        </a>
+        <a href="/blog/el-alquimista" class="related-card">
+          <div class="mini-cover grad-coelho">El Alquimista</div>
+          <div class="body">
+            <h4>El best-seller que se disfruta más escuchándolo</h4>
+            <p>Cien millones de ejemplares, cuatro horas de audio, y tres versiones distintas en YouTube. Analizamos cuál merece la pena.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+</article>
+
+<footer>
+  <div>
+    <a href="/">Inicio</a>
+    <a href="/blog">Blog</a>
+    <a href="/app">App</a>
+  </div>
+  <div style="margin-top:12px;">© 2026 Audiolibres</div>
+</footer>
+
+</body>
+</html>
