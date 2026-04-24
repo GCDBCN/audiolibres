@@ -839,5 +839,81 @@
   </div>
 </footer>
 
+<script>
+// Fetch real book covers from Google Books for hero cards + demo library
+(async () => {
+  const cache = {};
+  async function fetchCover(title, author) {
+    const key = (title + '|' + author).toLowerCase();
+    if (key in cache) return cache[key];
+    for (const q of [`intitle:"${title}" inauthor:"${author}"`, `${title} ${author}`]) {
+      try {
+        const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=1&langRestrict=es`);
+        const data = await r.json();
+        const img = data?.items?.[0]?.volumeInfo?.imageLinks;
+        if (img) {
+          const url = (img.extraLarge || img.large || img.medium || img.thumbnail || img.smallThumbnail || '')
+            .replace('http:', 'https:').replace('&edge=curl', '').replace('zoom=1', 'zoom=3');
+          cache[key] = url; return url;
+        }
+      } catch {}
+    }
+    cache[key] = ''; return '';
+  }
+
+  // Hero floating cards
+  document.querySelectorAll('.cover-card').forEach(async (card) => {
+    const title = card.querySelector('.cc-title')?.textContent?.trim() || '';
+    const author = card.querySelector('.cc-author')?.textContent?.trim() || '';
+    if (!title || !author) return;
+    const url = await fetchCover(title, author);
+    if (!url) return;
+    const img = new Image();
+    img.onload = () => {
+      const el = document.createElement('img');
+      el.src = url;
+      el.alt = title;
+      el.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border-radius:inherit;';
+      card.style.overflow = 'hidden';
+      card.insertBefore(el, card.firstChild);
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.05) 100%);z-index:1;';
+      card.insertBefore(overlay, card.children[1]);
+      Array.from(card.children).forEach(c => {
+        if (c.tagName !== 'IMG' && !c.style.cssText.includes('gradient')) {
+          c.style.position = 'relative';
+          c.style.zIndex = '2';
+        }
+      });
+    };
+    img.src = url;
+  });
+
+  // Demo library mini thumbs
+  document.querySelectorAll('.demo-lib-item').forEach(async (item) => {
+    const title = item.querySelector('.t')?.textContent?.trim() || '';
+    const author = item.querySelector('.a')?.textContent?.trim() || '';
+    const thumb = item.querySelector('.demo-lib-thumb');
+    if (!title || !author || !thumb) return;
+    const url = await fetchCover(title, author);
+    if (!url) return;
+    thumb.style.backgroundImage = `url('${url}')`;
+    thumb.style.backgroundSize = 'cover';
+    thumb.style.backgroundPosition = 'center';
+  });
+
+  // Demo player cover
+  const demoCover = document.querySelector('.demo-player-cover');
+  if (demoCover) {
+    const url = await fetchCover('El Acto de Crear', 'Rick Rubin');
+    if (url) {
+      demoCover.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('${url}')`;
+      demoCover.style.backgroundSize = 'cover';
+      demoCover.style.backgroundPosition = 'center';
+    }
+  }
+})();
+</script>
+
 </body>
 </html>
