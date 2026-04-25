@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Audiolibres — Reproductor</title>
+<link rel="icon" href="/logo-favicon.png" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
@@ -55,11 +56,11 @@
   }
   .logo .dot {
     width: 28px; height: 28px; border-radius: 8px;
-    background: var(--accent);
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(255,0,51,0.35);
     display:inline-flex; align-items:center; justify-content:center;
-    color:white; font-weight:900;
   }
+  .logo .dot img { width:100%; height:100%; object-fit:cover; display:block; }
   .brand-actions { display:flex; gap:8px; align-items: center; }
   .user-chip {
     display: flex; align-items: center; gap: 8px;
@@ -499,7 +500,7 @@
 <div class="app">
   <header class="brand">
     <div class="logo">
-      <span class="dot">▶</span>
+      <span class="dot"><img src="/logo-mark.png" alt="audiolibres" /></span>
       <span>audio<b style="color:var(--accent);">libres</b></span>
     </div>
     <div class="brand-actions">
