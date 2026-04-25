@@ -909,22 +909,22 @@
   ];
 
   /* ===== MOVIE CATALOG ===== */
-  // Películas en YouTube en dominio público o subidas por canales oficiales (gratuitas).
+  // VideoIds verificados con yt-search (búsqueda real en YouTube). coverUrl = thumbnail HQ del propio vídeo.
   const MOVIE_CATALOG = [
-    { type: 'movie', title: 'Charlot, Tiempos Modernos', author: 'Charles Chaplin', category: 'Comedia', description: 'El obrero Charlot contra la línea de montaje. Sátira mecanizada de 1936.', videoId: 'Cgw1BX9SxZo' },
-    { type: 'movie', title: 'El Gran Dictador', author: 'Charles Chaplin', category: 'Comedia', description: 'Chaplin parodia a Hitler. El discurso final sigue siendo demoledor.', videoId: 'F5xeZgYTw_0' },
-    { type: 'movie', title: 'Nosferatu (1922)', author: 'F.W. Murnau', category: 'Clásico', description: 'La primera adaptación cinematográfica de Drácula. Cine mudo expresionista alemán.', videoId: 'FC6jFoYm3xs' },
-    { type: 'movie', title: 'Metropolis (1927)', author: 'Fritz Lang', category: 'Clásico', description: 'La ciencia ficción que inventó el género. Visualmente revolucionaria un siglo después.', videoId: 'WJEsCrahgvo' },
-    { type: 'movie', title: 'El Hombre con la Cámara (1929)', author: 'Dziga Vertov', category: 'Clásico', description: 'Documental experimental soviético. Un día en la vida de la URSS, sin guion ni intertítulos.', videoId: 'ofdf4fbHEtA' },
-    { type: 'movie', title: 'Cosmos: A Personal Voyage', author: 'Carl Sagan', category: 'Documental', description: 'La serie de divulgación científica más influyente de la historia. 1980.', videoId: 'pSiEjPdc6Lk' },
-    { type: 'movie', title: 'Planeta Tierra · Bosques', author: 'BBC Earth', category: 'Documental', description: 'Episodio completo de la serie de Attenborough. Calidad documental absoluta.', videoId: 'SaSBaVTiBQQ' },
-    { type: 'movie', title: 'Free Solo (Trailer + Behind)', author: 'National Geographic', category: 'Documental', description: 'El escalador Alex Honnold sube El Capitán sin cuerda. Materiales del Oscar 2019.', videoId: 'urRVZ4SW7WU' },
-    { type: 'movie', title: 'TED Talks · Mejor de 2024', author: 'TED', category: 'Charlas', description: 'Compilación de las charlas TED más vistas y comentadas del año.', videoId: 'ZSHk0I9wYJg' },
-    { type: 'movie', title: 'Rick Rubin · Conversación con Tim Ferriss', author: 'Tim Ferriss Show', category: 'Charlas', description: 'El productor más influyente del mundo habla de proceso creativo durante 3 horas.', videoId: 'ZcHduMkMMQU' },
-    { type: 'movie', title: 'Joe Rogan · Elon Musk', author: 'JRE Podcast', category: 'Charlas', description: 'La entrevista viral de 2018. Tesla, SpaceX, IA y un porro famoso.', videoId: 'ycPr5-27vSI' },
-    { type: 'movie', title: 'Stanford Commencement · Steve Jobs', author: 'Steve Jobs', category: 'Charlas', description: 'El discurso "Stay hungry, stay foolish" de 2005. 15 minutos que cambiaron a millones.', videoId: 'UF8uR6Z6KLc' },
-    { type: 'movie', title: 'Cortometraje "Pixar" · La Luna', author: 'Pixar', category: 'Animación', description: 'Cortometraje nominado al Oscar 2012. Tres generaciones limpian las estrellas caídas.', videoId: '-Yc5pFn3HeY' },
-    { type: 'movie', title: 'El Erizo y el Dragón', author: 'CGI Short Films', category: 'Animación', description: 'Cortometraje animado premiado. Visualmente impresionante.', videoId: 'cAEgOf5C-yc' },
+    { type: 'movie', title: 'Tiempos Modernos', author: 'Charlie Chaplin', category: 'Comedia', description: 'El obrero Charlot contra la línea de montaje. Sátira mecanizada de 1936.', videoId: 'i15UCTIdfwI', coverUrl: 'https://i.ytimg.com/vi/i15UCTIdfwI/hqdefault.jpg' },
+    { type: 'movie', title: 'El Gran Dictador (discurso final)', author: 'Charlie Chaplin', category: 'Comedia', description: 'Chaplin parodia a Hitler. El discurso final sigue siendo demoledor.', videoId: '3cFTJ9q5ztk', coverUrl: 'https://i.ytimg.com/vi/3cFTJ9q5ztk/hqdefault.jpg' },
+    { type: 'movie', title: 'Nosferatu (1922)', author: 'F.W. Murnau', category: 'Clásico', description: 'La primera adaptación cinematográfica de Drácula. Cine mudo expresionista alemán, restaurado en HD.', videoId: '-d2otW-98gA', coverUrl: 'https://i.ytimg.com/vi/-d2otW-98gA/hqdefault.jpg' },
+    { type: 'movie', title: 'Metropolis (1927)', author: 'Fritz Lang', category: 'Clásico', description: 'La ciencia ficción que inventó el género. Visualmente revolucionaria un siglo después.', videoId: 'ioNfNTAmpkc', coverUrl: 'https://i.ytimg.com/vi/ioNfNTAmpkc/hqdefault.jpg' },
+    { type: 'movie', title: 'El Hombre con la Cámara (1929)', author: 'Dziga Vertov', category: 'Clásico', description: 'Documental experimental soviético. Un día en la vida de la URSS, sin guion ni intertítulos.', videoId: 'EKVY-fet28w', coverUrl: 'https://i.ytimg.com/vi/EKVY-fet28w/hqdefault.jpg' },
+    { type: 'movie', title: 'Cosmos · La orilla del océano cósmico', author: 'Carl Sagan', category: 'Documental', description: 'Episodio 1 de la serie de divulgación científica más influyente de la historia. 1980.', videoId: 'YU5I4M3x7zU', coverUrl: 'https://i.ytimg.com/vi/YU5I4M3x7zU/hqdefault.jpg' },
+    { type: 'movie', title: 'Hidden Forests · Wildlife', author: 'BBC Earth', category: 'Documental', description: 'Episodio completo de BBC Earth sobre la fauna de los bosques ocultos del mundo.', videoId: 'oo9c9HC-pmM', coverUrl: 'https://i.ytimg.com/vi/oo9c9HC-pmM/hqdefault.jpg' },
+    { type: 'movie', title: 'Free Solo · Trailer', author: 'National Geographic', category: 'Documental', description: 'El escalador Alex Honnold sube El Capitán sin cuerda. Materiales del Oscar 2019.', videoId: 'urRVZ4SW7WU', coverUrl: 'https://i.ytimg.com/vi/urRVZ4SW7WU/hqdefault.jpg' },
+    { type: 'movie', title: 'TED · The Art of Reading Minds', author: 'Oz Pearlman (TED)', category: 'Charlas', description: 'Charla viral del mentalista Oz Pearlman. Cómo lee a la gente en segundos.', videoId: 'h3M00JI8Iwo', coverUrl: 'https://i.ytimg.com/vi/h3M00JI8Iwo/hqdefault.jpg' },
+    { type: 'movie', title: 'Rick Rubin · Conversación con Tim Ferriss', author: 'The Tim Ferriss Show', category: 'Charlas', description: 'El productor más influyente del mundo habla de proceso creativo durante 1h20.', videoId: '4AlZGl1o89s', coverUrl: 'https://i.ytimg.com/vi/4AlZGl1o89s/hqdefault.jpg' },
+    { type: 'movie', title: 'Joe Rogan · Elon Musk (#2404)', author: 'JRE Podcast', category: 'Charlas', description: 'Tres horas y media de Musk hablando de Tesla, SpaceX, IA, política y todo lo demás.', videoId: 'O4wBUysNe2k', coverUrl: 'https://i.ytimg.com/vi/O4wBUysNe2k/hqdefault.jpg' },
+    { type: 'movie', title: 'Steve Jobs · Stanford Commencement', author: 'Stanford / Steve Jobs', category: 'Charlas', description: 'El discurso "Stay hungry, stay foolish" de 2005. 15 minutos que cambiaron a millones.', videoId: 'UF8uR6Z6KLc', coverUrl: 'https://i.ytimg.com/vi/UF8uR6Z6KLc/hqdefault.jpg' },
+    { type: 'movie', title: 'La Luna · Pixar', author: 'Pixar', category: 'Animación', description: 'Cortometraje nominado al Oscar 2012. Tres generaciones limpian las estrellas caídas.', videoId: 'CCQ9v6XMC6c', coverUrl: 'https://i.ytimg.com/vi/CCQ9v6XMC6c/hqdefault.jpg' },
+    { type: 'movie', title: 'Big Buck Bunny', author: 'Blender Foundation', category: 'Animación', description: 'Cortometraje libre de la Blender Foundation. Open source, divertido y precioso.', videoId: 'aqz-KE-bpKQ', coverUrl: 'https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg' },
   ];
 
   // Combine all catalogs into one for unified rendering
@@ -946,10 +946,12 @@
     movie:     { single: 'película',   plural: 'películas',  empty: 'Sin pelis guardadas', libraryLabel: 'Películas', addLabel: '+ Añadir película' },
   };
 
-  /* Cover lookup per type. iTunes Search API is free & no key needed. */
+  /* Cover lookup per type. If the catalog item already has a coverUrl, use it directly. */
   async function fetchMediaCover(item) {
-    const t = item.type || 'audiobook';
+    if (item && item.coverUrl) return item.coverUrl;
+    const t = (item && item.type) || 'audiobook';
     if (t === 'audiobook') return await fetchBookCover(item.title, item.author);
+    // For music/movies without a pre-resolved cover, try iTunes (album/movie poster)
     try {
       const entity = t === 'movie' ? 'movie' : 'album';
       const term = encodeURIComponent(`${item.author || ''} ${item.title}`.trim());
@@ -957,8 +959,12 @@
       const data = await r.json();
       let url = data?.results?.[0]?.artworkUrl100 || '';
       if (url) url = url.replace('100x100', '600x600');
+      // If iTunes had nothing but we have a videoId, fall back to the YouTube thumbnail
+      if (!url && item.videoId) url = `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`;
       return url;
-    } catch { return ''; }
+    } catch {
+      return item.videoId ? `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg` : '';
+    }
   }
 
   /* Google Books cover fetch (cached) */
@@ -1379,7 +1385,7 @@
       const btnClass = already ? 'add added' : 'add';
       return `
         <div class="catalog-card" data-key="${esc(key)}">
-          <div class="cat-thumb" data-cover-title="${esc(c.title)}" data-cover-author="${esc(c.author)}" data-cover-type="${esc(c.type||'audiobook')}">${categoryIcon(c.category)}</div>
+          <div class="cat-thumb" data-cover-title="${esc(c.title)}" data-cover-author="${esc(c.author)}" data-cover-type="${esc(c.type||'audiobook')}" ${c.coverUrl ? `style="background:url('${esc(c.coverUrl)}') center/cover #111;"` : ''}>${c.coverUrl ? '' : categoryIcon(c.category)}</div>
           <div class="cat-info">
             <div class="cat-title">${esc(c.title)}</div>
             <div class="cat-meta">${esc(c.author)}</div>
