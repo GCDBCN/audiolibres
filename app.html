@@ -265,6 +265,19 @@
     margin: 4px 0;
   }
 
+  /* Media-type tabs (Audiolibros / Música / Películas) */
+  .media-tabs {
+    display: flex; gap: 4px; background: var(--bg-elev-2); padding: 4px;
+    border-radius: 10px; margin-bottom: 8px;
+  }
+  .media-tab {
+    flex: 1; padding: 8px 4px; text-align: center; cursor: pointer;
+    border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted);
+    transition: all .15s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .media-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
+  .media-tab:hover:not(.active) { color: var(--text); }
+
   /* Sidebar tabs (Mi biblioteca / Descubrir) */
   .side-tabs {
     display: flex; gap: 4px; background: var(--bg-elev-2); padding: 4px;
@@ -522,6 +535,11 @@
   </div>
 
   <aside class="panel sidebar">
+    <div class="media-tabs" id="media-tabs">
+      <div class="media-tab active" data-media="audiobook">📚 Audiolibros</div>
+      <div class="media-tab" data-media="music">🎵 Música</div>
+      <div class="media-tab" data-media="movie">🎬 Películas</div>
+    </div>
     <div class="side-tabs">
       <div class="side-tab active" data-tab="library">📚 Mi biblioteca</div>
       <div class="side-tab" data-tab="discover">✨ Descubrir</div>
@@ -599,7 +617,7 @@
 <!-- Add modal -->
 <div class="modal-backdrop" id="add-modal">
   <div class="modal">
-    <h2>Añadir audiolibro</h2>
+    <h2 id="add-modal-title">Añadir audiolibro</h2>
     <div class="field">
       <label for="yt-url">URL de YouTube</label>
       <input id="yt-url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
@@ -609,7 +627,7 @@
       <input id="yt-title" placeholder="Déjalo vacío para autocompletar" />
     </div>
     <div class="field">
-      <label for="yt-author">Autor / Narrador (opcional)</label>
+      <label for="yt-author" id="yt-author-label">Autor / Narrador (opcional)</label>
       <input id="yt-author" placeholder="Ej. Gabriel García Márquez" />
     </div>
     <div class="row">
@@ -821,7 +839,80 @@
     { title: 'Filosofía Fundamental (Tomo 1)', author: 'Jaime Balmes', category: 'Filosofía', description: 'El gran tratado filosófico del sacerdote catalán del XIX. Lógica, crítica y ontología.', videoId: 'wFPMxlZYqzg' },
     { title: 'Filosofía Fundamental (Tomo 2)', author: 'Jaime Balmes', category: 'Filosofía', description: 'Segundo tomo. Teoría del conocimiento, metafísica aplicada y Dios.', videoId: 'wsNaZfDD6k8' },
   ];
-  const CATEGORIES = ['Todas', 'Novela', 'Poesía', 'Autoayuda', 'Filosofía', 'Historia', 'Finanzas', 'Política', 'Psicología', 'Biografía', 'Espiritualidad'];
+  // Tag every audiobook entry with type so the rest of the code can filter by mediaType
+  CATALOG.forEach(c => { if (!c.type) c.type = 'audiobook'; });
+
+  /* ===== MUSIC CATALOG ===== */
+  const MUSIC_CATALOG = [
+    { type: 'music', title: 'Lo-fi Hip Hop · Beats to Study', author: 'Lofi Girl', category: 'Estudio', description: 'El stream legendario para concentrarse, leer o trabajar en flow.', videoId: 'jfKfPfyJRdk' },
+    { type: 'music', title: 'Synthwave Radio', author: 'Lofi Girl', category: 'Electrónica', description: 'Beats sintéticos retro futuristas para programar y trabajar de noche.', videoId: '4xDzrJKXOOY' },
+    { type: 'music', title: 'Música Clásica para Estudiar', author: 'Mozart, Beethoven, Bach', category: 'Clásica', description: 'Lo mejor del repertorio clásico para concentración profunda.', videoId: 'jgpJVI3tDbY' },
+    { type: 'music', title: 'Las 4 Estaciones', author: 'Antonio Vivaldi', category: 'Clásica', description: 'La obra más famosa del barroco italiano: primavera, verano, otoño, invierno.', videoId: 'GRxofEmo3HA' },
+    { type: 'music', title: 'Para Elisa y otras obras', author: 'Ludwig van Beethoven', category: 'Clásica', description: 'Selección de las obras maestras del piano de Beethoven.', videoId: 'wfF3vWiiqz4' },
+    { type: 'music', title: 'Nocturnos', author: 'Frédéric Chopin', category: 'Clásica', description: 'La obra más íntima y romántica del compositor polaco.', videoId: 'TWzSNz2EYnE' },
+    { type: 'music', title: 'Café Jazz Relajante', author: 'Smooth Jazz', category: 'Jazz', description: 'Saxofón suave y piano para una mañana de café o un domingo lento.', videoId: 'Dx5qFachd3A' },
+    { type: 'music', title: 'Bossa Nova Brasileña', author: 'Various Artists', category: 'Jazz', description: 'Lo mejor del bossa nova: João Gilberto, Tom Jobim, Stan Getz.', videoId: 'iiP65A3XnaA' },
+    { type: 'music', title: 'Flamenco Guitar', author: 'Paco de Lucía', category: 'Latina', description: 'El maestro del flamenco. Bulerías, soleás y rumbas que ponen la piel de gallina.', videoId: 'hQ1A1KtcYaI' },
+    { type: 'music', title: 'Boleros Clásicos', author: 'Various Artists', category: 'Latina', description: 'Los boleros que definieron una época: Los Panchos, Toña la Negra, Lucho Gatica.', videoId: 'kp7fWNosRrs' },
+    { type: 'music', title: 'Chill House Mix', author: 'Various Artists', category: 'Electrónica', description: 'House relajado para tardes de terraza y atardeceres en la playa.', videoId: 'OWNN5BSBHuY' },
+    { type: 'music', title: 'Naturaleza · Sonidos para Dormir', author: 'Nature Sounds', category: 'Relax', description: 'Lluvia, océano y bosque. 8 horas para dormir profundamente o meditar.', videoId: 'q76bMs-NwRk' },
+    { type: 'music', title: 'Música para Meditar', author: 'Meditation Music', category: 'Relax', description: 'Cuencos tibetanos, frecuencias 432Hz y ambientes para la práctica diaria.', videoId: 'lFcSrYw-ARY' },
+    { type: 'music', title: 'Ed Sheeran Greatest Hits', author: 'Ed Sheeran', category: 'Pop', description: 'Lo mejor del cantautor inglés: Shape of You, Perfect, Thinking Out Loud.', videoId: 'JGwWNGJdvx8' },
+    { type: 'music', title: 'Coldplay Live', author: 'Coldplay', category: 'Pop', description: 'Conciertos completos y los grandes éxitos de la banda británica.', videoId: 'BPNTC7uZYrI' },
+  ];
+
+  /* ===== MOVIE CATALOG ===== */
+  // Películas en YouTube en dominio público o subidas por canales oficiales (gratuitas).
+  const MOVIE_CATALOG = [
+    { type: 'movie', title: 'Charlot, Tiempos Modernos', author: 'Charles Chaplin', category: 'Comedia', description: 'El obrero Charlot contra la línea de montaje. Sátira mecanizada de 1936.', videoId: 'Cgw1BX9SxZo' },
+    { type: 'movie', title: 'El Gran Dictador', author: 'Charles Chaplin', category: 'Comedia', description: 'Chaplin parodia a Hitler. El discurso final sigue siendo demoledor.', videoId: 'F5xeZgYTw_0' },
+    { type: 'movie', title: 'Nosferatu (1922)', author: 'F.W. Murnau', category: 'Clásico', description: 'La primera adaptación cinematográfica de Drácula. Cine mudo expresionista alemán.', videoId: 'FC6jFoYm3xs' },
+    { type: 'movie', title: 'Metropolis (1927)', author: 'Fritz Lang', category: 'Clásico', description: 'La ciencia ficción que inventó el género. Visualmente revolucionaria un siglo después.', videoId: 'WJEsCrahgvo' },
+    { type: 'movie', title: 'El Hombre con la Cámara (1929)', author: 'Dziga Vertov', category: 'Clásico', description: 'Documental experimental soviético. Un día en la vida de la URSS, sin guion ni intertítulos.', videoId: 'ofdf4fbHEtA' },
+    { type: 'movie', title: 'Cosmos: A Personal Voyage', author: 'Carl Sagan', category: 'Documental', description: 'La serie de divulgación científica más influyente de la historia. 1980.', videoId: 'pSiEjPdc6Lk' },
+    { type: 'movie', title: 'Planeta Tierra · Bosques', author: 'BBC Earth', category: 'Documental', description: 'Episodio completo de la serie de Attenborough. Calidad documental absoluta.', videoId: 'SaSBaVTiBQQ' },
+    { type: 'movie', title: 'Free Solo (Trailer + Behind)', author: 'National Geographic', category: 'Documental', description: 'El escalador Alex Honnold sube El Capitán sin cuerda. Materiales del Oscar 2019.', videoId: 'urRVZ4SW7WU' },
+    { type: 'movie', title: 'TED Talks · Mejor de 2024', author: 'TED', category: 'Charlas', description: 'Compilación de las charlas TED más vistas y comentadas del año.', videoId: 'ZSHk0I9wYJg' },
+    { type: 'movie', title: 'Rick Rubin · Conversación con Tim Ferriss', author: 'Tim Ferriss Show', category: 'Charlas', description: 'El productor más influyente del mundo habla de proceso creativo durante 3 horas.', videoId: 'ZcHduMkMMQU' },
+    { type: 'movie', title: 'Joe Rogan · Elon Musk', author: 'JRE Podcast', category: 'Charlas', description: 'La entrevista viral de 2018. Tesla, SpaceX, IA y un porro famoso.', videoId: 'ycPr5-27vSI' },
+    { type: 'movie', title: 'Stanford Commencement · Steve Jobs', author: 'Steve Jobs', category: 'Charlas', description: 'El discurso "Stay hungry, stay foolish" de 2005. 15 minutos que cambiaron a millones.', videoId: 'UF8uR6Z6KLc' },
+    { type: 'movie', title: 'Cortometraje "Pixar" · La Luna', author: 'Pixar', category: 'Animación', description: 'Cortometraje nominado al Oscar 2012. Tres generaciones limpian las estrellas caídas.', videoId: '-Yc5pFn3HeY' },
+    { type: 'movie', title: 'El Erizo y el Dragón', author: 'CGI Short Films', category: 'Animación', description: 'Cortometraje animado premiado. Visualmente impresionante.', videoId: 'cAEgOf5C-yc' },
+  ];
+
+  // Combine all catalogs into one for unified rendering
+  const ALL_CATALOG = [...CATALOG, ...MUSIC_CATALOG, ...MOVIE_CATALOG];
+
+  /* Categories per media type */
+  const CATEGORIES_BY_TYPE = {
+    audiobook: ['Todas', 'Novela', 'Poesía', 'Autoayuda', 'Filosofía', 'Historia', 'Finanzas', 'Política', 'Psicología', 'Biografía', 'Espiritualidad'],
+    music: ['Todas', 'Estudio', 'Clásica', 'Jazz', 'Latina', 'Pop', 'Electrónica', 'Relax'],
+    movie: ['Todas', 'Documental', 'Charlas', 'Clásico', 'Comedia', 'Animación'],
+  };
+  // Backwards-compat alias
+  const CATEGORIES = CATEGORIES_BY_TYPE.audiobook;
+
+  /* Friendly labels per media type */
+  const MEDIA_NOUNS = {
+    audiobook: { single: 'audiolibro', plural: 'audiolibros', empty: 'Biblioteca vacía', libraryLabel: 'Biblioteca', addLabel: '+ Añadir audiolibro' },
+    music:     { single: 'canción',    plural: 'canciones',  empty: 'Sin música guardada', libraryLabel: 'Música', addLabel: '+ Añadir canción' },
+    movie:     { single: 'película',   plural: 'películas',  empty: 'Sin pelis guardadas', libraryLabel: 'Películas', addLabel: '+ Añadir película' },
+  };
+
+  /* Cover lookup per type. iTunes Search API is free & no key needed. */
+  async function fetchMediaCover(item) {
+    const t = item.type || 'audiobook';
+    if (t === 'audiobook') return await fetchBookCover(item.title, item.author);
+    try {
+      const entity = t === 'movie' ? 'movie' : 'album';
+      const term = encodeURIComponent(`${item.author || ''} ${item.title}`.trim());
+      const r = await fetch(`https://itunes.apple.com/search?term=${term}&entity=${entity}&limit=1`);
+      const data = await r.json();
+      let url = data?.results?.[0]?.artworkUrl100 || '';
+      if (url) url = url.replace('100x100', '600x600');
+      return url;
+    } catch { return ''; }
+  }
 
   /* Google Books cover fetch (cached) */
   const coverCache = {};
@@ -846,11 +937,12 @@
   let state = { library: [], currentId: null, speed: 1 };
   let sidebarMode = 'library'; // 'library' | 'discover'
   let activeCategory = 'Todas';
+  let activeMediaType = localStorage.getItem('audiolibros.mediaType') || 'audiobook'; // 'audiobook' | 'music' | 'movie'
   try {
     const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('audiolibros.v2');
     if (raw) {
       const p = JSON.parse(raw);
-      state.library = p.library || [];
+      state.library = (p.library || []).map(b => ({ ...b, type: b.type || 'audiobook' })); // migrate
       state.currentId = p.currentId || null;
       state.speed = p.speed || 1;
     }
@@ -1064,8 +1156,10 @@
 
   /* ===== RENDER ===== */
   function renderChips() {
+    const cats = CATEGORIES_BY_TYPE[activeMediaType] || CATEGORIES;
+    if (!cats.includes(activeCategory)) activeCategory = 'Todas';
     const el = $('#chips');
-    el.innerHTML = CATEGORIES.map(c =>
+    el.innerHTML = cats.map(c =>
       `<div class="chip ${c === activeCategory ? 'active' : ''}" data-cat="${esc(c)}">${esc(c)}</div>`
     ).join('');
     el.querySelectorAll('[data-cat]').forEach(n => n.addEventListener('click', () => {
@@ -1074,6 +1168,12 @@
       if (sidebarMode === 'library') renderLibrary();
       else renderCatalog();
     }));
+  }
+
+  function renderMediaTabs() {
+    document.querySelectorAll('.media-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.media === activeMediaType);
+    });
   }
 
   function renderSidebar() {
@@ -1097,14 +1197,17 @@
 
   function renderLibrary() {
     const q = ($('#search-input').value || '').toLowerCase();
-    const list = state.library
+    const typeMatches = b => (b.type || 'audiobook') === activeMediaType;
+    const ofType = state.library.filter(typeMatches);
+    const list = ofType
       .filter(b => !q || b.title.toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q))
       .filter(b => activeCategory === 'Todas' || b.category === activeCategory)
       .sort((a,b) => b.addedAt - a.addedAt);
-    $('#library-count').textContent = `Biblioteca · ${state.library.length} ${state.library.length === 1 ? 'libro' : 'libros'}`;
+    const noun = MEDIA_NOUNS[activeMediaType] || { single: 'item', plural: 'items', empty: 'Biblioteca vacía' };
+    $('#library-count').textContent = `${noun.libraryLabel} · ${ofType.length} ${ofType.length === 1 ? noun.single : noun.plural}`;
     const el = $('#library');
-    if (state.library.length === 0) {
-      el.innerHTML = '<div class="empty" style="margin-top:8px;"><h3>Biblioteca vacía</h3><p>Ve a <b>Descubrir</b> para añadir audiolibros.</p></div>';
+    if (ofType.length === 0) {
+      el.innerHTML = `<div class="empty" style="margin-top:8px;"><h3>${noun.empty}</h3><p>Ve a <b>Descubrir</b> para añadir ${noun.plural}.</p></div>`;
       return;
     }
     if (list.length === 0) {
@@ -1126,10 +1229,10 @@
           <button class="kebab" data-del="${b.id}" title="Eliminar">✕</button>
         </div>`;
     }).join('');
-    // Auto-fetch covers from Google Books for library items that don't have one yet
+    // Auto-fetch covers (Google Books for audiobooks, iTunes for music/movies) for items that don't have one yet
     list.forEach(async (b) => {
       if (!b.coverUrl && b.title) {
-        const url = await fetchBookCover(b.title, b.author || '');
+        const url = await fetchMediaCover(b);
         if (url) {
           b.coverUrl = url;
           save();
@@ -1148,7 +1251,7 @@
     }));
     el.querySelectorAll('[data-del]').forEach(n => n.addEventListener('click', e => {
       e.stopPropagation();
-      if (!confirm('¿Eliminar este audiolibro?')) return;
+      if (!confirm('¿Eliminar este elemento?')) return;
       const id = n.dataset.del;
       state.library = state.library.filter(b => b.id !== id);
       if (state.currentId === id) {
@@ -1167,18 +1270,24 @@
   function categoryIcon(cat) {
     return ({
       'Novela': '📖', 'Autoayuda': '🌱', 'Filosofía': '🏛️',
-      'Historia': '📜', 'Finanzas': '💰', 'Política': '⚖️'
+      'Historia': '📜', 'Finanzas': '💰', 'Política': '⚖️',
+      'Estudio': '📝', 'Clásica': '🎻', 'Jazz': '🎷', 'Latina': '💃',
+      'Pop': '🎤', 'Electrónica': '🎛️', 'Relax': '🌙',
+      'Documental': '🌍', 'Charlas': '🗣️', 'Clásico': '🎞️',
+      'Comedia': '🎭', 'Animación': '✨'
     })[cat] || '📚';
   }
 
   function renderCatalog() {
     const q = ($('#search-input').value || '').toLowerCase();
-    const filtered = CATALOG
+    const filtered = ALL_CATALOG
+      .filter(c => (c.type || 'audiobook') === activeMediaType)
       .filter(c => !q || c.title.toLowerCase().includes(q) || c.author.toLowerCase().includes(q) || (c.description||'').toLowerCase().includes(q))
       .filter(c => activeCategory === 'Todas' || c.category === activeCategory);
     const el = $('#catalog');
     const countEl = $('#library-count');
-    if (countEl) countEl.textContent = `Descubre · ${filtered.length} audiolibro${filtered.length === 1 ? '' : 's'}`;
+    const noun = MEDIA_NOUNS[activeMediaType] || { single: 'item', plural: 'items' };
+    if (countEl) countEl.textContent = `Descubre · ${filtered.length} ${filtered.length === 1 ? noun.single : noun.plural}`;
     if (filtered.length === 0) {
       el.innerHTML = `<div class="empty" style="margin-top:8px;"><p>Sin resultados</p></div>`;
       return;
@@ -1191,7 +1300,7 @@
       const btnClass = already ? 'add added' : 'add';
       return `
         <div class="catalog-card" data-key="${esc(key)}">
-          <div class="cat-thumb" data-cover-title="${esc(c.title)}" data-cover-author="${esc(c.author)}">${categoryIcon(c.category)}</div>
+          <div class="cat-thumb" data-cover-title="${esc(c.title)}" data-cover-author="${esc(c.author)}" data-cover-type="${esc(c.type||'audiobook')}">${categoryIcon(c.category)}</div>
           <div class="cat-info">
             <div class="cat-title">${esc(c.title)}</div>
             <div class="cat-meta">${esc(c.author)}</div>
@@ -1202,11 +1311,12 @@
         </div>`;
     }).join('');
 
-    // Lazy-load covers from Google Books
+    // Lazy-load covers (Google Books for audiobooks, iTunes for music/movies)
     el.querySelectorAll('[data-cover-title]').forEach(async (thumb) => {
       const title = thumb.dataset.coverTitle;
       const author = thumb.dataset.coverAuthor;
-      const url = await fetchBookCover(title, author);
+      const type = thumb.dataset.coverType || 'audiobook';
+      const url = await fetchMediaCover({ title, author, type });
       if (url) {
         thumb.style.background = `url('${url}') center/cover #111`;
         thumb.textContent = '';
@@ -1228,11 +1338,11 @@
       }
       n.classList.add('added');
       n.textContent = '✓ Añadiendo…';
-      const book = await addBook(`https://www.youtube.com/watch?v=${entry.videoId}`, entry.title, entry.author, entry.category);
+      const book = await addBook(`https://www.youtube.com/watch?v=${entry.videoId}`, entry.title, entry.author, entry.category, entry.type || activeMediaType);
       if (book) {
         n.textContent = '✓ Añadido';
         // Fetch cover and attach to book
-        const coverUrl = await fetchBookCover(entry.title, entry.author);
+        const coverUrl = await fetchMediaCover(entry);
         if (coverUrl) { book.coverUrl = coverUrl; save(); }
         renderSidebar();
       } else {
@@ -1327,7 +1437,7 @@
   }
 
   /* ===== ADD BOOK ===== */
-  async function addBook(url, title, author, category) {
+  async function addBook(url, title, author, category, type) {
     const videoId = parseYouTubeId(url);
     if (!videoId) { toast('URL de YouTube no válida'); return null; }
     if (state.library.some(b => b.videoId === videoId)) { toast('Ya está en tu biblioteca'); return null; }
@@ -1343,6 +1453,7 @@
       id: (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random()),
       videoId, title: t || 'Audiolibro', author: a,
       category: category || null,
+      type: typeof type === 'string' ? type : activeMediaType,
       thumb: thumbUrl(videoId),
       duration: 0, position: 0, addedAt: Date.now(),
       bookmarks: [],
@@ -1376,6 +1487,23 @@
   /* ===== WIRE UI ===== */
   $('#btn-add').addEventListener('click', () => {
     $('#yt-url').value = ''; $('#yt-title').value = ''; $('#yt-author').value = '';
+    // Adapt modal labels per active media type
+    const titleEl = document.getElementById('add-modal-title');
+    const authorLbl = document.getElementById('yt-author-label');
+    const authorIn = document.getElementById('yt-author');
+    if (activeMediaType === 'music') {
+      if (titleEl) titleEl.textContent = 'Añadir canción';
+      if (authorLbl) authorLbl.textContent = 'Artista (opcional)';
+      if (authorIn) authorIn.placeholder = 'Ej. Coldplay';
+    } else if (activeMediaType === 'movie') {
+      if (titleEl) titleEl.textContent = 'Añadir película o vídeo';
+      if (authorLbl) authorLbl.textContent = 'Director / Canal (opcional)';
+      if (authorIn) authorIn.placeholder = 'Ej. National Geographic';
+    } else {
+      if (titleEl) titleEl.textContent = 'Añadir audiolibro';
+      if (authorLbl) authorLbl.textContent = 'Autor / Narrador (opcional)';
+      if (authorIn) authorIn.placeholder = 'Ej. Gabriel García Márquez';
+    }
     openModal('add-modal');
     setTimeout(()=>$('#yt-url').focus(), 50);
   });
@@ -1445,6 +1573,28 @@
       renderSidebar();
     });
   });
+
+  /* Media-type tabs (Audiolibros / Música / Películas) */
+  document.querySelectorAll('.media-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      activeMediaType = t.dataset.media;
+      localStorage.setItem('audiolibros.mediaType', activeMediaType);
+      activeCategory = 'Todas';
+      $('#search-input').value = '';
+      // Update "+ Añadir" button label
+      const addBtn = document.getElementById('btn-add');
+      if (addBtn) addBtn.textContent = (MEDIA_NOUNS[activeMediaType] || {}).addLabel || '+ Añadir';
+      renderMediaTabs();
+      renderChips();
+      renderSidebar();
+    });
+  });
+  // Initial label
+  (function syncAddLabel(){
+    const addBtn = document.getElementById('btn-add');
+    if (addBtn) addBtn.textContent = (MEDIA_NOUNS[activeMediaType] || {}).addLabel || '+ Añadir';
+    renderMediaTabs();
+  })();
 
   /* YouTube-style comment bar: focus → show actions, save via button */
   const composeEl = $('#yt-bar-compose');
@@ -1608,6 +1758,7 @@
   });
 
   /* ===== INIT ===== */
+  renderMediaTabs();
   renderChips();
   renderSidebar();
   renderPlayer();
@@ -1623,6 +1774,14 @@
     const title = params.get('title') || '';
     const author = params.get('author') || '';
     const category = params.get('category') || '';
+    const type = params.get('type') || activeMediaType;
+    // Switch active media type to match the deep link, so the user lands on the right tab
+    if (['audiobook','music','movie'].includes(type) && type !== activeMediaType) {
+      activeMediaType = type;
+      localStorage.setItem('audiolibros.mediaType', activeMediaType);
+      renderMediaTabs();
+      renderChips();
+    }
     // Clean URL so refresh doesn't re-add
     history.replaceState(null, '', window.location.pathname);
     if (videoId) {
@@ -1634,11 +1793,11 @@
         return;
       }
       toast('Añadiendo a tu biblioteca…');
-      const book = await addBook(`https://www.youtube.com/watch?v=${videoId}`, title, author, category);
+      const book = await addBook(`https://www.youtube.com/watch?v=${videoId}`, title, author, category, type);
       if (book) {
-        // Fetch cover for the new book
-        if (title && author) {
-          const coverUrl = await fetchBookCover(title, author);
+        // Fetch cover for the new item
+        if (title) {
+          const coverUrl = await fetchMediaCover({ title, author, type });
           if (coverUrl) { book.coverUrl = coverUrl; save(); renderSidebar(); }
         }
         loadBook(book.id, true);
