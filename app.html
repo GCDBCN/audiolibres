@@ -225,13 +225,24 @@
   #yt-container { position: absolute; inset: 0; }
   #yt-container iframe { width: 100%; height: 100%; border: 0; border-radius: var(--radius); }
   .yt-error {
-    position: absolute; inset: 0; background: rgba(11,15,20,.94);
+    position: absolute; inset: 0; background: rgba(11,15,20,.97);
     color: var(--text); display:none; align-items:center; justify-content:center;
-    padding: 16px; text-align:center; font-size: 12px; border-radius: var(--radius);
-    flex-direction: column; gap: 6px;
+    padding: 24px 18px; text-align:center; font-size: 13px; border-radius: var(--radius);
+    flex-direction: column; gap: 14px;
   }
   .yt-error.show { display:flex; }
-  .yt-error b { color: var(--danger); }
+  .yt-error .yt-error-ico { font-size: 32px; }
+  .yt-error b { color: var(--danger); display:block; font-size: 15px; }
+  .yt-error p { color: var(--text-muted); margin: 0; max-width: 340px; line-height: 1.45; }
+  .yt-error .yt-error-actions { display:flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+  .yt-error .yt-error-actions a, .yt-error .yt-error-actions button {
+    background: var(--accent); color:#fff; border: none; padding: 9px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: background .12s;
+  }
+  .yt-error .yt-error-actions a:hover { background: #d10027; }
+  .yt-error .yt-error-actions .ghost { background: var(--bg-elev-2); color: var(--text); }
+  .yt-error .yt-error-actions .ghost:hover { background: #2a2a2a; }
 
   .np-title { font-size: 20px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
   .np-sub { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
@@ -1096,7 +1107,9 @@
       playsinline: '1',
       controls: '1',
     });
-    iframe.src = `https://www.youtube.com/embed/${videoId}?${params}`;
+    // Use youtube-nocookie.com — same player but allows embed for many videos that
+    // block youtube.com (record labels often whitelist nocookie domain only).
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params}`;
     iframe.id = 'yt-iframe-el';
     iframe.setAttribute('frameborder', '0');
     iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
@@ -1124,7 +1137,7 @@
 
   window.addEventListener('message', (e) => {
     if (typeof e.data !== 'string') return;
-    if (!/^https?:\/\/(www\.)?youtube\.com/.test(e.origin)) return;
+    if (!/^https?:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com)/.test(e.origin)) return;
     let data;
     try { data = JSON.parse(e.data); } catch { return; }
     if (!data) return;
@@ -1137,17 +1150,17 @@
     } else if (data.event === 'onStateChange') {
       applyState(data.info);
     } else if (data.event === 'onError') {
-      showYtError(errorMsg(data.info));
+      showYtError(data.info);
     }
   });
 
   function errorMsg(code) {
     return ({
-      2: 'URL o ID de video inválido.',
+      2: 'URL o ID de vídeo inválido.',
       5: 'Error del reproductor HTML5.',
-      100: 'Video no encontrado o privado.',
-      101: 'El propietario no permite reproducir este video en apps externas.',
-      150: 'El propietario no permite reproducir este video en apps externas.',
+      100: 'Vídeo no encontrado o privado.',
+      101: 'El propietario no permite reproducir este vídeo fuera de YouTube.',
+      150: 'El propietario no permite reproducir este vídeo fuera de YouTube.',
     })[code] || ('Error (código ' + code + ').');
   }
 
@@ -1178,10 +1191,40 @@
   }
   function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
 
-  function showYtError(msg) {
+  function showYtError(code) {
+    const msg = errorMsg(code);
     const el = $('#yt-error');
-    el.innerHTML = '<div><b>No se puede reproducir</b></div><div>'+esc(msg)+'</div>';
+    const b = currentBook();
+    const vid = b && b.videoId;
+    const isBlocked = code === 101 || code === 150;
+    el.innerHTML = `
+      <div class="yt-error-ico">${isBlocked ? '🔒' : '⚠️'}</div>
+      <div>
+        <b>${isBlocked ? 'Embed bloqueado por el propietario' : 'No se puede reproducir'}</b>
+        <p>${esc(msg)}${isBlocked ? '<br>Puedes seguir escuchándolo abriendo el vídeo en YouTube.' : ''}</p>
+      </div>
+      <div class="yt-error-actions">
+        ${vid ? `<a href="https://www.youtube.com/watch?v=${esc(vid)}" target="_blank" rel="noopener">▶ Abrir en YouTube ↗</a>` : ''}
+        <button class="ghost" id="yt-error-remove">🗑 Quitar de mi biblioteca</button>
+      </div>`;
     el.classList.add('show');
+    const rm = document.getElementById('yt-error-remove');
+    if (rm) rm.addEventListener('click', () => {
+      if (!b) return;
+      if (!confirm(`¿Quitar "${b.title}" de tu biblioteca?`)) return;
+      state.library = state.library.filter(x => x.id !== b.id);
+      state.currentId = null;
+      const box = document.getElementById('yt-player');
+      if (box) box.innerHTML = '';
+      ytIframe = null;
+      $('#cover').classList.remove('has-video');
+      stopPolling();
+      hideYtError();
+      save();
+      renderPlayer();
+      renderLibrary();
+      toast('Eliminado de tu biblioteca');
+    });
   }
   function hideYtError() { $('#yt-error').classList.remove('show'); }
 
