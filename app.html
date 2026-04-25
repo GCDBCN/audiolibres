@@ -470,7 +470,30 @@
     border-radius: var(--radius); width: min(480px, 92vw); padding: 20px;
     box-shadow: var(--shadow);
   }
+  .modal-wide { width: min(680px, 94vw); max-height: 90vh; overflow-y: auto; }
   .modal h2 { margin: 0 0 12px; font-size: 18px; }
+  .search-wrap { position: relative; display: block; }
+  .search-wrap .search-ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+  .search-wrap input { padding-left: 36px !important; padding-right: 36px !important; }
+  .search-spinner { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+  .yt-results { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 4px; }
+  .yt-results::-webkit-scrollbar { width: 6px; }
+  .yt-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .yt-result { display: flex; gap: 12px; padding: 8px; border-radius: var(--radius-sm); background: var(--bg-elev-2); cursor: default; transition: background .12s; }
+  .yt-result:hover { background: #2a2a2a; }
+  .yt-result-thumb { position: relative; width: 130px; height: 73px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: #000; }
+  .yt-result-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .yt-result-dur { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,.85); color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+  .yt-result-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .yt-result-title { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .yt-result-meta { font-size: 12px; color: var(--text-muted); }
+  .yt-result-add { align-self: center; padding: 8px 14px; font-size: 13px; font-weight: 700; border-radius: 999px; background: var(--accent); color: #fff; border: none; cursor: pointer; flex-shrink: 0; transition: background .12s; }
+  .yt-result-add:hover { background: #d10027; }
+  .yt-result-add.added { background: #2a8a3e; cursor: default; }
+  .yt-empty { color: var(--text-muted); text-align: center; padding: 40px 16px; font-size: 13px; }
+  .manual-add { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .manual-add summary { cursor: pointer; color: var(--text-muted); font-size: 13px; padding: 4px 0; user-select: none; }
+  .manual-add summary:hover { color: var(--text); }
   .field { display:flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
   .field label { font-size: 12px; color: var(--text-muted); }
   .field input, .field textarea, .field select {
@@ -616,23 +639,36 @@
 
 <!-- Add modal -->
 <div class="modal-backdrop" id="add-modal">
-  <div class="modal">
+  <div class="modal modal-wide">
     <h2 id="add-modal-title">Añadir audiolibro</h2>
     <div class="field">
-      <label for="yt-url">URL de YouTube</label>
-      <input id="yt-url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+      <label for="yt-search">Busca en YouTube o pega una URL</label>
+      <div class="search-wrap">
+        <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="yt-search" type="text" placeholder="Ej. Hábitos atómicos, Bohemian Rhapsody, Cosmos Sagan…" autocomplete="off" />
+        <span class="search-spinner" id="yt-search-spinner" style="display:none;">⏳</span>
+      </div>
     </div>
-    <div class="field">
-      <label for="yt-title">Título (opcional — se autocompleta)</label>
-      <input id="yt-title" placeholder="Déjalo vacío para autocompletar" />
-    </div>
-    <div class="field">
-      <label for="yt-author" id="yt-author-label">Autor / Narrador (opcional)</label>
-      <input id="yt-author" placeholder="Ej. Gabriel García Márquez" />
-    </div>
-    <div class="row">
-      <button class="btn" id="cancel-add">Cancelar</button>
-      <button class="btn primary" id="confirm-add">Añadir</button>
+    <div id="yt-results" class="yt-results"></div>
+    <div id="yt-empty" class="yt-empty">Empieza a escribir para buscar — los resultados aparecen aquí.</div>
+    <details class="manual-add">
+      <summary>Añadir manualmente con título y autor</summary>
+      <div class="field" style="margin-top:8px;">
+        <label for="yt-url">URL de YouTube</label>
+        <input id="yt-url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+      <div class="field">
+        <label for="yt-title">Título (opcional)</label>
+        <input id="yt-title" placeholder="Déjalo vacío para autocompletar" />
+      </div>
+      <div class="field">
+        <label for="yt-author" id="yt-author-label">Autor / Narrador (opcional)</label>
+        <input id="yt-author" placeholder="Ej. Gabriel García Márquez" />
+      </div>
+      <button class="btn primary" id="confirm-add" style="width:100%;">Añadir desde URL</button>
+    </details>
+    <div class="row" style="margin-top:14px;">
+      <button class="btn" id="cancel-add">Cerrar</button>
     </div>
   </div>
 </div>
@@ -1504,8 +1540,13 @@
       if (authorLbl) authorLbl.textContent = 'Autor / Narrador (opcional)';
       if (authorIn) authorIn.placeholder = 'Ej. Gabriel García Márquez';
     }
+    // Reset search UI
+    $('#yt-search').value = '';
+    $('#yt-results').innerHTML = '';
+    $('#yt-empty').style.display = '';
+    $('#yt-empty').textContent = 'Empieza a escribir para buscar — los resultados aparecen aquí.';
     openModal('add-modal');
-    setTimeout(()=>$('#yt-url').focus(), 50);
+    setTimeout(()=>$('#yt-search').focus(), 50);
   });
   $('#cancel-add').addEventListener('click', () => closeModal('add-modal'));
   $('#confirm-add').addEventListener('click', async () => {
@@ -1515,6 +1556,124 @@
     const b = await addBook(url, $('#yt-title').value, $('#yt-author').value);
     $('#confirm-add').disabled = false;
     if (b) { closeModal('add-modal'); loadBook(b.id, true); }
+  });
+
+  /* ===== YOUTUBE SEARCH (via /api/ytsearch — Vercel serverless function on this same domain) ===== */
+  async function searchYouTube(query) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 9000);
+      const r = await fetch(`/api/ytsearch?q=${encodeURIComponent(query)}`, { signal: ctrl.signal });
+      clearTimeout(t);
+      if (!r.ok) return null;
+      const data = await r.json();
+      return Array.isArray(data?.items) ? data.items : null;
+    } catch { return null; }
+  }
+  function fmtDuration(sec) {
+    if (!sec || sec < 0) return '';
+    sec = Math.floor(sec);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+  }
+  function fmtViews(n) {
+    if (!n || n < 0) return '';
+    if (n >= 1e9) return (n/1e9).toFixed(1).replace('.0','') + ' B';
+    if (n >= 1e6) return (n/1e6).toFixed(1).replace('.0','') + ' M';
+    if (n >= 1e3) return (n/1e3).toFixed(0) + ' K';
+    return String(n);
+  }
+  function renderYtResults(items) {
+    const el = $('#yt-results');
+    const empty = $('#yt-empty');
+    if (!items || items.length === 0) {
+      el.innerHTML = '';
+      empty.style.display = '';
+      empty.textContent = 'Sin resultados. Prueba con otras palabras.';
+      return;
+    }
+    empty.style.display = 'none';
+    const haveIds = new Set(state.library.map(b => b.videoId));
+    el.innerHTML = items.slice(0, 20).map((it, i) => {
+      const vid = it.videoId || '';
+      const thumb = it.thumbnail || `https://i.ytimg.com/vi/${vid}/mqdefault.jpg`;
+      const dur = it.durationLabel || fmtDuration(it.duration || 0);
+      const views = fmtViews(it.views || 0);
+      const channel = it.author || '';
+      const already = vid && haveIds.has(vid);
+      const btn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-i="${i}">+ Añadir</button>`;
+      return `<div class="yt-result">
+        <div class="yt-result-thumb"><img src="${esc(thumb)}" loading="lazy" /><span class="yt-result-dur">${esc(dur)}</span></div>
+        <div class="yt-result-info">
+          <div class="yt-result-title">${esc(it.title || '')}</div>
+          <div class="yt-result-meta">${esc(channel)}${views ? ' · ' + views + ' vistas' : ''}${it.publishedLabel ? ' · ' + esc(it.publishedLabel) : ''}</div>
+        </div>
+        ${btn}
+      </div>`;
+    }).join('');
+    el.querySelectorAll('button.yt-result-add[data-i]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const it = items[parseInt(btn.dataset.i, 10)];
+        const vid = it.videoId || '';
+        if (!vid) { toast('No se pudo leer el vídeo'); return; }
+        btn.disabled = true; btn.textContent = '⏳ Añadiendo…';
+        const book = await addBook(`https://www.youtube.com/watch?v=${vid}`, it.title || '', it.author || '', null, activeMediaType);
+        if (book) {
+          btn.classList.add('added'); btn.textContent = '✓ Añadido';
+          // attach the YouTube thumbnail directly so we don't wait for iTunes
+          if (it.thumbnail) { book.coverUrl = it.thumbnail; save(); }
+          // try a higher-quality cover too
+          fetchMediaCover(book).then(url => {
+            if (url) { book.coverUrl = url; save(); renderSidebar(); }
+          });
+          renderSidebar();
+          toast('Añadido a tu biblioteca');
+        } else {
+          btn.disabled = false; btn.textContent = '+ Añadir';
+        }
+      });
+    });
+  }
+  let ytSearchT = null;
+  let ytSearchSeq = 0;
+  $('#yt-search').addEventListener('input', () => {
+    const q = $('#yt-search').value.trim();
+    clearTimeout(ytSearchT);
+    if (!q) {
+      $('#yt-results').innerHTML = '';
+      $('#yt-empty').style.display = '';
+      $('#yt-empty').textContent = 'Empieza a escribir para buscar — los resultados aparecen aquí.';
+      return;
+    }
+    // If user pasted a YouTube URL directly, just add it
+    if (/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)/i.test(q)) {
+      $('#yt-empty').style.display = '';
+      $('#yt-empty').textContent = 'Detectada URL — añadiendo…';
+      $('#yt-search').disabled = true;
+      addBook(q, '', '', null, activeMediaType).then(book => {
+        $('#yt-search').disabled = false;
+        if (book) { closeModal('add-modal'); loadBook(book.id, true); }
+      });
+      return;
+    }
+    ytSearchT = setTimeout(async () => {
+      const seq = ++ytSearchSeq;
+      $('#yt-search-spinner').style.display = '';
+      $('#yt-empty').style.display = '';
+      $('#yt-empty').textContent = 'Buscando…';
+      const items = await searchYouTube(q);
+      if (seq !== ytSearchSeq) return; // stale
+      $('#yt-search-spinner').style.display = 'none';
+      if (items === null) {
+        $('#yt-results').innerHTML = '';
+        $('#yt-empty').style.display = '';
+        $('#yt-empty').innerHTML = 'No se pudo conectar al buscador. <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(q) + '" target="_blank" style="color:var(--accent);">Buscar en YouTube ↗</a>';
+        return;
+      }
+      renderYtResults(items);
+    }, 350);
   });
 
   $('#btn-play').addEventListener('click', togglePlay);

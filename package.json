@@ -1,0 +1,10 @@
+{
+  "name": "audiolibres",
+  "private": true,
+  "version": "1.0.0",
+  "description": "audiolibres.com — escucha audiolibros, música y vídeos de YouTube sin anuncios",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "yt-search": "^2.13.1"
+  }
+}
