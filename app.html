@@ -37,11 +37,12 @@
     padding: 24px;
     display: grid;
     grid-template-columns: 340px 1fr;
+    grid-template-rows: auto 1fr; /* row 2 (panels) fills remaining viewport height */
     gap: 24px;
     min-height: 100vh;
   }
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; padding: 16px; }
+    .app { grid-template-columns: 1fr; grid-template-rows: auto auto auto; padding: 16px; }
   }
   header.brand {
     grid-column: 1 / -1;
@@ -132,9 +133,16 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    min-height: 720px; /* keep both panels at the same height even when empty */
+  }
+  @media (max-width: 900px) {
+    .panel { min-height: 0; }
   }
   .sidebar { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
   .main   { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+  /* When the player is empty/no-selection, fill the panel so it doesn't collapse */
+  #no-selection { flex: 1; display: flex; align-items: center; justify-content: center; }
+  #player-ui { flex: 1; }
 
   .search {
     display:flex; gap:8px; align-items:center;
