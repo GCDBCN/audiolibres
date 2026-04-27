@@ -1359,18 +1359,38 @@
           <button class="kebab" data-del="${b.id}" title="Eliminar">✕</button>
         </div>`;
     }).join('');
-    // Auto-fetch covers (Google Books for audiobooks, iTunes for music/movies) for items that don't have one yet
+    // Auto-fetch covers for items that don't have one yet OR whose URL is the
+    // known-broken Archive.org placeholder (LibriVox legacy entries).
     list.forEach(async (b) => {
-      if (!b.coverUrl && b.title) {
-        const url = await fetchMediaCover(b);
+      const broken = b.coverUrl && /archive\.org\/services\/img/.test(b.coverUrl);
+      if ((!b.coverUrl || broken) && b.title) {
+        let url = '';
+        if (b.source === 'librivox') {
+          // Try Google Books first, then OpenLibrary — best for classics
+          url = await fetchBookCover(b.title, b.author || '');
+          if (!url) {
+            try {
+              const r = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(b.title)}&limit=1`);
+              const data = await r.json();
+              const cid = data?.docs?.[0]?.cover_i;
+              if (cid) url = `https://covers.openlibrary.org/b/id/${cid}-L.jpg`;
+            } catch {}
+          }
+        } else {
+          url = await fetchMediaCover(b);
+        }
         if (url) {
           b.coverUrl = url;
           save();
-          // Update the img src for this card
           const card = el.querySelector(`[data-id="${b.id}"]`);
           if (card) {
             const img = card.querySelector('img');
             if (img) img.src = url;
+          }
+          // Also update the playing cover image if this book is currently active
+          if (state.currentId === b.id) {
+            const cov = document.getElementById('lv-cover');
+            if (cov) { cov.src = url; cov.style.display = ''; }
           }
         }
       }
