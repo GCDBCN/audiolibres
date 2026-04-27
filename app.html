@@ -637,6 +637,9 @@
         <div class="cover" id="cover">
           <span class="ph">📖</span>
           <div id="yt-container"><div id="yt-player"></div></div>
+          <!-- Native HTML5 audio for LibriVox sources (works in iOS background) -->
+          <img id="lv-cover" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:var(--radius);" />
+          <audio id="native-audio" preload="metadata" style="display:none;"></audio>
           <div class="yt-error" id="yt-error"></div>
         </div>
         <div>
@@ -1489,7 +1492,13 @@
     $('#no-selection').style.display = 'none';
     $('#player-ui').style.display = 'flex';
     $('#np-title').textContent = b.title;
-    $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + 'YouTube';
+    if (b.source === 'librivox') {
+      const idx = (b.sectionIndex || 0) + 1;
+      const total = (b.sections || []).length;
+      $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + `LibriVox · Capítulo ${idx}/${total}`;
+    } else {
+      $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + 'YouTube';
+    }
     $('#cover').classList.add('has-video');
     renderTime(b.position || 0, b.duration || 0);
     renderBookmarks();
@@ -1549,9 +1558,98 @@
     if (!b) return;
     state.currentId = id;
     save(); renderPlayer(); renderLibrary(); hideYtError();
-    createYtIframe(b.videoId, b.position || 0, autoplay);
+    // Tear down any previous native audio
+    teardownNativeAudio();
+    if (b.source === 'librivox') {
+      loadLibrivoxBook(b, autoplay);
+    } else {
+      // Hide the LV cover overlay if it was up
+      const cov = document.getElementById('lv-cover'); if (cov) cov.style.display = 'none';
+      createYtIframe(b.videoId, b.position || 0, autoplay);
+    }
     updateMediaSession(b);
   }
+
+  /* ===== NATIVE AUDIO (LibriVox) ===== */
+  let activePlayer = 'iframe'; // 'iframe' | 'native'
+  let nativeAudio = null;
+  function teardownNativeAudio() {
+    if (nativeAudio) {
+      try { nativeAudio.pause(); nativeAudio.removeAttribute('src'); nativeAudio.load(); } catch(e){}
+    }
+  }
+  function loadLibrivoxBook(book, autoplay) {
+    activePlayer = 'native';
+    // Hide YouTube iframe area, show cover image instead
+    const ytBox = document.getElementById('yt-player');
+    if (ytBox) ytBox.innerHTML = '';
+    ytIframe = null;
+    stopPolling();
+    const cov = document.getElementById('lv-cover');
+    if (cov) {
+      cov.src = book.coverUrl || '';
+      cov.style.display = book.coverUrl ? '' : 'none';
+    }
+    nativeAudio = document.getElementById('native-audio');
+    if (!nativeAudio) return;
+    const idx = Math.max(0, Math.min(book.sectionIndex || 0, (book.sections || []).length - 1));
+    const sec = (book.sections || [])[idx];
+    if (!sec) return;
+    nativeAudio.src = sec.url;
+    nativeAudio.playbackRate = state.speed || 1;
+    // Restore position within the section
+    nativeAudio.addEventListener('loadedmetadata', () => {
+      const sectionStartTime = book.position || 0;
+      // book.position is the position WITHIN current section
+      if (sectionStartTime > 0 && sectionStartTime < (nativeAudio.duration || Infinity)) {
+        nativeAudio.currentTime = sectionStartTime;
+      }
+      ytState.duration = nativeAudio.duration || 0;
+      renderTime(nativeAudio.currentTime, ytState.duration);
+      updateMediaPositionState();
+    }, { once: true });
+    if (autoplay) {
+      const p = nativeAudio.play();
+      if (p && p.catch) p.catch(() => {/* user must interact first */});
+    }
+  }
+  // Wire native-audio events once
+  (function wireNativeAudio() {
+    const a = document.getElementById('native-audio');
+    if (!a) return;
+    a.addEventListener('timeupdate', () => {
+      ytState.currentTime = a.currentTime;
+      ytState.duration = a.duration || ytState.duration;
+      renderTime(ytState.currentTime, ytState.duration);
+      const b = currentBook();
+      if (b && b.source === 'librivox') {
+        b.position = a.currentTime;                     // saved per current section
+        if (Date.now() - lastSaveAt > 2000) { lastSaveAt = Date.now(); save(); renderLibrary(); }
+      }
+      updateMediaPositionState();
+    });
+    a.addEventListener('play',  () => { ytState.playing = true;  setPlayIcon(true);  updateMediaPlaybackState(true);  });
+    a.addEventListener('pause', () => { ytState.playing = false; setPlayIcon(false); updateMediaPlaybackState(false); });
+    a.addEventListener('ended', () => {
+      const b = currentBook();
+      if (!b || b.source !== 'librivox') return;
+      const next = (b.sectionIndex || 0) + 1;
+      if (next < (b.sections || []).length) {
+        b.sectionIndex = next;
+        b.position = 0;
+        save();
+        loadLibrivoxBook(b, true);
+        toast(`Capítulo ${next + 1} de ${b.sections.length}`);
+      } else {
+        ytState.playing = false; setPlayIcon(false); updateMediaPlaybackState(false);
+        b.sectionIndex = 0; b.position = 0; save();
+        toast('Audiolibro completado 🎉');
+      }
+    });
+    a.addEventListener('error', () => {
+      showYtError(2); // generic error UI; user can remove or skip
+    });
+  })();
 
   /* ===== MEDIA SESSION (lockscreen / notification controls on phones) ===== */
   function updateMediaSession(book) {
@@ -1568,10 +1666,23 @@
           { src: cover, sizes: '512x512', type: 'image/png' },
         ] : [],
       });
-      navigator.mediaSession.setActionHandler('play',  () => sendYT('playVideo'));
-      navigator.mediaSession.setActionHandler('pause', () => sendYT('pauseVideo'));
+      navigator.mediaSession.setActionHandler('play',  () => togglePlay());
+      navigator.mediaSession.setActionHandler('pause', () => togglePlay());
       navigator.mediaSession.setActionHandler('seekbackward', (d) => seekBy(-(d.seekOffset || 15)));
       navigator.mediaSession.setActionHandler('seekforward',  (d) => seekBy(  d.seekOffset || 30));
+      // Section navigation for LibriVox audiobooks
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        const cb = currentBook();
+        if (cb && cb.source === 'librivox' && (cb.sectionIndex || 0) > 0) {
+          cb.sectionIndex -= 1; cb.position = 0; save(); loadLibrivoxBook(cb, true);
+        }
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        const cb = currentBook();
+        if (cb && cb.source === 'librivox' && (cb.sectionIndex || 0) < (cb.sections.length - 1)) {
+          cb.sectionIndex += 1; cb.position = 0; save(); loadLibrivoxBook(cb, true);
+        }
+      });
       navigator.mediaSession.setActionHandler('seekto', (d) => {
         if (typeof d.seekTime === 'number') {
           sendYT('seekTo', [d.seekTime, true]);
@@ -1597,12 +1708,25 @@
     } catch (e) {}
   }
   function togglePlay() {
-    if (!currentBook()) return;
+    const b = currentBook();
+    if (!b) return;
+    if (b.source === 'librivox' && nativeAudio) {
+      if (nativeAudio.paused) nativeAudio.play().catch(()=>{});
+      else nativeAudio.pause();
+      return;
+    }
     if (ytState.playing) sendYT('pauseVideo');
     else sendYT('playVideo');
   }
   function seekBy(delta) {
+    const b = currentBook();
     const t = Math.max(0, (ytState.currentTime || 0) + delta);
+    if (b && b.source === 'librivox' && nativeAudio) {
+      nativeAudio.currentTime = Math.min(t, nativeAudio.duration || t);
+      ytState.currentTime = nativeAudio.currentTime;
+      renderTime(ytState.currentTime, ytState.duration);
+      return;
+    }
     sendYT('seekTo', [t, true]);
     ytState.currentTime = t;
     renderTime(t, ytState.duration);
@@ -1799,18 +1923,173 @@
       $('#yt-search-spinner').style.display = '';
       $('#yt-empty').style.display = '';
       $('#yt-empty').textContent = 'Buscando…';
-      const items = await searchYouTube(q);
+      // Search YouTube + (if on audiolibros tab) LibriVox in parallel
+      const [items, lvBooks] = await Promise.all([
+        searchYouTube(q),
+        activeMediaType === 'audiobook' ? searchLibrivox(q) : Promise.resolve([]),
+      ]);
       if (seq !== ytSearchSeq) return; // stale
       $('#yt-search-spinner').style.display = 'none';
-      if (items === null) {
+      if ((!items || items.length === 0) && (!lvBooks || lvBooks.length === 0)) {
         $('#yt-results').innerHTML = '';
         $('#yt-empty').style.display = '';
-        $('#yt-empty').innerHTML = 'No se pudo conectar al buscador. <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(q) + '" target="_blank" style="color:var(--accent);">Buscar en YouTube ↗</a>';
+        $('#yt-empty').innerHTML = items === null
+          ? 'No se pudo conectar al buscador. <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(q) + '" target="_blank" style="color:var(--accent);">Buscar en YouTube ↗</a>'
+          : 'Sin resultados. Prueba con otras palabras.';
         return;
       }
-      renderYtResults(items);
+      renderCombinedResults(items || [], lvBooks || []);
     }, 350);
   });
+
+  /* ===== LIBRIVOX ===== */
+  async function searchLibrivox(q) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 9000);
+      const r = await fetch(`/api/librivox?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
+      clearTimeout(t);
+      if (!r.ok) return [];
+      const data = await r.json();
+      return Array.isArray(data?.books) ? data.books : [];
+    } catch { return []; }
+  }
+  async function fetchLibrivoxBook(id) {
+    try {
+      const r = await fetch(`/api/librivox?id=${encodeURIComponent(id)}`);
+      if (!r.ok) return null;
+      const data = await r.json();
+      return data.book || null;
+    } catch { return null; }
+  }
+
+  function renderCombinedResults(ytItems, lvBooks) {
+    const el = $('#yt-results');
+    const empty = $('#yt-empty');
+    empty.style.display = 'none';
+    const haveIds = new Set(state.library.map(b => b.videoId));
+    const haveLvIds = new Set(state.library.filter(b => b.source === 'librivox').map(b => 'lv:' + b.librivoxId));
+
+    let html = '';
+    if (lvBooks.length) {
+      html += `<div style="font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.05em; margin:4px 0 6px; display:flex; align-items:center; gap:6px;">
+        🎧 LIBRIVOX · DOMINIO PÚBLICO · BACKGROUND EN IPHONE</div>`;
+      html += lvBooks.slice(0, 6).map((b, i) => {
+        const already = haveLvIds.has('lv:' + b.id);
+        const btn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-lvi="${i}">+ Añadir</button>`;
+        return `<div class="yt-result lv-result">
+          <div class="yt-result-thumb" style="background:linear-gradient(135deg,#1c2a40,#2a1f40); display:flex;align-items:center;justify-content:center; font-size:32px;">📖<span class="yt-result-dur">${esc(b.totaltime || '')}</span></div>
+          <div class="yt-result-info">
+            <div class="yt-result-title">${esc(b.title || '')}</div>
+            <div class="yt-result-meta">${esc((b.authors || []).slice(0,2).join(', '))} · ${b.sectionsCount} ${b.sectionsCount === 1 ? 'sección' : 'secciones'}${b.language ? ' · ' + esc(b.language) : ''}</div>
+          </div>
+          ${btn}
+        </div>`;
+      }).join('');
+    }
+    if (ytItems.length) {
+      if (lvBooks.length) html += `<div style="font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.05em; margin:14px 0 6px;">📺 YOUTUBE</div>`;
+      html += ytItems.slice(0, 14).map((it, i) => {
+        const vid = it.videoId || '';
+        const thumb = it.thumbnail || `https://i.ytimg.com/vi/${vid}/mqdefault.jpg`;
+        const dur = it.durationLabel || fmtDuration(it.duration || 0);
+        const views = fmtViews(it.views || 0);
+        const channel = it.author || '';
+        const already = vid && haveIds.has(vid);
+        const btn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-i="${i}">+ Añadir</button>`;
+        return `<div class="yt-result">
+          <div class="yt-result-thumb"><img src="${esc(thumb)}" loading="lazy" /><span class="yt-result-dur">${esc(dur)}</span></div>
+          <div class="yt-result-info">
+            <div class="yt-result-title">${esc(it.title || '')}</div>
+            <div class="yt-result-meta">${esc(channel)}${views ? ' · ' + views + ' vistas' : ''}</div>
+          </div>
+          ${btn}
+        </div>`;
+      }).join('');
+    }
+    el.innerHTML = html;
+
+    // Wire YouTube buttons
+    el.querySelectorAll('button.yt-result-add[data-i]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const it = ytItems[parseInt(btn.dataset.i, 10)];
+        const vid = it.videoId || '';
+        if (!vid) { toast('No se pudo leer el vídeo'); return; }
+        btn.disabled = true; btn.textContent = '⏳ Añadiendo…';
+        const book = await addBook(`https://www.youtube.com/watch?v=${vid}`, it.title || '', it.author || '', null, activeMediaType);
+        if (book) {
+          btn.classList.add('added'); btn.textContent = '✓ Añadido';
+          if (it.thumbnail) { book.coverUrl = it.thumbnail; save(); }
+          fetchMediaCover(book).then(url => { if (url) { book.coverUrl = url; save(); renderSidebar(); } });
+          renderSidebar();
+          toast('Añadido a tu biblioteca');
+        } else { btn.disabled = false; btn.textContent = '+ Añadir'; }
+      });
+    });
+    // Wire LibriVox buttons
+    el.querySelectorAll('button.yt-result-add[data-lvi]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const b = lvBooks[parseInt(btn.dataset.lvi, 10)];
+        btn.disabled = true; btn.textContent = '⏳ Cargando capítulos…';
+        const full = await fetchLibrivoxBook(b.id);
+        if (!full || !(full.sections || []).length) {
+          btn.disabled = false; btn.textContent = '+ Añadir';
+          toast('No se pudo cargar este audiolibro');
+          return;
+        }
+        const lvBook = addLibrivoxBook(full);
+        if (lvBook) {
+          btn.classList.add('added'); btn.textContent = '✓ Añadido';
+          renderSidebar();
+          toast('Añadido a tu biblioteca');
+        }
+      });
+    });
+  }
+
+  function addLibrivoxBook(full) {
+    const sections = (full.sections || []).map(s => ({
+      title: s.title || '',
+      url: s.listen_url,
+      playtime: s.playtime || 0,
+    }));
+    if (!sections.length) return null;
+    if (state.library.some(b => b.source === 'librivox' && b.librivoxId === full.id)) {
+      toast('Ya está en tu biblioteca');
+      return null;
+    }
+    const totalSecs = sections.reduce((acc, s) => acc + (parseInt(s.playtime, 10) || 0), 0);
+    const book = {
+      id: (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random()),
+      source: 'librivox',
+      librivoxId: full.id,
+      videoId: 'lv-' + full.id,                         // unique within library indexes
+      title: full.title || 'LibriVox',
+      author: (full.authors || []).slice(0, 2).join(', '),
+      category: null,
+      type: 'audiobook',
+      coverUrl: '',                                     // we will fetch one
+      thumb: '',
+      sections,
+      sectionIndex: 0,
+      duration: totalSecs,
+      position: 0,
+      addedAt: Date.now(),
+      bookmarks: [],
+    };
+    state.library.push(book);
+    save();
+    renderLibrary();
+    // Try to grab a cover from Internet Archive (LibriVox links there)
+    if (full.url_iarchive) {
+      const m = full.url_iarchive.match(/\/details\/([^/]+)/);
+      if (m) {
+        book.coverUrl = `https://archive.org/services/img/${m[1]}`;
+        save();
+      }
+    }
+    return book;
+  }
 
   /* ===== Player size toggle (compact / theater, like YouTube) ===== */
   let playerSize = localStorage.getItem('audiolibros.playerSize') || 'compact';
@@ -1837,18 +2116,28 @@
     const i = SPEEDS.indexOf(state.speed);
     state.speed = SPEEDS[(i+1) % SPEEDS.length];
     save();
-    sendYT('setPlaybackRate', state.speed);
+    if (nativeAudio && currentBook() && currentBook().source === 'librivox') {
+      nativeAudio.playbackRate = state.speed;
+    } else {
+      sendYT('setPlaybackRate', state.speed);
+    }
     $('#btn-speed').textContent = state.speed + '×';
   });
 
   $('#timeline').addEventListener('click', (e) => {
-    if (!currentBook() || !ytState.duration) return;
+    const b = currentBook();
+    if (!b || !ytState.duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
     const t = pct * ytState.duration;
-    sendYT('seekTo', [t, true]);
-    ytState.currentTime = t;
-    renderTime(t, ytState.duration);
+    if (b.source === 'librivox' && nativeAudio) {
+      nativeAudio.currentTime = Math.min(t, nativeAudio.duration || t);
+      ytState.currentTime = nativeAudio.currentTime;
+    } else {
+      sendYT('seekTo', [t, true]);
+      ytState.currentTime = t;
+    }
+    renderTime(ytState.currentTime, ytState.duration);
   });
 
   $('#btn-bookmark').addEventListener('click', () => {
