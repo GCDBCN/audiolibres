@@ -5,6 +5,7 @@
   "description": "audiolibres.com — escucha audiolibros, música y vídeos de YouTube sin anuncios",
   "engines": { "node": ">=18" },
   "dependencies": {
-    "yt-search": "^2.13.1"
+    "yt-search": "^2.13.1",
+    "youtube-dl-exec": "^3.0.10"
   }
 }
