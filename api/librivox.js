@@ -42,32 +42,55 @@ function trimBook(b, withSections) {
 }
 
 function capitalize(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
-function decapitalize(s) { return s.toLowerCase(); }
-
-// Build a list of query variations to try, in priority order
-function buildVariations(q) {
-  const trimmed = q.trim();
-  const lower = decapitalize(trimmed);
-  const cap = capitalize(lower);
-  const words = lower.split(/\s+/).filter(w => w.length >= 4 && !/^[\W_]+$/.test(w));
-  const variations = new Set();
-  // Whole-string variations
-  variations.add(trimmed);
-  variations.add(lower);
-  variations.add(cap);
-  // Each significant word in lowercase + capitalized
-  for (const w of words) {
-    variations.add(w);
-    variations.add(capitalize(w));
-  }
-  return Array.from(variations).slice(0, 8);
-}
 
 async function trySearch(params) {
   try {
     const data = await fetchJson(`${BASE}?${params}`);
     return Array.isArray(data && data.books) ? data.books : [];
   } catch { return []; }
+}
+
+// Spanish ↔ English aliases for very common works whose LibriVox title differs
+const TITLE_ALIASES = {
+  'quijote': ['Don Quixote'],
+  'don quijote': ['Don Quixote'],
+  'odisea': ['Odyssey'],
+  'iliada': ['Iliad'],
+  'ilíada': ['Iliad'],
+  'biblia': ['Bible'],
+  'principito': ['Le Petit Prince', 'Little Prince'],
+  'principe': ['Prince'],
+  'príncipe': ['Prince'],
+  'crimen y castigo': ['Crime and Punishment'],
+  'guerra y paz': ['War and Peace'],
+  'metamorfosis': ['Metamorphosis'],
+  'rebelion en la granja': ['Animal Farm'],
+  'rebelión en la granja': ['Animal Farm'],
+};
+
+function planSearches(q) {
+  const lower = q.trim().toLowerCase();
+  const words = lower.split(/\s+/).filter(w => w.length >= 4 && !/^[\W_]+$/.test(w));
+  // Build (priority, params) tuples — lower number = higher priority
+  const plans = [];
+  // 1. Direct alias hits (instant results for known works)
+  if (TITLE_ALIASES[lower]) {
+    for (const t of TITLE_ALIASES[lower]) plans.push([0, `title=${encodeURIComponent(t)}`]);
+  }
+  // 2. The full string as title, in original + Capitalized variants
+  plans.push([1, `title=${encodeURIComponent(q.trim())}`]);
+  plans.push([1, `title=${encodeURIComponent(capitalize(lower))}`]);
+  plans.push([1, `title=${encodeURIComponent(lower)}`]);
+  // 3. Each word as author (LibriVox author is case-insensitive last-name match)
+  for (const w of words) plans.push([2, `author=${encodeURIComponent(w)}`]);
+  // 4. Each significant word as title (catches single-word queries)
+  for (const w of words) {
+    plans.push([3, `title=${encodeURIComponent(capitalize(w))}`]);
+    plans.push([3, `title=${encodeURIComponent(w)}`]);
+  }
+  // De-duplicate URL params, preserving priority
+  const seen = new Set();
+  return plans.filter(([_, p]) => seen.has(p) ? false : (seen.add(p), true)).slice(0, 18);
 }
 
 module.exports = async (req, res) => {
@@ -90,23 +113,20 @@ module.exports = async (req, res) => {
     }
     if (!q) { res.status(400).json({ error: 'Missing q' }); return; }
 
-    const variations = buildVariations(q);
-    // Fan out: title + author in parallel for each variation, then merge
-    const promises = [];
-    for (const v of variations) {
-      const enc = encodeURIComponent(v);
-      promises.push(trySearch(`format=json&extended=1&limit=12&title=${enc}`));
-      promises.push(trySearch(`format=json&extended=1&limit=12&author=${enc}`));
-    }
-    const all = (await Promise.all(promises)).flat();
+    const plans = planSearches(q);
+    const all = await Promise.all(plans.map(([_, p]) => trySearch(`format=json&extended=1&limit=12&${p}`)));
+    // all[i] aligns with plans[i] which is priority-ordered
 
-    // Deduplicate by id, keep first occurrence (=highest priority variation)
+    // Deduplicate by id; keep first occurrence (= highest-priority match)
     const seen = new Set();
     const merged = [];
-    for (const b of all) {
-      if (!b || !b.id || seen.has(b.id)) continue;
-      seen.add(b.id);
-      merged.push(trimBook(b, false));
+    for (let i = 0; i < all.length; i++) {
+      for (const b of all[i]) {
+        if (!b || !b.id || seen.has(b.id)) continue;
+        seen.add(b.id);
+        merged.push(trimBook(b, false));
+        if (merged.length >= 15) break;
+      }
       if (merged.length >= 15) break;
     }
     res.status(200).json({ books: merged });
