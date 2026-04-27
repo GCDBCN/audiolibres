@@ -638,7 +638,7 @@
           <span class="ph">📖</span>
           <div id="yt-container"><div id="yt-player"></div></div>
           <!-- Native HTML5 audio for LibriVox sources (works in iOS background) -->
-          <img id="lv-cover" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:var(--radius);" />
+          <img id="lv-cover" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:var(--radius);" onerror="this.style.display='none';" />
           <audio id="native-audio" preload="metadata" style="display:none;"></audio>
           <div class="yt-error" id="yt-error"></div>
         </div>
@@ -1590,6 +1590,25 @@
       cov.src = book.coverUrl || '';
       cov.style.display = book.coverUrl ? '' : 'none';
     }
+    // If cover is missing or is the broken Archive.org placeholder, fetch a better one
+    const needsBetter = !book.coverUrl || /archive\.org\/services\/img/.test(book.coverUrl);
+    if (needsBetter) {
+      (async () => {
+        let url = await fetchBookCover(book.title, book.author || '');
+        if (!url) {
+          try {
+            const r = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(book.title)}&limit=1`);
+            const data = await r.json();
+            const cid = data?.docs?.[0]?.cover_i;
+            if (cid) url = `https://covers.openlibrary.org/b/id/${cid}-L.jpg`;
+          } catch {}
+        }
+        if (url) {
+          book.coverUrl = url; save(); renderSidebar();
+          if (state.currentId === book.id && cov) { cov.src = url; cov.style.display = ''; }
+        }
+      })();
+    }
     nativeAudio = document.getElementById('native-audio');
     if (!nativeAudio) return;
     const idx = Math.max(0, Math.min(book.sectionIndex || 0, (book.sections || []).length - 1));
@@ -2102,14 +2121,33 @@
     state.library.push(book);
     save();
     renderLibrary();
-    // Try to grab a cover from Internet Archive (LibriVox links there)
-    if (full.url_iarchive) {
-      const m = full.url_iarchive.match(/\/details\/([^/]+)/);
-      if (m) {
-        book.coverUrl = `https://archive.org/services/img/${m[1]}`;
-        save();
+    // Cover: prefer Google Books (better for classics), then OpenLibrary, then Archive.org as fallback
+    (async () => {
+      let cover = await fetchBookCover(book.title, book.author || '');
+      if (!cover) {
+        // OpenLibrary by title
+        try {
+          const r = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(book.title)}&limit=1`);
+          const data = await r.json();
+          const cid = data?.docs?.[0]?.cover_i;
+          if (cid) cover = `https://covers.openlibrary.org/b/id/${cid}-L.jpg`;
+        } catch {}
       }
-    }
+      if (!cover && full.url_iarchive) {
+        const m = full.url_iarchive.match(/\/details\/([^/]+)/);
+        if (m) cover = `https://archive.org/services/img/${m[1]}`;
+      }
+      if (cover) {
+        book.coverUrl = cover;
+        save();
+        renderSidebar();
+        // also update the playing cover if currently active
+        if (state.currentId === book.id) {
+          const cov = document.getElementById('lv-cover');
+          if (cov) cov.src = cover;
+        }
+      }
+    })();
     return book;
   }
 
