@@ -2444,6 +2444,20 @@
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     });
   }
+
+  // One-shot migration: nuke the broken Archive.org placeholder URLs so the
+  // normal cover-fetch path in renderLibrary picks up a real one (Google Books
+  // or OpenLibrary). Without this, items that already have a "broken" coverUrl
+  // never get refreshed because the lazy-load only runs when coverUrl is empty.
+  let _migrated = false;
+  for (const b of state.library) {
+    if (b.coverUrl && /archive\.org\/services\/img/.test(b.coverUrl)) {
+      b.coverUrl = '';
+      _migrated = true;
+    }
+  }
+  if (_migrated) save();
+
   renderMediaTabs();
   renderChips();
   renderSidebar();
