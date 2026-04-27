@@ -1,8 +1,9 @@
 // Vercel serverless function: /api/librivox
-//   ?q=meditaciones        → search audiobooks by title
-//   ?author=marcus aurelio → search by author
+//   ?q=meditaciones        → search audiobooks (title + author, with case variations)
 //   ?id=18163              → get full book info (all sections with MP3 URLs)
-// Proxies the public LibriVox JSON API so the browser doesn't worry about CORS.
+// Proxies the public LibriVox JSON API and works around its picky matching:
+// LibriVox is case-sensitive, partial-prefix only (e.g. "Don Quixote" finds the book
+// but "quixote" alone does not), so we fan out multiple variations server-side.
 
 const BASE = 'https://librivox.org/api/feed/audiobooks/';
 
@@ -40,6 +41,35 @@ function trimBook(b, withSections) {
   return out;
 }
 
+function capitalize(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+function decapitalize(s) { return s.toLowerCase(); }
+
+// Build a list of query variations to try, in priority order
+function buildVariations(q) {
+  const trimmed = q.trim();
+  const lower = decapitalize(trimmed);
+  const cap = capitalize(lower);
+  const words = lower.split(/\s+/).filter(w => w.length >= 4 && !/^[\W_]+$/.test(w));
+  const variations = new Set();
+  // Whole-string variations
+  variations.add(trimmed);
+  variations.add(lower);
+  variations.add(cap);
+  // Each significant word in lowercase + capitalized
+  for (const w of words) {
+    variations.add(w);
+    variations.add(capitalize(w));
+  }
+  return Array.from(variations).slice(0, 8);
+}
+
+async function trySearch(params) {
+  try {
+    const data = await fetchJson(`${BASE}?${params}`);
+    return Array.isArray(data && data.books) ? data.books : [];
+  } catch { return []; }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -47,12 +77,10 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') { res.status(204).end(); return; }
 
   const q = (req.query.q || '').toString().trim();
-  const author = (req.query.author || '').toString().trim();
   const id = (req.query.id || '').toString().trim();
 
   try {
     if (id) {
-      // Single book with full sections
       const url = `${BASE}?format=json&extended=1&id=${encodeURIComponent(id)}`;
       const data = await fetchJson(url);
       const book = (data.books || [])[0];
@@ -60,14 +88,28 @@ module.exports = async (req, res) => {
       res.status(200).json({ book: trimBook(book, true) });
       return;
     }
-    if (!q && !author) { res.status(400).json({ error: 'Missing q or author' }); return; }
+    if (!q) { res.status(400).json({ error: 'Missing q' }); return; }
 
-    const params = new URLSearchParams({ format: 'json', extended: '1', limit: '15' });
-    if (q) params.set('title', q);
-    if (author) params.set('author', author);
-    const data = await fetchJson(`${BASE}?${params}`);
-    const books = (data.books || []).map(b => trimBook(b, false));
-    res.status(200).json({ books });
+    const variations = buildVariations(q);
+    // Fan out: title + author in parallel for each variation, then merge
+    const promises = [];
+    for (const v of variations) {
+      const enc = encodeURIComponent(v);
+      promises.push(trySearch(`format=json&extended=1&limit=12&title=${enc}`));
+      promises.push(trySearch(`format=json&extended=1&limit=12&author=${enc}`));
+    }
+    const all = (await Promise.all(promises)).flat();
+
+    // Deduplicate by id, keep first occurrence (=highest priority variation)
+    const seen = new Set();
+    const merged = [];
+    for (const b of all) {
+      if (!b || !b.id || seen.has(b.id)) continue;
+      seen.add(b.id);
+      merged.push(trimBook(b, false));
+      if (merged.length >= 15) break;
+    }
+    res.status(200).json({ books: merged });
   } catch (e) {
     res.status(502).json({ error: 'LibriVox fetch failed', detail: String((e && e.message) || e).slice(0, 300) });
   }
