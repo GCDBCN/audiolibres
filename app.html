@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Audiolibres — Reproductor</title>
 <link rel="icon" href="/logo-favicon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#FF0033" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="audiolibres" />
+<link rel="apple-touch-icon" href="/logo-mark.png" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
@@ -1206,12 +1212,13 @@
   }
 
   function applyState(st) {
-    if (st === 1) { ytState.playing = true; setPlayIcon(true); }
-    else if (st === 2 || st === 0 || st === -1 || st === 5) { ytState.playing = false; setPlayIcon(false); }
+    if (st === 1) { ytState.playing = true; setPlayIcon(true); updateMediaPlaybackState(true); }
+    else if (st === 2 || st === 0 || st === -1 || st === 5) { ytState.playing = false; setPlayIcon(false); updateMediaPlaybackState(false); }
   }
 
   function updateFromState() {
     renderTime(ytState.currentTime, ytState.duration);
+    updateMediaPositionState();
     const b = currentBook();
     if (!b) return;
     if (ytState.duration > 0 && !b.duration) b.duration = ytState.duration;
@@ -1543,6 +1550,51 @@
     state.currentId = id;
     save(); renderPlayer(); renderLibrary(); hideYtError();
     createYtIframe(b.videoId, b.position || 0, autoplay);
+    updateMediaSession(b);
+  }
+
+  /* ===== MEDIA SESSION (lockscreen / notification controls on phones) ===== */
+  function updateMediaSession(book) {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      const cover = book.coverUrl || (book.videoId ? `https://i.ytimg.com/vi/${book.videoId}/hqdefault.jpg` : '');
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: book.title || 'audiolibres',
+        artist: book.author || '',
+        album: 'audiolibres',
+        artwork: cover ? [
+          { src: cover, sizes: '96x96',  type: 'image/png' },
+          { src: cover, sizes: '256x256', type: 'image/png' },
+          { src: cover, sizes: '512x512', type: 'image/png' },
+        ] : [],
+      });
+      navigator.mediaSession.setActionHandler('play',  () => sendYT('playVideo'));
+      navigator.mediaSession.setActionHandler('pause', () => sendYT('pauseVideo'));
+      navigator.mediaSession.setActionHandler('seekbackward', (d) => seekBy(-(d.seekOffset || 15)));
+      navigator.mediaSession.setActionHandler('seekforward',  (d) => seekBy(  d.seekOffset || 30));
+      navigator.mediaSession.setActionHandler('seekto', (d) => {
+        if (typeof d.seekTime === 'number') {
+          sendYT('seekTo', [d.seekTime, true]);
+          ytState.currentTime = d.seekTime;
+        }
+      });
+    } catch (e) {}
+  }
+  function updateMediaPlaybackState(playing) {
+    if (!('mediaSession' in navigator)) return;
+    try { navigator.mediaSession.playbackState = playing ? 'playing' : 'paused'; } catch (e) {}
+  }
+  function updateMediaPositionState() {
+    if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+    try {
+      if (ytState.duration > 0) {
+        navigator.mediaSession.setPositionState({
+          duration: ytState.duration,
+          playbackRate: state.speed || 1,
+          position: Math.max(0, Math.min(ytState.currentTime || 0, ytState.duration)),
+        });
+      }
+    } catch (e) {}
   }
   function togglePlay() {
     if (!currentBook()) return;
@@ -2017,6 +2069,12 @@
   });
 
   /* ===== INIT ===== */
+  // Register service worker so the app is installable as a PWA and stays alive in background
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
   renderMediaTabs();
   renderChips();
   renderSidebar();

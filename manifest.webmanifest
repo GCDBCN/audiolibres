@@ -1,0 +1,17 @@
+{
+  "name": "audiolibres",
+  "short_name": "audiolibres",
+  "description": "Escucha audiolibros, música y vídeos de YouTube sin anuncios — con tu biblioteca y marcadores sincronizados.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0F0F0F",
+  "theme_color": "#FF0033",
+  "categories": ["entertainment", "music", "books"],
+  "lang": "es",
+  "icons": [
+    { "src": "/logo-favicon.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/logo-mark.png",    "sizes": "412x412", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
