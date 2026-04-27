@@ -1944,15 +1944,37 @@
 
   /* ===== LIBRIVOX ===== */
   async function searchLibrivox(q) {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 9000);
-      const r = await fetch(`/api/librivox?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
-      clearTimeout(t);
-      if (!r.ok) return [];
-      const data = await r.json();
-      return Array.isArray(data?.books) ? data.books : [];
-    } catch { return []; }
+    // LibriVox does exact-substring matching on title. To be tolerant with
+    // longer or messy queries, try the full string first, and if that returns
+    // nothing also try by individual words (longest first) and by author.
+    const tryQuery = async (params) => {
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 8000);
+        const r = await fetch(`/api/librivox?${params}`, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (!r.ok) return [];
+        const data = await r.json();
+        return Array.isArray(data?.books) ? data.books : [];
+      } catch { return []; }
+    };
+    let books = await tryQuery('q=' + encodeURIComponent(q));
+    if (books.length) return books;
+    // Try by author with the full query
+    books = await tryQuery('author=' + encodeURIComponent(q));
+    if (books.length) return books;
+    // Split words >3 chars, try each as title or author
+    const words = q.split(/\s+/).filter(w => w.length > 3 && !/^[\W_]+$/.test(w))
+                   .sort((a,b) => b.length - a.length).slice(0, 3);
+    for (const w of words) {
+      books = await tryQuery('q=' + encodeURIComponent(w));
+      if (books.length) return books;
+    }
+    for (const w of words) {
+      books = await tryQuery('author=' + encodeURIComponent(w));
+      if (books.length) return books;
+    }
+    return [];
   }
   async function fetchLibrivoxBook(id) {
     try {
