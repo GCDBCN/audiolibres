@@ -531,9 +531,31 @@
   .yt-result-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .yt-result-title { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .yt-result-meta { font-size: 12px; color: var(--text-muted); }
-  .yt-result-add { align-self: center; padding: 8px 14px; font-size: 13px; font-weight: 700; border-radius: 999px; background: var(--accent); color: #fff; border: none; cursor: pointer; flex-shrink: 0; transition: background .12s; }
+  .yt-result-actions { display: flex; flex-direction: column; gap: 6px; align-self: center; flex-shrink: 0; }
+  .yt-result-add { padding: 8px 14px; font-size: 13px; font-weight: 700; border-radius: 999px; background: var(--accent); color: #fff; border: none; cursor: pointer; transition: background .12s; }
   .yt-result-add:hover { background: #d10027; }
   .yt-result-add.added { background: #2a8a3e; cursor: default; }
+  .yt-result-preview { padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 999px; background: var(--bg-elev-2); color: var(--text); border: 1px solid var(--border); cursor: pointer; transition: background .12s; }
+  .yt-result-preview:hover { background: #2a2a2a; }
+  .yt-result-preview.playing { background: var(--accent); color: #fff; border-color: transparent; }
+
+  .preview-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-elev-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 8px 12px; margin-bottom: 12px;
+  }
+  .preview-bar .preview-info { flex: 1; min-width: 0; }
+  .preview-bar .preview-title { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .preview-bar .preview-meta { font-size: 11px; color: var(--text-muted); }
+  .preview-bar .preview-time { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+  .preview-bar .preview-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 999px;
+    width: 32px; height: 32px; cursor: pointer; font-size: 14px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .preview-bar .preview-btn:hover { background: #d10027; }
+  .preview-bar .preview-btn.ghost { background: var(--bg-elev); color: var(--text-muted); border: 1px solid var(--border); }
+  .preview-bar .preview-btn.ghost:hover { background: #2a2a2a; color: var(--text); }
   .yt-empty { color: var(--text-muted); text-align: center; padding: 40px 16px; font-size: 13px; }
   .manual-add { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
   .manual-add summary { cursor: pointer; color: var(--text-muted); font-size: 13px; padding: 4px 0; user-select: none; }
@@ -704,6 +726,18 @@
         <span class="search-spinner" id="yt-search-spinner" style="display:none;">⏳</span>
       </div>
     </div>
+    <!-- Inline preview bar (shown while previewing a result) -->
+    <div id="preview-bar" class="preview-bar" style="display:none;">
+      <div class="preview-info">
+        <div id="preview-title" class="preview-title">—</div>
+        <div id="preview-meta" class="preview-meta">—</div>
+      </div>
+      <div class="preview-time" id="preview-time">0:00</div>
+      <button class="preview-btn" id="preview-toggle" title="Pausar/Reanudar">⏸</button>
+      <button class="preview-btn ghost" id="preview-close" title="Cerrar preview">✕</button>
+    </div>
+    <iframe id="preview-yt" style="position:absolute;width:1px;height:1px;left:-9999px;border:0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+    <audio id="preview-audio" preload="metadata" style="display:none;"></audio>
     <div id="yt-results" class="yt-results"></div>
     <div id="yt-empty" class="yt-empty">Empieza a escribir para buscar — los resultados aparecen aquí.</div>
     <details class="manual-add">
@@ -2037,14 +2071,15 @@
         🎧 LIBRIVOX · DOMINIO PÚBLICO · BACKGROUND EN IPHONE</div>`;
       html += lvBooks.slice(0, 6).map((b, i) => {
         const already = haveLvIds.has('lv:' + b.id);
-        const btn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-lvi="${i}">+ Añadir</button>`;
+        const addBtn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-lvi="${i}">+ Añadir</button>`;
+        const prevBtn = `<button class="yt-result-preview" data-prev-lvi="${i}">▶ Probar</button>`;
         return `<div class="yt-result lv-result">
           <div class="yt-result-thumb" style="background:linear-gradient(135deg,#1c2a40,#2a1f40); display:flex;align-items:center;justify-content:center; font-size:32px;">📖<span class="yt-result-dur">${esc(b.totaltime || '')}</span></div>
           <div class="yt-result-info">
             <div class="yt-result-title">${esc(b.title || '')}</div>
             <div class="yt-result-meta">${esc((b.authors || []).slice(0,2).join(', '))} · ${b.sectionsCount} ${b.sectionsCount === 1 ? 'sección' : 'secciones'}${b.language ? ' · ' + esc(b.language) : ''}</div>
           </div>
-          ${btn}
+          <div class="yt-result-actions">${addBtn}${prevBtn}</div>
         </div>`;
       }).join('');
     }
@@ -2057,14 +2092,15 @@
         const views = fmtViews(it.views || 0);
         const channel = it.author || '';
         const already = vid && haveIds.has(vid);
-        const btn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-i="${i}">+ Añadir</button>`;
+        const addBtn = already ? `<button class="yt-result-add added" disabled>✓ Añadido</button>` : `<button class="yt-result-add" data-i="${i}">+ Añadir</button>`;
+        const prevBtn = `<button class="yt-result-preview" data-prev-i="${i}">▶ Probar</button>`;
         return `<div class="yt-result">
           <div class="yt-result-thumb"><img src="${esc(thumb)}" loading="lazy" /><span class="yt-result-dur">${esc(dur)}</span></div>
           <div class="yt-result-info">
             <div class="yt-result-title">${esc(it.title || '')}</div>
             <div class="yt-result-meta">${esc(channel)}${views ? ' · ' + views + ' vistas' : ''}</div>
           </div>
-          ${btn}
+          <div class="yt-result-actions">${addBtn}${prevBtn}</div>
         </div>`;
       }).join('');
     }
@@ -2106,7 +2142,103 @@
         }
       });
     });
+    // Wire preview buttons (YouTube)
+    el.querySelectorAll('button.yt-result-preview[data-prev-i]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const it = ytItems[parseInt(btn.dataset.prevI, 10)];
+        previewYouTube(it, btn);
+      });
+    });
+    // Wire preview buttons (LibriVox)
+    el.querySelectorAll('button.yt-result-preview[data-prev-lvi]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const b = lvBooks[parseInt(btn.dataset.prevLvi, 10)];
+        previewLibrivox(b, btn);
+      });
+    });
   }
+
+  /* ===== PREVIEW (in-modal, no commit to library) ===== */
+  let previewState = { kind: null, btn: null, ticker: null, startedAt: 0 };
+  function stopPreview() {
+    const ifr = document.getElementById('preview-yt');
+    const aud = document.getElementById('preview-audio');
+    try { if (ifr) ifr.src = 'about:blank'; } catch (e) {}
+    try { if (aud) { aud.pause(); aud.removeAttribute('src'); aud.load(); } } catch (e) {}
+    if (previewState.btn) {
+      previewState.btn.classList.remove('playing');
+      previewState.btn.textContent = '▶ Probar';
+    }
+    if (previewState.ticker) clearInterval(previewState.ticker);
+    previewState = { kind: null, btn: null, ticker: null, startedAt: 0 };
+    const bar = document.getElementById('preview-bar');
+    if (bar) bar.style.display = 'none';
+  }
+  function showPreviewBar(title, meta) {
+    const bar = document.getElementById('preview-bar');
+    document.getElementById('preview-title').textContent = title || '';
+    document.getElementById('preview-meta').textContent  = meta  || '';
+    document.getElementById('preview-time').textContent = '0:00';
+    document.getElementById('preview-toggle').textContent = '⏸';
+    if (bar) bar.style.display = '';
+  }
+  function previewYouTube(it, btn) {
+    if (previewState.kind === 'yt' && previewState.videoId === it.videoId) {
+      stopPreview();
+      return;
+    }
+    stopPreview();
+    const ifr = document.getElementById('preview-yt');
+    if (!ifr) return;
+    ifr.src = `https://www.youtube-nocookie.com/embed/${it.videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+    btn.classList.add('playing'); btn.textContent = '⏸ Parando…';
+    showPreviewBar(it.title || '', (it.author || '') + ' · YouTube');
+    previewState = { kind: 'yt', videoId: it.videoId, btn, startedAt: Date.now(), ticker: null };
+    btn.textContent = '⏸ Sonando';
+    previewState.ticker = setInterval(() => {
+      const sec = Math.floor((Date.now() - previewState.startedAt) / 1000);
+      document.getElementById('preview-time').textContent = `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+    }, 500);
+  }
+  async function previewLibrivox(b, btn) {
+    if (previewState.kind === 'lv' && previewState.lvId === b.id) {
+      stopPreview();
+      return;
+    }
+    stopPreview();
+    btn.classList.add('playing'); btn.textContent = '⏳ Cargando…';
+    const full = await fetchLibrivoxBook(b.id);
+    if (!full || !(full.sections || []).length) {
+      btn.classList.remove('playing'); btn.textContent = '▶ Probar';
+      toast('No se pudo cargar la preview');
+      return;
+    }
+    const aud = document.getElementById('preview-audio');
+    if (!aud) return;
+    aud.src = full.sections[0].listen_url;
+    aud.play().catch(() => {});
+    btn.textContent = '⏸ Sonando';
+    showPreviewBar(b.title, (b.authors || []).slice(0,2).join(', ') + ' · LibriVox · Cap. 1');
+    previewState = { kind: 'lv', lvId: b.id, btn, ticker: null };
+    aud.ontimeupdate = () => {
+      const sec = Math.floor(aud.currentTime || 0);
+      document.getElementById('preview-time').textContent = `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+    };
+  }
+  // Preview bar controls
+  document.getElementById('preview-toggle').addEventListener('click', () => {
+    if (previewState.kind === 'lv') {
+      const aud = document.getElementById('preview-audio');
+      if (aud.paused) { aud.play().catch(()=>{}); document.getElementById('preview-toggle').textContent = '⏸'; }
+      else { aud.pause(); document.getElementById('preview-toggle').textContent = '▶'; }
+    } else if (previewState.kind === 'yt') {
+      // YT iframe preview: simplest is to stop & start
+      stopPreview();
+    }
+  });
+  document.getElementById('preview-close').addEventListener('click', stopPreview);
+  // Stop preview when modal closes
+  document.getElementById('cancel-add').addEventListener('click', stopPreview);
 
   function addLibrivoxBook(full) {
     const sections = (full.sections || []).map(s => ({
