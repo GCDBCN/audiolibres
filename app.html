@@ -216,8 +216,15 @@
     display:grid; grid-template-columns: 220px 1fr; gap: 20px;
     align-items:center;
   }
+  /* "Theater" / pantalla grande — el vídeo arriba a 16:9, controles debajo */
+  .now-playing.theater {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+  .now-playing.theater .cover { aspect-ratio: 16 / 9; max-height: 60vh; }
   @media (max-width: 700px) {
     .now-playing { grid-template-columns: 1fr; }
+    .now-playing .cover { aspect-ratio: 16 / 9; }
   }
   .cover {
     aspect-ratio: 1 / 1; width: 100%;
@@ -227,6 +234,17 @@
     overflow: hidden;
     position: relative;
     display:flex; align-items:center; justify-content:center;
+  }
+  /* Botón de tamaño del reproductor (estilo theater de YouTube) */
+  .size-toggle {
+    background: var(--bg-elev-2); border: 1px solid var(--border); color: var(--text);
+    border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: background .12s;
+  }
+  .size-toggle:hover { background: #2a2a2a; }
+  .size-toggle svg { width: 14px; height: 14px; }
+  .np-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
   }
   .cover .ph { font-size: 48px; opacity: .4; }
   .cover.has-video .ph { display: none; }
@@ -608,15 +626,23 @@
     </div>
 
     <div id="player-ui" style="display:none; flex-direction: column; gap: 16px;">
-      <div class="now-playing">
+      <div class="now-playing" id="now-playing">
         <div class="cover" id="cover">
           <span class="ph">📖</span>
           <div id="yt-container"><div id="yt-player"></div></div>
           <div class="yt-error" id="yt-error"></div>
         </div>
         <div>
-          <div class="np-title" id="np-title">—</div>
-          <div class="np-sub" id="np-sub">—</div>
+          <div class="np-header">
+            <div>
+              <div class="np-title" id="np-title">—</div>
+              <div class="np-sub" id="np-sub">—</div>
+            </div>
+            <button class="size-toggle" id="btn-size" title="Cambiar tamaño del reproductor">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              <span id="btn-size-label">Pantalla grande</span>
+            </button>
+          </div>
           <div class="controls">
             <button class="btn icon" id="btn-back15" title="Retroceder 15s">⏪15</button>
             <button class="play-btn" id="btn-play" title="Play/Pause">
@@ -1731,6 +1757,22 @@
       }
       renderYtResults(items);
     }, 350);
+  });
+
+  /* ===== Player size toggle (compact / theater, like YouTube) ===== */
+  let playerSize = localStorage.getItem('audiolibros.playerSize') || 'compact';
+  function applyPlayerSize() {
+    const np = document.getElementById('now-playing');
+    const lbl = document.getElementById('btn-size-label');
+    if (!np) return;
+    np.classList.toggle('theater', playerSize === 'theater');
+    if (lbl) lbl.textContent = playerSize === 'theater' ? 'Vista compacta' : 'Pantalla grande';
+  }
+  applyPlayerSize();
+  $('#btn-size').addEventListener('click', () => {
+    playerSize = playerSize === 'theater' ? 'compact' : 'theater';
+    localStorage.setItem('audiolibros.playerSize', playerSize);
+    applyPlayerSize();
   });
 
   $('#btn-play').addEventListener('click', togglePlay);
