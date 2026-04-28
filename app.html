@@ -1066,6 +1066,8 @@
   /* ===== STATE ===== */
   const STORAGE_KEY = 'audiolibros.v1';
   let state = { library: [], currentId: null, speed: 1 };
+  // If the user has no library yet (e.g. brand new account), default to Discover
+  // so they see the seed catalog immediately instead of an empty panel.
   let sidebarMode = 'library'; // 'library' | 'discover'
   let activeCategory = 'Todas';
   let activeMediaType = localStorage.getItem('audiolibros.mediaType') || 'audiobook'; // 'audiobook' | 'music' | 'movie'
@@ -1129,6 +1131,10 @@
         // No row yet - create one if we have local data
         if (state.library.length > 0) { await pushToCloud(); toast('Biblioteca subida a la nube ☁️'); }
         else { updateSyncStatus('Sincronizado'); }
+      }
+      // After cloud load, if library is still empty (brand-new user) flip to Descubrir
+      if ((!state.library || state.library.length === 0) && sidebarMode !== 'discover') {
+        sidebarMode = 'discover';
       }
       renderSidebar(); renderPlayer();
     } catch (e) { console.warn('cloud load', e); }
@@ -2589,6 +2595,11 @@
     }
   }
   if (_migrated) save();
+
+  // First-run UX: if the library is empty, land on Descubrir so the user sees content right away
+  if (!state.library || state.library.length === 0) {
+    sidebarMode = 'discover';
+  }
 
   renderMediaTabs();
   renderChips();
