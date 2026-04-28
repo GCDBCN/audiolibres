@@ -595,6 +595,53 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #243044; border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: #2f3e57; }
+
+  /* ============================================================
+   * TV MODE — activated when body.tv-mode (Samsung Tizen browser
+   * or ?tv=1 in URL). Larger fonts, big focus rings, hidden mouse.
+   * ============================================================ */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent), 0 0 0 6px rgba(255,0,51,0.35) !important;
+    border-radius: var(--radius-sm);
+    z-index: 5;
+    position: relative;
+  }
+  body.tv-mode { font-size: 20px; cursor: none; }
+  body.tv-mode :focus-visible {
+    box-shadow: 0 0 0 4px var(--accent), 0 0 0 10px rgba(255,0,51,0.45) !important;
+    transform: scale(1.03);
+    transition: transform 0.12s;
+  }
+  body.tv-mode .app { max-width: 1600px; padding: 36px; gap: 32px; }
+  body.tv-mode .panel { min-height: 820px; }
+  body.tv-mode header.brand { font-size: 26px; }
+  body.tv-mode .brand-mark { width: 44px; height: 44px; }
+  body.tv-mode .btn { padding: 16px 24px; font-size: 16px; }
+  body.tv-mode .btn.primary { padding: 18px 28px; font-size: 17px; }
+  body.tv-mode .play-btn { width: 92px; height: 92px; }
+  body.tv-mode .media-tab { padding: 14px 8px; font-size: 16px; }
+  body.tv-mode .side-tab { padding: 14px; font-size: 14px; }
+  body.tv-mode .chip { padding: 8px 16px; font-size: 14px; }
+  body.tv-mode .book { padding: 12px; }
+  body.tv-mode .book .thumb { width: 64px; height: 64px; }
+  body.tv-mode .book-title { font-size: 16px; }
+  body.tv-mode .catalog-card { padding: 16px; }
+  body.tv-mode .cat-thumb { width: 72px; height: 72px; font-size: 36px; }
+  body.tv-mode .cat-title { font-size: 17px; }
+  body.tv-mode .cat-meta { font-size: 14px; }
+  body.tv-mode .cat-desc { font-size: 13px; }
+  body.tv-mode .yt-result-thumb { width: 180px; height: 100px; }
+  body.tv-mode .yt-result-title { font-size: 16px; }
+  body.tv-mode .np-title { font-size: 28px; }
+  body.tv-mode .np-sub { font-size: 16px; }
+  body.tv-mode .modal { width: min(960px, 92vw); padding: 28px; font-size: 16px; }
+  body.tv-mode .modal h2 { font-size: 24px; }
+  body.tv-mode .field input { padding: 14px; font-size: 16px; }
+  body.tv-mode .yt-result-add { padding: 12px 18px; font-size: 15px; }
+  body.tv-mode .yt-result-preview { padding: 10px 16px; font-size: 14px; }
+  /* Smooth scroll for TV navigation */
+  body.tv-mode { scroll-behavior: smooth; }
 </style>
 </head>
 <body>
@@ -2574,6 +2621,108 @@
       await loadFromCloud();
     }
   });
+
+  /* ============================================================
+   * TV MODE (Samsung Tizen) — detection, spatial navigation, back key
+   * ============================================================ */
+  function isTvEnv() {
+    const ua = (navigator.userAgent || '').toLowerCase();
+    if (location.search.includes('tv=1')) return true;
+    if (/tizen|webos|smarthub|smart-tv|smarttv|hbbtv|netcast/.test(ua)) return true;
+    return false;
+  }
+  if (isTvEnv()) document.body.classList.add('tv-mode');
+
+  // Make all interactive cards focusable so D-pad works on them
+  function ensureTabbable() {
+    document.querySelectorAll('.book, .catalog-card, .yt-result, .chip, .media-tab, .side-tab, .play-chip, .yt-bar-bookmark').forEach(el => {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    });
+  }
+  // Run after each render too — new DOM nodes need tabindex
+  const _origRenderLibrary = window.renderLibrary;
+  setInterval(ensureTabbable, 1500); // cheap re-tick to catch dynamic content
+
+  // Spatial navigation: pick nearest focusable in the pressed direction
+  function focusableEls() {
+    const list = Array.from(document.querySelectorAll(
+      'button:not([disabled]), a[href], input:not([disabled]):not([type="hidden"]), [tabindex="0"], summary'
+    ));
+    return list.filter(el => {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) return false;
+      // Skip elements inside hidden modals
+      let p = el.parentElement;
+      while (p) {
+        if (p.classList && p.classList.contains('modal-backdrop') && !p.classList.contains('open')) return false;
+        p = p.parentElement;
+      }
+      return true;
+    });
+  }
+  function navigateSpatial(dir) {
+    const cur = document.activeElement;
+    const curRect = (cur && cur !== document.body) ? cur.getBoundingClientRect() : { left: 0, top: 0, right: 0, bottom: 0 };
+    const cx = (curRect.left + curRect.right) / 2;
+    const cy = (curRect.top + curRect.bottom) / 2;
+    let best = null, bestScore = Infinity;
+    for (const el of focusableEls()) {
+      if (el === cur) continue;
+      const r = el.getBoundingClientRect();
+      const ex = (r.left + r.right) / 2;
+      const ey = (r.top + r.bottom) / 2;
+      const dx = ex - cx;
+      const dy = ey - cy;
+      let inDir = false;
+      if (dir === 'ArrowDown'  && dy >  16) inDir = true;
+      if (dir === 'ArrowUp'    && dy < -16) inDir = true;
+      if (dir === 'ArrowRight' && dx >  16) inDir = true;
+      if (dir === 'ArrowLeft'  && dx < -16) inDir = true;
+      if (!inDir) continue;
+      // Prefer elements closer in the same axis perpendicular to movement
+      const dist = Math.hypot(dx, dy);
+      const axisPenalty = (dir === 'ArrowDown' || dir === 'ArrowUp') ? Math.abs(dx) * 1.5 : Math.abs(dy) * 1.5;
+      const score = dist + axisPenalty;
+      if (score < bestScore) { bestScore = score; best = el; }
+    }
+    if (best) {
+      best.focus({ preventScroll: false });
+      best.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    // Always: Tizen back key closes modals
+    if (e.keyCode === 10009 || e.key === 'GoBack' || e.key === 'BrowserBack') {
+      const open = document.querySelector('.modal-backdrop.open');
+      if (open) { e.preventDefault(); open.classList.remove('open'); return; }
+    }
+    if (!document.body.classList.contains('tv-mode')) return;
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+      // Don't hijack arrows in inputs/textareas (typing)
+      const ae = document.activeElement;
+      if (ae && (ae.matches('input, textarea') || ae.isContentEditable)) return;
+      e.preventDefault();
+      navigateSpatial(e.key);
+    }
+    // Enter/OK = activate (browsers do this natively for buttons; for divs we trigger click)
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      const ae = document.activeElement;
+      if (ae && ae !== document.body && ae.matches('[tabindex="0"]') && !ae.matches('button, a, input')) {
+        e.preventDefault();
+        ae.click();
+      }
+    }
+  });
+
+  // Auto-focus first useful element on load when in TV mode
+  if (document.body.classList.contains('tv-mode')) {
+    setTimeout(() => {
+      ensureTabbable();
+      const first = document.querySelector('.media-tab.active') || document.querySelector('.media-tab') || document.querySelector('button');
+      if (first) first.focus();
+    }, 300);
+  }
 
   /* ===== INIT ===== */
   // Register service worker so the app is installable as a PWA and stays alive in background
