@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Audiolibres, la web para escuchar audiolibros, música y vídeos de YouTube sin anuncios. Tu biblioteca personal con marcadores, sincronizada en todos tus dispositivos. Para padres, niños y abuelos." />
+<meta name="robots" content="index, follow" />
+<title>Audiolibres explicado: la app para toda la familia, sin anuncios y con tu biblioteca | Audiolibres</title>
+<link rel="canonical" href="https://audiolibres.com/blog/audiolibres-para-toda-la-familia" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://audiolibres.com/blog/audiolibres-para-toda-la-familia" />
+<meta property="og:title" content="Audiolibres explicado: la app sin anuncios para toda la familia" />
+<meta property="og:description" content="Cómo escuchar audiolibros, música y películas de YouTube sin anuncios y sin distracciones. Una guía completa con capturas y casos de uso para padres, niños y abuelos." />
+<meta property="og:image" content="https://audiolibres.com/logo-mark.png" />
+<meta property="og:locale" content="es_ES" />
+<meta property="og:site_name" content="audiolibres" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Audiolibres explicado: la app sin anuncios para toda la familia" />
+<meta name="twitter:description" content="Cómo escuchar audiolibros, música y películas de YouTube sin anuncios. Una guía con capturas y casos de uso." />
+<meta name="twitter:image" content="https://audiolibres.com/logo-mark.png" />
+<link rel="icon" href="/logo-favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --yt-red:#FF0033; --yt-red-dark:#CC0028; --yt-red-soft:#FFE8EC; --ink:#1a1a1a; --ink-soft:#3a3a3a; --gray-700:#5a5a5a; --gray-500:#8a8a8a; --gray-300:#c9c9c9; --gray-100:#EFECE6; --cream:#FAF7F2; }
+  *{box-sizing:border-box;}
+  body { margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  a { color:var(--yt-red); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .container { max-width:780px; margin:0 auto; padding:0 24px; }
+  .container-wide { max-width:1100px; margin:0 auto; padding:0 24px; }
+  nav.top { position:sticky; top:0; z-index:50; background:rgba(250,247,242,.92); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--gray-100); }
+  nav.top .inner { display:flex; align-items:center; justify-content:space-between; height:68px; max-width:1100px; margin:0 auto; padding:0 24px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; color:var(--ink); }
+  .brand-mark { width:30px; height:30px; border-radius:8px; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; }
+  .brand-name b { color:var(--yt-red); }
+  .nav-links { display:flex; gap:28px; align-items:center; }
+  .nav-links a { color:var(--gray-700); font-size:14px; font-weight:500; }
+  .nav-links a:hover { color:var(--ink); }
+  @media (max-width:780px){ .nav-links a:not(.btn){ display:none; } }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; font-size:14px; font-weight:600; border-radius:999px; border:0; cursor:pointer; }
+  .btn-primary { background:var(--yt-red); color:white !important; box-shadow:0 6px 16px rgba(255,0,51,.22); }
+  .btn-primary:hover { background:var(--yt-red-dark); text-decoration:none; }
+  .article-header { padding:60px 0 40px; }
+  .breadcrumb { font-size:13px; color:var(--gray-500); margin-bottom:24px; }
+  .breadcrumb a { color:var(--gray-700); }
+  .category { display:inline-block; background:var(--yt-red-soft); color:var(--yt-red); padding:5px 14px; border-radius:999px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.1em; margin-bottom:20px; }
+  h1.article-title { font-family:'Fraunces',serif; font-size:clamp(36px,5vw,54px); font-weight:500; letter-spacing:-0.02em; line-height:1.05; margin:0 0 20px; }
+  h1.article-title em { font-style:italic; color:var(--yt-red); }
+  .article-sub { font-size:20px; color:var(--gray-700); line-height:1.5; margin:0 0 28px; font-family:'Fraunces',serif; font-weight:400; }
+  .article-meta { display:flex; gap:16px; align-items:center; font-size:13px; color:var(--gray-500); padding-bottom:28px; border-bottom:1px solid var(--gray-100); }
+  .article-body { font-size:18px; line-height:1.75; color:var(--ink-soft); }
+  .article-body p { margin:0 0 24px; }
+  .article-body p:first-child::first-letter { font-family:'Fraunces',serif; font-size:68px; float:left; line-height:.9; margin:6px 10px 0 -2px; color:var(--yt-red); font-weight:500; }
+  .article-body h2 { font-family:'Fraunces',serif; font-size:32px; font-weight:500; margin:56px 0 20px; color:var(--ink); line-height:1.15; }
+  .article-body h3 { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin:36px 0 12px; color:var(--ink); }
+  .article-body ul { padding-left:24px; margin:0 0 24px; }
+  .article-body li { margin-bottom:10px; }
+  .article-body strong { color:var(--ink); font-weight:700; }
+  .article-body blockquote { font-family:'Fraunces',serif; font-style:italic; font-size:24px; line-height:1.35; color:var(--ink); margin:36px 0; padding:0 0 0 28px; border-left:3px solid var(--yt-red); }
+
+  /* Benefit cards grid */
+  .benefits-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin:32px 0 40px; }
+  @media (max-width:640px){ .benefits-grid { grid-template-columns:1fr; } }
+  .benefit-card { background:white; border:1px solid var(--gray-100); border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,.03); }
+  .benefit-card .ico { font-size:28px; margin-bottom:10px; }
+  .benefit-card h4 { font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin:0 0 8px; color:var(--ink); }
+  .benefit-card p { font-size:14px; color:var(--gray-700); margin:0; line-height:1.55; }
+
+  /* App mockups (CSS-recreated screenshots) */
+  .mock { background:#0F0F0F; border-radius:18px; padding:14px; margin:40px 0; box-shadow:0 30px 60px rgba(0,0,0,.18); border:1px solid #2a2a2a; overflow:hidden; }
+  .mock-bar { display:flex; align-items:center; gap:6px; padding-bottom:14px; }
+  .mock-bar .dot { width:11px; height:11px; border-radius:50%; background:#ff5f57; }
+  .mock-bar .dot:nth-child(2) { background:#febc2e; }
+  .mock-bar .dot:nth-child(3) { background:#28c840; }
+  .mock-bar .url { margin-left:auto; background:#1a1a1a; padding:5px 14px; border-radius:6px; font-size:11px; color:#888; font-family:ui-monospace,monospace; }
+  .mock-frame { background:#0F0F0F; border-radius:12px; padding:24px; min-height:380px; color:#F1F1F1; font-family:'Inter',sans-serif; font-size:13px; }
+  .mock-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .mock-logo { display:flex; align-items:center; gap:8px; font-weight:800; font-size:16px; }
+  .mock-logo .lm { width:24px; height:24px; border-radius:6px; background:var(--yt-red); display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .mock-logo b { color:var(--yt-red); }
+  .mock-actions { display:flex; gap:6px; }
+  .mock-actions .ab { padding:6px 12px; background:#272727; border-radius:999px; font-size:11px; color:#aaa; border:1px solid #333; }
+  .mock-actions .ab.primary { background:var(--yt-red); color:white; border-color:transparent; }
+
+  .mock-grid { display:grid; grid-template-columns:240px 1fr; gap:14px; }
+  @media (max-width:640px){ .mock-grid { grid-template-columns:1fr; } }
+
+  .mock-panel { background:#1A1A1A; border:1px solid #2a2a2a; border-radius:10px; padding:14px; }
+  .mock-tabs { display:flex; gap:3px; background:#272727; padding:3px; border-radius:7px; margin-bottom:8px; }
+  .mock-tab { flex:1; padding:5px 4px; border-radius:5px; text-align:center; font-size:10px; color:#888; }
+  .mock-tab.active { background:var(--yt-red); color:white; }
+  .mock-search { background:#272727; border:1px solid #333; padding:6px 10px; border-radius:6px; font-size:11px; color:#666; margin:8px 0; }
+  .mock-chips { display:flex; gap:4px; flex-wrap:wrap; margin:6px 0 12px; }
+  .mock-chip { padding:3px 9px; border-radius:999px; font-size:10px; background:#272727; color:#888; border:1px solid #333; }
+  .mock-chip.on { background:linear-gradient(135deg,var(--yt-red),#cc0028); color:white; border-color:transparent; }
+  .mock-section-title { font-size:9px; color:#666; letter-spacing:.1em; margin:6px 0; text-transform:uppercase; font-weight:700; }
+  .mock-book { display:flex; gap:8px; padding:6px; border-radius:7px; margin-bottom:5px; align-items:center; }
+  .mock-book.active { background:#0c1929; border:1px solid #1f3a55; }
+  .mock-book .thumb { width:36px; height:36px; border-radius:5px; background:linear-gradient(135deg,#1c2a40,#2a1f40); flex-shrink:0; }
+  .mock-book .info { flex:1; min-width:0; }
+  .mock-book .title { font-size:11px; font-weight:600; color:#F1F1F1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mock-book .meta { font-size:9px; color:#888; }
+  .mock-book .bar { height:2px; background:#272727; margin-top:3px; border-radius:1px; }
+  .mock-book .bar i { display:block; height:100%; background:var(--yt-red); border-radius:1px; }
+
+  .mock-cover { aspect-ratio:1/1; border-radius:10px; background:linear-gradient(135deg,#1c2a40,#2a1f40); position:relative; margin-bottom:10px; overflow:hidden; }
+  .mock-cover .play { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .mock-cover .play .btn-play { width:40px; height:40px; border-radius:50%; background:var(--yt-red); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(255,0,51,.5); }
+  .mock-now { display:grid; grid-template-columns:120px 1fr; gap:14px; }
+  @media (max-width:540px){ .mock-now { grid-template-columns:1fr; } }
+  .mock-controls { display:flex; gap:5px; align-items:center; margin-top:8px; }
+  .mock-controls .c { padding:4px 8px; background:#272727; border:1px solid #333; border-radius:5px; font-size:9px; }
+  .mock-controls .c.play-c { background:var(--yt-red); color:white; padding:6px 10px; border-radius:50%; border-color:transparent; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:10px; }
+  .mock-prog { height:3px; background:#272727; margin-top:8px; border-radius:2px; }
+  .mock-prog i { display:block; height:100%; width:30%; background:var(--yt-red); border-radius:2px; }
+  .mock-times { display:flex; justify-content:space-between; font-size:9px; color:#888; margin-top:4px; font-variant-numeric:tabular-nums; }
+
+  /* Modal mockup */
+  .mock-modal { background:#1A1A1A; border:1px solid #2a2a2a; border-radius:12px; padding:18px; max-width:560px; margin:0 auto; }
+  .mock-modal h4 { font-size:14px; margin:0 0 14px; color:#F1F1F1; }
+  .mock-modal .input { background:#272727; border:1px solid var(--yt-red); padding:9px 12px; border-radius:7px; font-size:12px; color:#F1F1F1; margin-bottom:14px; }
+  .mock-section-lv { display:inline-block; font-size:9px; font-weight:700; color:var(--yt-red); letter-spacing:.1em; margin:6px 0; }
+  .mock-section-yt { display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:.1em; margin:14px 0 6px; }
+  .mock-result { display:flex; gap:8px; padding:7px; background:#272727; border-radius:7px; margin-bottom:5px; align-items:center; }
+  .mock-result .rt { width:48px; height:30px; background:#000; border-radius:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .mock-result .info { flex:1; min-width:0; }
+  .mock-result .title { font-size:11px; font-weight:600; color:#F1F1F1; }
+  .mock-result .meta { font-size:9px; color:#888; }
+  .mock-result button { padding:5px 10px; font-size:9px; font-weight:700; border-radius:999px; background:var(--yt-red); color:white; border:0; }
+  .mock-result button.added { background:#2a8a3e; }
+  .mock-result button.preview { background:#272727; color:#F1F1F1; border:1px solid #333; padding:4px 8px; }
+
+  /* Family persona cards */
+  .personas-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin:32px 0; }
+  @media (max-width:640px){ .personas-grid { grid-template-columns:1fr; } }
+  .persona { background:white; border-radius:16px; padding:26px; border:1px solid var(--gray-100); }
+  .persona .em { font-size:36px; margin-bottom:8px; }
+  .persona h4 { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin:0 0 6px; }
+  .persona .sub { font-size:13px; color:var(--gray-500); margin-bottom:14px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
+  .persona p { font-size:15px; color:var(--gray-700); margin:0 0 12px; line-height:1.55; }
+  .persona ul { padding-left:20px; margin:0; font-size:14px; color:var(--gray-700); }
+  .persona ul li { margin-bottom:5px; }
+
+  /* CTA */
+  .cta-box { background:var(--ink); color:white; border-radius:20px; padding:48px; margin:60px 0; text-align:center; }
+  .cta-box h3 { font-family:'Fraunces',serif; font-size:32px; font-weight:500; margin:0 0 12px; color:white; }
+  .cta-box p { color:#c9c9c9; margin:0 0 24px; font-size:16px; }
+  .cta-box .btn-primary { background:white; color:var(--yt-red) !important; }
+
+  /* Step list */
+  .steps { counter-reset:step; padding:0; list-style:none; margin:32px 0; }
+  .steps li { position:relative; padding:22px 22px 22px 70px; background:white; border:1px solid var(--gray-100); border-radius:14px; margin-bottom:14px; counter-increment:step; }
+  .steps li::before { content:counter(step); position:absolute; left:18px; top:18px; width:36px; height:36px; border-radius:50%; background:var(--yt-red); color:white; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .steps li h4 { font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin:0 0 6px; }
+  .steps li p { margin:0; font-size:15px; color:var(--gray-700); line-height:1.55; }
+
+  /* FAQ */
+  details.faq { background:white; border:1px solid var(--gray-100); border-radius:12px; padding:0; margin-bottom:10px; }
+  details.faq summary { padding:18px 22px; cursor:pointer; font-weight:600; font-size:16px; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  details.faq summary::-webkit-details-marker { display:none; }
+  details.faq summary::after { content:'+'; color:var(--yt-red); font-size:22px; font-weight:300; }
+  details.faq[open] summary::after { content:'−'; }
+  details.faq .a { padding:0 22px 18px; color:var(--gray-700); font-size:15px; line-height:1.6; }
+
+  footer { padding:40px 0; background:var(--cream); border-top:1px solid var(--gray-100); text-align:center; color:var(--gray-500); font-size:13px; }
+  footer a { color:var(--gray-700); margin:0 12px; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <a href="/" class="brand">
+      <span class="brand-mark"><img src="/logo-mark.png" alt="audiolibres" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;" /></span>
+      <span class="brand-name">audio<b>libres</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="/#features">Características</a>
+      <a href="/blog">Blog</a>
+      <a href="/#faq">Preguntas</a>
+      <a href="/app" class="btn btn-primary">Abrir app</a>
+    </div>
+  </div>
+</nav>
+
+<article>
+  <header class="article-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Inicio</a> → <a href="/blog">Blog</a> → Audiolibres para toda la familia
+      </div>
+      <span class="category">Guía</span>
+      <h1 class="article-title">Audiolibres explicado: <em>una app para toda la familia</em>, sin anuncios y con tu biblioteca</h1>
+      <p class="article-sub">Cómo escuchar audiolibros, música y películas de YouTube como si fuera Spotify — sin spots de marca interrumpiendo a Marco Aurelio, sin pestañas que se cierran solas, y con marcadores que se sincronizan en todos tus dispositivos.</p>
+      <div class="article-meta">
+        <span>10 min de lectura</span><span class="dot">•</span><span>Mayo 2026</span><span class="dot">•</span><span>Por Audiolibres</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="article-body">
+
+      <p>Imagínate que tu hijo acaba de meterse en la cama y le pones <em>El Principito</em>. A los dos minutos arranca un anuncio de un casino. Le quitas el móvil. Lo cierras. Lo vuelves a abrir. Otro anuncio. La hora de dormir se ha vuelto un campo de minas. Y eso suponiendo que la versión que encontraste no se interrumpa porque la cuenta sin Premium "no permite reproducción en segundo plano".</p>
+
+      <p>Esa fricción diaria es exactamente la razón por la que existe <a href="/">audiolibres.com</a>. Una herramienta gratis, sin instalación, que coge los audiolibros y vídeos que ya están en YouTube y los presenta como una biblioteca personal — limpia, organizada, sin anuncios y sin scroll infinito.</p>
+
+      <p>Este artículo es una guía completa: qué hace audiolibres, los seis beneficios concretos para una familia, capturas de cómo se ve por dentro, los pasos exactos para usarlo, y casos reales para padres, niños y abuelos.</p>
+
+      <h2>¿Qué es audiolibres exactamente?</h2>
+
+      <p><strong>Audiolibres es una web app — no una aplicación que tengas que descargar de la App Store, ni un servicio con suscripción.</strong> Abres <a href="/">audiolibres.com</a> en cualquier navegador (Chrome, Safari, el del Smart TV) y ya está dentro. Si quieres, le das al botón "Añadir a pantalla de inicio" del móvil y tienes su icono propio como una app más.</p>
+
+      <p>Por dentro, audiolibres reproduce contenido que ya existe en <strong>YouTube</strong> (audiolibros narrados por canales reales) y en <strong>LibriVox</strong> (la biblioteca de audiolibros en dominio público — Marco Aurelio, Cervantes, Tolstói, miles de obras). La diferencia con abrir YouTube directamente es que aquí no hay anuncios entre capítulos, no hay vídeos sugeridos que distraigan, y tu biblioteca queda guardada y organizada por categorías.</p>
+
+      <blockquote>El contenido es el mismo que ya está en YouTube. La diferencia es la experiencia alrededor: cero anuncios, biblioteca personal, marcadores y sincronización entre tus dispositivos.</blockquote>
+
+      <h2>Los seis beneficios reales</h2>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="ico">🚫</div>
+          <h4>Cero anuncios entre capítulos</h4>
+          <p>Te metes en Meditaciones de Marco Aurelio y no hay un cuñao vendiendo crypto cada 8 minutos. Es solo el audiolibro, de principio a fin.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="ico">📚</div>
+          <h4>Tu biblioteca personal</h4>
+          <p>Cada vez que añades algo, queda guardado en tu cuenta. Tu lista crece como en Spotify. Sin "perder" un audiolibro porque cerraste la pestaña.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="ico">🔖</div>
+          <h4>Marcadores en cualquier punto</h4>
+          <p>Pulsas el icono de marcador y guardas el momento exacto. "Frase brutal del minuto 23:14" — para volver mañana donde lo dejaste.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="ico">📱</div>
+          <h4>Sincronizado entre móvil y PC</h4>
+          <p>Empiezas en el ordenador, sigues en el móvil mientras paseas, retomas en el portátil al volver. Misma posición, mismos marcadores.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="ico">🔍</div>
+          <h4>Buscador unificado</h4>
+          <p>Una sola caja de búsqueda. Te enseña a la vez resultados de YouTube y de LibriVox. Dos universos en un solo clic.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="ico">🎧</div>
+          <h4>Suena con la pantalla bloqueada</h4>
+          <p>Para los audiolibros de LibriVox, sigue reproduciéndose aunque bloquees el móvil — exactamente como Spotify. Controles en la pantalla de bloqueo incluidos.</p>
+        </div>
+      </div>
+
+      <h2>Una mirada por dentro</h2>
+
+      <p>Así se ve audiolibres cuando entras. A la izquierda tu biblioteca personal organizada por tipo (audiolibros, música, películas) y por categorías. A la derecha el reproductor con el contenido que estás escuchando ahora mismo, controles tipo podcast (saltar 15 segundos atrás, 30 adelante, velocidad 1×, marcador), y debajo la lista de tus marcadores guardados.</p>
+
+      <!-- Mockup 1: Dashboard -->
+      <div class="mock">
+        <div class="mock-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="url">audiolibres.com/app</span>
+        </div>
+        <div class="mock-frame">
+          <div class="mock-header">
+            <div class="mock-logo"><span class="lm">▸</span> audio<b>libres</b></div>
+            <div class="mock-actions">
+              <span class="ab">Entrar</span>
+              <span class="ab">💤 Sleep</span>
+              <span class="ab primary">+ Añadir audiolibro</span>
+            </div>
+          </div>
+          <div class="mock-grid">
+            <div class="mock-panel">
+              <div class="mock-tabs">
+                <span class="mock-tab active">📚 Audiolibros</span>
+                <span class="mock-tab">🎵 Música</span>
+                <span class="mock-tab">🎬 Pelis</span>
+              </div>
+              <div class="mock-tabs">
+                <span class="mock-tab active">Mi biblioteca</span>
+                <span class="mock-tab">✨ Descubrir</span>
+              </div>
+              <div class="mock-search">🔎 Busca aquí o en YouTube + LibriVox…</div>
+              <div class="mock-chips">
+                <span class="mock-chip on">Todas</span>
+                <span class="mock-chip">Filosofía</span>
+                <span class="mock-chip">Novela</span>
+                <span class="mock-chip">Autoayuda</span>
+              </div>
+              <div class="mock-section-title">Biblioteca · 4 audiolibros</div>
+              <div class="mock-book active">
+                <div class="thumb"></div>
+                <div class="info">
+                  <div class="title">Meditaciones</div>
+                  <div class="meta">Marco Aurelio · 5:45:13</div>
+                  <div class="bar"><i style="width:33%"></i></div>
+                </div>
+              </div>
+              <div class="mock-book">
+                <div class="thumb"></div>
+                <div class="info">
+                  <div class="title">El Acto de Crear</div>
+                  <div class="meta">Rick Rubin · 8:21:00</div>
+                  <div class="bar"><i style="width:62%"></i></div>
+                </div>
+              </div>
+              <div class="mock-book">
+                <div class="thumb"></div>
+                <div class="info">
+                  <div class="title">Hábitos Atómicos</div>
+                  <div class="meta">James Clear · 5:32:09</div>
+                  <div class="bar"><i style="width:8%"></i></div>
+                </div>
+              </div>
+              <div class="mock-book">
+                <div class="thumb"></div>
+                <div class="info">
+                  <div class="title">Sapiens</div>
+                  <div class="meta">Yuval Harari · 14:54:18</div>
+                  <div class="bar"><i style="width:0"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="mock-panel">
+              <div class="mock-now">
+                <div>
+                  <div class="mock-cover">
+                    <div class="play"><div class="btn-play">▶</div></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:16px;font-weight:700;color:#F1F1F1;margin-bottom:4px;">Meditaciones</div>
+                  <div style="font-size:12px;color:#888;">Marco Aurelio · LibriVox · Capítulo 4/12</div>
+                  <div class="mock-controls">
+                    <span class="c">⏪15</span>
+                    <span class="c play-c">⏸</span>
+                    <span class="c">30⏩</span>
+                    <span class="c">1×</span>
+                    <span class="c">🔖</span>
+                  </div>
+                  <div class="mock-prog"><i></i></div>
+                  <div class="mock-times"><span>1:48:22</span><span>5:45:13</span></div>
+                  <div style="font-size:10px;color:#888;margin-top:14px;">2 marcadores</div>
+                  <div style="background:#272727;padding:8px;border-radius:6px;font-size:10px;color:#aaa;margin-top:6px;">"Frase brutal del libro 5" · 23:14</div>
+                  <div style="background:#272727;padding:8px;border-radius:6px;font-size:10px;color:#aaa;margin-top:4px;">"Sobre la muerte y la naturaleza" · 1:24:08</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>Cómo se usa, paso a paso</h2>
+
+      <ol class="steps">
+        <li>
+          <h4>Abrir audiolibres.com en cualquier navegador</h4>
+          <p>No hace falta instalar nada. En el móvil, al cabo de un segundo te aparecerá una sugerencia de "Añadir a pantalla de inicio" — acéptala y tienes el icono como app, sin pasar por App Store.</p>
+        </li>
+        <li>
+          <h4>Crear tu cuenta (o no)</h4>
+          <p>Puedes usar audiolibres sin registrarte y todo se guarda en el navegador. Pero si quieres que tu biblioteca se sincronice entre móvil y PC, en 30 segundos creas una cuenta con email y contraseña. Cero spam.</p>
+        </li>
+        <li>
+          <h4>Buscar el contenido que quieras</h4>
+          <p>Pulsa el botón rojo <strong>+ Añadir audiolibro</strong> arriba a la derecha. Se abre un buscador grande. Escribes "meditaciones marco aurelio" y aparecen resultados <em>simultáneos</em> de YouTube y LibriVox. Click en + Añadir y ya está en tu biblioteca.</p>
+        </li>
+        <li>
+          <h4>Escuchar y marcar</h4>
+          <p>Le das al play. Si te encuentras una frase que quieres recordar, pulsas el botón 🔖 y escribes una nota. Esa nota queda guardada en ese segundo exacto del audio. Mañana vuelves y haces clic en el marcador para saltar directo allí.</p>
+        </li>
+      </ol>
+
+      <h2>El buscador combinado</h2>
+
+      <p>La mayor diferencia con la app oficial de YouTube es ésta: cuando buscas algo, audiolibres consulta <strong>dos bases de datos en paralelo</strong>. Por un lado, YouTube — donde están los audiolibros narrados por canales modernos como AMA Audiolibros, Diario Estoico, etc. Por otro, <strong>LibriVox</strong>, una biblioteca de dominio público con miles de obras leídas por voluntarios — clásicos perfectamente narrados, totalmente legales, gratis y sin ningún tipo de restricción.</p>
+
+      <p>Esto es lo que ves cuando escribes "meditaciones" en el buscador:</p>
+
+      <!-- Mockup 2: Search modal -->
+      <div class="mock">
+        <div class="mock-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="url">audiolibres.com/app</span>
+        </div>
+        <div class="mock-frame" style="background:rgba(15,15,15,.9);">
+          <div class="mock-modal">
+            <h4>Añadir audiolibro</h4>
+            <div style="font-size:10px;color:#888;margin-bottom:6px;">Busca en YouTube o pega una URL</div>
+            <div class="input">🔎 meditaciones</div>
+            <div class="mock-section-lv">🎧 LIBRIVOX · DOMINIO PÚBLICO · BACKGROUND EN IPHONE</div>
+            <div class="mock-result">
+              <div class="rt" style="background:linear-gradient(135deg,#1c2a40,#2a1f40);">📖</div>
+              <div class="info">
+                <div class="title">Meditaciones</div>
+                <div class="meta">Marco Aurelio · 12 secciones · Spanish</div>
+              </div>
+              <button class="added">✓ Añadido</button>
+            </div>
+            <div class="mock-section-yt">📺 YOUTUBE</div>
+            <div class="mock-result">
+              <div class="rt" style="background:#222;">15:24</div>
+              <div class="info">
+                <div class="title">15 Magical Minutes to Eliminate ANXIETY</div>
+                <div class="meta">Anabel Otero · 4 M vistas</div>
+              </div>
+              <button>+ Añadir</button>
+            </div>
+            <div class="mock-result">
+              <div class="rt" style="background:#222;">1:29:59</div>
+              <div class="info">
+                <div class="title">Iniciación a la Meditación · Lama Rinchen</div>
+                <div class="meta">Paramita · 1.3 M vistas</div>
+              </div>
+              <button>+ Añadir</button>
+            </div>
+            <div class="mock-result">
+              <div class="rt" style="background:#222;">12:00</div>
+              <div class="info">
+                <div class="title">Meditación para principiantes</div>
+                <div class="meta">CuriosaMente · 4 M vistas</div>
+              </div>
+              <button>+ Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>Tres detalles que hacen el buscador muy práctico:</p>
+
+      <ul>
+        <li><strong>El botón "▶ Probar"</strong> al lado de "+ Añadir" reproduce los primeros segundos del audio antes de añadirlo a tu biblioteca. Para no llevarte sorpresas con la voz del narrador.</li>
+        <li><strong>LibriVox = background play en iPhone</strong>. Los audiolibros que añades de LibriVox sí siguen sonando aunque bloquees la pantalla del iPhone — algo que YouTube en navegador móvil no permite. Esto es enorme para escuchar mientras vas en metro, conduces o vas a dormir.</li>
+        <li><strong>Pegar una URL</strong>. Si tienes el enlace de un vídeo de YouTube concreto, pégalo en el mismo buscador y lo añade directo, sin buscar.</li>
+      </ul>
+
+      <h2>El reproductor: dos modos</h2>
+
+      <p>Cuando estás escuchando algo, el reproductor tiene dos vistas que cambias con un botón. <strong>Vista compacta</strong>: la portada del libro a la izquierda y el título + controles a la derecha. Es la vista por defecto, ideal para audiolibros donde el vídeo no aporta nada. <strong>Pantalla grande</strong>: el vídeo ocupa el ancho completo, formato 16:9, perfecto para conciertos, documentales o películas. La preferencia se guarda — si una vez le diste a "Pantalla grande", la próxima vez que entres se queda así.</p>
+
+      <p>Y por encima de todo: <strong>marcadores estilo YouTube</strong>. Una caja debajo del reproductor donde escribes una nota y pulsas Publicar. Esa nota se ancla al segundo exacto donde estabas. Acumulas tantas como quieras. Cada una es clickable para volver allí.</p>
+
+      <h2>Para cada miembro de la familia</h2>
+
+      <div class="personas-grid">
+        <div class="persona">
+          <div class="em">👶</div>
+          <h4>Para los peques</h4>
+          <div class="sub">3-10 años</div>
+          <p>Cuentos clásicos en formato audiolibro sin que aparezca un anuncio del Black Friday a mitad de "El Patito Feo". Antes de dormir le pones un cuento, le das al sleep timer (15, 30, 60 minutos) y se apaga solo.</p>
+          <ul>
+            <li>El Principito, Caperucita Roja, Las Mil y Una Noches</li>
+            <li>Cuentos de los Hermanos Grimm narrados</li>
+            <li>Sleep timer para que se apague solo</li>
+          </ul>
+        </div>
+        <div class="persona">
+          <div class="em">👨‍🎓</div>
+          <h4>Para adolescentes</h4>
+          <div class="sub">11-18 años</div>
+          <p>Lecturas obligatorias del instituto en formato audio, mientras hacen otras cosas. La Celestina, El Lazarillo, Crónica de una Muerte Anunciada, Las Aventuras de Tom Sawyer. Y también Sapiens, Hábitos Atómicos para los más mayores.</p>
+          <ul>
+            <li>Lecturas del programa escolar</li>
+            <li>Libros de productividad y desarrollo personal</li>
+            <li>Velocidad 1.25× / 1.5× para repasar</li>
+          </ul>
+        </div>
+        <div class="persona">
+          <div class="em">👩‍💼</div>
+          <h4>Para adultos</h4>
+          <div class="sub">Padres, profesionales</div>
+          <p>Mientras cocinas, conduces, paseas, vas al gimnasio, planchas. Audiolibres en el móvil, AirPods, y a 1.5× porque el tiempo es lo único que no se compra. Tu biblioteca crece y la sincronizas entre todos tus dispositivos.</p>
+          <ul>
+            <li>Productividad: Hábitos Atómicos, Deep Work</li>
+            <li>Filosofía: Marco Aurelio, Séneca, Nietzsche</li>
+            <li>Negocios: Padre Rico Padre Pobre, Piense y Hágase Rico</li>
+          </ul>
+        </div>
+        <div class="persona">
+          <div class="em">👴</div>
+          <h4>Para abuelos</h4>
+          <div class="sub">60+ años</div>
+          <p>La interfaz es grande, simple, sin scroll infinito ni notificaciones. Los clásicos que ya leyeron en su día, ahora narrados. Don Quijote, Cien Años de Soledad, Crimen y Castigo. La pantalla grande del Smart TV los reproduce con calidad.</p>
+          <ul>
+            <li>Funciona en el navegador del Smart TV</li>
+            <li>Texto grande, controles claros</li>
+            <li>Sin scroll infinito ni distracciones</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Casos de uso reales</h2>
+
+      <h3>El paseo del perro</h3>
+      <p>Sales a la calle a las 7 de la tarde. Sacas el móvil, abres audiolibres (icono en la pantalla de inicio porque está instalada como PWA), tocas Meditaciones de Marco Aurelio en tu biblioteca. AirPods conectados, pantalla bloqueada en el bolsillo. <strong>El audio sigue sonando perfectamente</strong> aunque la pantalla esté apagada — porque LibriVox usa audio HTML nativo, no iframe de YouTube. 45 minutos paseando, vuelves, vuelves a abrir audiolibres y el progreso está guardado: empieza donde te quedaste.</p>
+
+      <h3>La hora del baño de los niños</h3>
+      <p>Los niños tienen 6 y 8 años. Mientras se bañan, abres audiolibres en la tablet (mismos audiolibros sincronizados desde tu cuenta), eliges <em>El Principito</em> o un cuento de los Hermanos Grimm, le das play. Cero anuncios — el cuento empieza y termina sin interrupciones. Los chavales no piden cambiar a TikTok porque no hay un botón de "next video" tentándoles.</p>
+
+      <h3>Conduciendo a 110 km/h</h3>
+      <p>Vas de viaje 4 horas por la AP-7. Móvil conectado al CarPlay/Android Auto. En el reproductor del coche aparecen los <strong>controles nativos del sistema</strong> con el título del audiolibro, el nombre del autor, y los botones de play/pausa, +30 segundos, capítulo siguiente. Saltas capítulos sin tocar el móvil. <strong>La pantalla del coche reconoce audiolibres como fuente de audio</strong> igual que reconocería Spotify o Apple Music.</p>
+
+      <h3>El estudio de los exámenes</h3>
+      <p>Adolescente repasando Don Quijote para Lengua. En la web de audiolibres lo encuentra (LibriVox lo tiene completo en español). Pone velocidad 1.25× y va escuchando mientras hojea el libro físico. Cuando encuentra una frase importante, pulsa el icono de marcador y escribe "preguntar a profe sobre la cordura de Don Quijote — capítulo 8". Al día siguiente abre los marcadores y va directamente a esos puntos.</p>
+
+      <h2>Funciona también en el Samsung Smart TV</h2>
+
+      <p>Los Samsung con Tizen (a partir de 2018) traen un navegador Chromium que abre audiolibres perfectamente. Hemos puesto incluso un modo TV que se activa automáticamente cuando detecta el navegador del televisor: fuentes más grandes, foco rojo bien visible al moverte con el mando, y navegación con flechas (arriba/abajo/izquierda/derecha) que funciona como en Netflix. Si quieres forzar el modo TV desde el ordenador para probarlo, abre <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:14px;">audiolibres.com/app?tv=1</code>.</p>
+
+      <h2>Lo que no es</h2>
+
+      <p>Para no vender humo, dos cosas que <strong>audiolibres no es</strong>:</p>
+
+      <ul>
+        <li><strong>No es Audible.</strong> No tiene los audiolibros de pago (los nuevos best-sellers narrados profesionalmente y vendidos por Amazon). Audiolibres usa contenido que ya existe en YouTube y en LibriVox — que es muchísimo, pero no es todo.</li>
+        <li><strong>No es Spotify para música comercial.</strong> Si quieres oír el último álbum de Rosalía, sigue siendo mejor abrir Spotify. Lo que sí funciona perfecto en audiolibres son los streams de música tipo lo-fi, clásica, jazz, y conciertos de YouTube como los Tiny Desk de NPR.</li>
+      </ul>
+
+      <h2>Preguntas frecuentes</h2>
+
+      <details class="faq">
+        <summary>¿Es gratis de verdad? ¿Cuál es el truco?</summary>
+        <div class="a">Sí, gratis al 100%. Sin freemium escondido, sin créditos limitados. El truco es que audiolibres no aloja contenido propio — solo te organiza y reproduce lo que ya está en YouTube y LibriVox. Ahorra ancho de banda, sin servidores caros, y por eso puede ser gratis.</div>
+      </details>
+
+      <details class="faq">
+        <summary>¿Por qué algunos vídeos de música no se reproducen?</summary>
+        <div class="a">Porque algunas discográficas bloquean explícitamente el embed externo. No es algo que audiolibres pueda saltarse — es restricción del propio dueño del vídeo. Cuando pasa, te aparece un botón "Abrir en YouTube" para que sí puedas escucharlo. Para audiolibros narrados (que es nuestro foco) raramente pasa.</div>
+      </details>
+
+      <details class="faq">
+        <summary>¿Funciona sin internet?</summary>
+        <div class="a">No. El audio se streamea de YouTube/LibriVox así que necesitas conexión. Pero la app en sí (la interfaz) sí está cacheada — cargará rápido aunque tengas mala señal. Y tu biblioteca está guardada localmente, así que se ve aunque no haya internet, solo no podrás reproducir.</div>
+      </details>
+
+      <details class="faq">
+        <summary>¿Funciona en iPhone con la pantalla bloqueada?</summary>
+        <div class="a">Para los audiolibros de LibriVox, sí — sigue sonando con la pantalla apagada como Spotify. Para los de YouTube, no, porque Apple bloquea iframes de vídeo en background. Es una limitación del sistema operativo, no de audiolibres. Si te importa el background play, prioriza LibriVox.</div>
+      </details>
+
+      <details class="faq">
+        <summary>¿Qué pasa con mis datos? ¿Tenéis publicidad?</summary>
+        <div class="a">Cero publicidad. La app guarda tu biblioteca y marcadores en una base de datos cifrada (Supabase). No vendemos datos a nadie, no hacemos perfilado, no usamos cookies de tracking. La razón por la que existe audiolibres es justo evitar esa mierda.</div>
+      </details>
+
+      <details class="faq">
+        <summary>¿Puedo usarla sin crear cuenta?</summary>
+        <div class="a">Sí. Sin cuenta, todo se guarda en el navegador (localStorage). Si borras el caché del navegador o cambias de dispositivo, pierdes la biblioteca. Por eso recomendamos cuenta — pero es opcional.</div>
+      </details>
+
+      <div class="cta-box">
+        <h3>Prueba audiolibres ahora</h3>
+        <p>Funciona en el navegador. No hay que instalar nada. No te pide tarjeta. Y nunca te la va a pedir.</p>
+        <a href="/app" class="btn btn-primary">Abrir la app →</a>
+      </div>
+
+    </div>
+  </div>
+</article>
+
+<footer>
+  <div>
+    <a href="/">Inicio</a>·<a href="/app">Abrir app</a>·<a href="/blog">Blog</a>·<a href="/#faq">Preguntas</a>
+  </div>
+  <div style="margin-top:14px;">© 2026 Audiolibres · Hecho con cariño en Barcelona</div>
+</footer>
+
+</body>
+</html>
