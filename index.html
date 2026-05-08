@@ -603,23 +603,29 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="cover-card cc-1">
-        <div class="play-icon">▶</div>
-        <div>
+      <div class="cover-card cc-1" style="overflow:hidden;">
+        <img src="https://covers.openlibrary.org/b/id/211529-L.jpg" alt="Meditaciones" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border-radius:inherit;" />
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.05) 100%);z-index:1;"></div>
+        <div class="play-icon" style="position:relative;z-index:2;">▶</div>
+        <div style="position:relative;z-index:2;">
           <div class="cc-title">Meditaciones</div>
           <div class="cc-author">Marco Aurelio</div>
         </div>
       </div>
-      <div class="cover-card cc-2">
-        <div class="play-icon">▶</div>
-        <div>
+      <div class="cover-card cc-2" style="overflow:hidden;">
+        <img src="https://covers.openlibrary.org/b/id/13316390-L.jpg" alt="El Acto de Crear" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border-radius:inherit;" />
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.05) 100%);z-index:1;"></div>
+        <div class="play-icon" style="position:relative;z-index:2;">▶</div>
+        <div style="position:relative;z-index:2;">
           <div class="cc-title">El Acto de Crear</div>
           <div class="cc-author">Rick Rubin</div>
         </div>
       </div>
-      <div class="cover-card cc-3">
-        <div class="play-icon">▶</div>
-        <div>
+      <div class="cover-card cc-3" style="overflow:hidden;">
+        <img src="https://covers.openlibrary.org/b/id/8634250-L.jpg" alt="Sapiens" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border-radius:inherit;" />
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.25) 55%,rgba(0,0,0,0.05) 100%);z-index:1;"></div>
+        <div class="play-icon" style="position:relative;z-index:2;">▶</div>
+        <div style="position:relative;z-index:2;">
           <div class="cc-title">Sapiens</div>
           <div class="cc-author">Yuval Harari</div>
         </div>
@@ -878,9 +884,10 @@
   async function fetchCover(title, author) {
     const key = (title + '|' + author).toLowerCase();
     if (key in cache) return cache[key];
+    // 1) Google Books (still try, sometimes works)
     for (const q of [`intitle:"${title}" inauthor:"${author}"`, `${title} ${author}`]) {
       try {
-        const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=1&langRestrict=es`);
+        const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=1`);
         const data = await r.json();
         const img = data?.items?.[0]?.volumeInfo?.imageLinks;
         if (img) {
@@ -890,6 +897,16 @@
         }
       } catch {}
     }
+    // 2) Fallback to OpenLibrary (more reliable for classics)
+    try {
+      const r = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&limit=1`);
+      const data = await r.json();
+      const cid = data?.docs?.[0]?.cover_i;
+      if (cid) {
+        const url = `https://covers.openlibrary.org/b/id/${cid}-L.jpg`;
+        cache[key] = url; return url;
+      }
+    } catch {}
     cache[key] = ''; return '';
   }
 
