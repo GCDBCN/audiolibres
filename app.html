@@ -544,6 +544,14 @@
     background: var(--bg-elev-2); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 8px 12px; margin-bottom: 12px;
   }
+  /* Floating variant: fixed at bottom of viewport, shown when previewing from anywhere */
+  .preview-bar.floating {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    z-index: 100; max-width: 540px; width: calc(100% - 32px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+    background: var(--bg-elev); border-color: var(--accent);
+    padding: 10px 14px;
+  }
   .preview-bar .preview-info { flex: 1; min-width: 0; }
   .preview-bar .preview-title { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .preview-bar .preview-meta { font-size: 11px; color: var(--text-muted); }
@@ -771,18 +779,6 @@
         <span class="search-spinner" id="yt-search-spinner" style="display:none;">⏳</span>
       </div>
     </div>
-    <!-- Inline preview bar (shown while previewing a result) -->
-    <div id="preview-bar" class="preview-bar" style="display:none;">
-      <div class="preview-info">
-        <div id="preview-title" class="preview-title">—</div>
-        <div id="preview-meta" class="preview-meta">—</div>
-      </div>
-      <div class="preview-time" id="preview-time">0:00</div>
-      <button class="preview-btn" id="preview-toggle" title="Pausar/Reanudar">⏸</button>
-      <button class="preview-btn ghost" id="preview-close" title="Cerrar preview">✕</button>
-    </div>
-    <iframe id="preview-yt" style="position:absolute;width:1px;height:1px;left:-9999px;border:0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
-    <audio id="preview-audio" preload="metadata" style="display:none;"></audio>
     <div id="yt-results" class="yt-results"></div>
     <div id="yt-empty" class="yt-empty">Empieza a escribir para buscar — los resultados aparecen aquí.</div>
     <details class="manual-add">
@@ -2471,8 +2467,8 @@
       html += `<div style="font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.05em; margin:14px 0 6px;">🎧 LIBRIVOX</div>`;
       html += lvBooks.slice(0, 4).map((b, i) => {
         const already = haveLvIds.has('lv:' + b.id);
-        const btnLabel = already ? '✓ Añadido' : '+ Añadir';
-        const btnClass = already ? 'add added' : 'add';
+        const addBtn = already ? `<button class="add added" disabled style="margin-bottom:4px;">✓ Añadido</button>` : `<button class="add" data-side-lvi="${i}" style="margin-bottom:4px;">+ Añadir</button>`;
+        const prevBtn = `<button class="add" data-prev-side-lvi="${i}" style="background:var(--bg-elev);color:var(--text);border:1px solid var(--border);font-weight:600;">▶ Probar</button>`;
         return `<div class="catalog-card">
           <div class="cat-thumb" style="background:linear-gradient(135deg,#1c2a40,#2a1f40); display:flex;align-items:center;justify-content:center;font-size:28px;">📖</div>
           <div class="cat-info">
@@ -2480,7 +2476,7 @@
             <div class="cat-meta">${esc((b.authors||[]).slice(0,2).join(', '))} · ${b.sectionsCount} ${b.sectionsCount === 1 ? 'sección' : 'secciones'}</div>
             <div class="cat-cat">LibriVox</div>
           </div>
-          <button class="${btnClass}" data-side-lvi="${i}">${btnLabel}</button>
+          <div style="display:flex;flex-direction:column;gap:4px;">${addBtn}${prevBtn}</div>
         </div>`;
       }).join('');
     }
@@ -2492,8 +2488,8 @@
         const channel = it.author || '';
         const dur = it.durationLabel || '';
         const already = vid && haveIds.has(vid);
-        const btnLabel = already ? '✓ Añadido' : '+ Añadir';
-        const btnClass = already ? 'add added' : 'add';
+        const addBtn = already ? `<button class="add added" disabled style="margin-bottom:4px;">✓ Añadido</button>` : `<button class="add" data-side-yti="${i}" style="margin-bottom:4px;">+ Añadir</button>`;
+        const prevBtn = `<button class="add" data-prev-side-yti="${i}" style="background:var(--bg-elev);color:var(--text);border:1px solid var(--border);font-weight:600;">▶ Probar</button>`;
         return `<div class="catalog-card">
           <div class="cat-thumb" style="background:url('${esc(thumb)}') center/cover #111;"></div>
           <div class="cat-info">
@@ -2501,7 +2497,7 @@
             <div class="cat-meta">${esc(channel)}${dur ? ' · ' + esc(dur) : ''}</div>
             <div class="cat-cat">YouTube</div>
           </div>
-          <button class="${btnClass}" data-side-yti="${i}">${btnLabel}</button>
+          <div style="display:flex;flex-direction:column;gap:4px;">${addBtn}${prevBtn}</div>
         </div>`;
       }).join('');
     }
@@ -2540,6 +2536,19 @@
           renderSidebar();
           toast('Añadido a tu biblioteca');
         }
+      });
+    });
+    // Wire ▶ Probar — preview without adding
+    el.querySelectorAll('button[data-prev-side-yti]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const it = ytItems[parseInt(btn.dataset.prevSideYti, 10)];
+        previewYouTube(it, btn);
+      });
+    });
+    el.querySelectorAll('button[data-prev-side-lvi]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const b = lvBooks[parseInt(btn.dataset.prevSideLvi, 10)];
+        previewLibrivox(b, btn);
       });
     });
   }
@@ -2935,5 +2944,19 @@
   })();
 })();
 </script>
+
+<!-- Global preview bar — shown when user clicks ▶ Probar from sidebar or modal -->
+<div id="preview-bar" class="preview-bar floating" style="display:none;">
+  <div class="preview-info">
+    <div id="preview-title" class="preview-title">—</div>
+    <div id="preview-meta" class="preview-meta">—</div>
+  </div>
+  <div class="preview-time" id="preview-time">0:00</div>
+  <button class="preview-btn" id="preview-toggle" title="Pausar/Reanudar">⏸</button>
+  <button class="preview-btn ghost" id="preview-close" title="Cerrar preview">✕</button>
+</div>
+<iframe id="preview-yt" style="position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;border:0;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+<audio id="preview-audio" preload="metadata" style="display:none;"></audio>
+
 </body>
 </html>
