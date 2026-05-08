@@ -688,6 +688,8 @@
     <div class="section-title" id="library-count">Biblioteca</div>
     <div class="list" id="library"></div>
     <div class="catalog-grid" id="catalog" style="display:none;"></div>
+    <!-- Remote search results (YouTube + LibriVox) when user types in sidebar search on Descubrir -->
+    <div id="remote-results" class="catalog-grid" style="display:none;"></div>
   </aside>
 
   <main class="panel main">
@@ -1396,15 +1398,17 @@
   function renderSidebar() {
     const libEl = $('#library');
     const catEl = $('#catalog');
+    const rmEl  = document.getElementById('remote-results');
     if (sidebarMode === 'library') {
       libEl.style.display = '';
       catEl.style.display = 'none';
+      if (rmEl) { rmEl.style.display = 'none'; rmEl.innerHTML = ''; }
       $('#search-input').placeholder = 'Buscar en mi biblioteca…';
       renderLibrary();
     } else {
       libEl.style.display = 'none';
       catEl.style.display = '';
-      $('#search-input').placeholder = 'Buscar en el catálogo…';
+      $('#search-input').placeholder = 'Busca aquí o en YouTube + LibriVox…';
       renderCatalog();
     }
     document.querySelectorAll('.side-tab').forEach(t => {
@@ -2425,10 +2429,124 @@
     toast('Marcador guardado');
   });
 
+  /* Sidebar search: instant local filter + debounced remote fetch (YouTube + LibriVox) */
+  let sidebarRemoteT = null;
+  let sidebarRemoteSeq = 0;
   $('#search-input').addEventListener('input', () => {
-    if (sidebarMode === 'library') renderLibrary();
-    else renderCatalog();
+    if (sidebarMode === 'library') {
+      renderLibrary();
+      hideRemoteResults();
+      return;
+    }
+    renderCatalog();
+    const q = ($('#search-input').value || '').trim();
+    clearTimeout(sidebarRemoteT);
+    if (q.length < 3) { hideRemoteResults(); return; }
+    sidebarRemoteT = setTimeout(() => triggerSidebarRemoteSearch(q), 450);
   });
+  function hideRemoteResults() {
+    const el = document.getElementById('remote-results');
+    if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+  }
+  async function triggerSidebarRemoteSearch(q) {
+    const el = document.getElementById('remote-results');
+    if (!el) return;
+    const seq = ++sidebarRemoteSeq;
+    el.style.display = '';
+    el.innerHTML = `<div style="font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.05em; margin:8px 0;">🔎 BUSCANDO EN YOUTUBE Y LIBRIVOX…</div>`;
+    const [items, lvBooks] = await Promise.all([
+      searchYouTube(q),
+      activeMediaType === 'audiobook' ? searchLibrivox(q) : Promise.resolve([]),
+    ]);
+    if (seq !== sidebarRemoteSeq) return; // stale
+    renderSidebarRemoteResults(items || [], lvBooks || []);
+  }
+  function renderSidebarRemoteResults(ytItems, lvBooks) {
+    const el = document.getElementById('remote-results');
+    if (!el) return;
+    if ((!ytItems || ytItems.length === 0) && (!lvBooks || lvBooks.length === 0)) {
+      el.innerHTML = `<div style="font-size:11px; color:var(--text-muted); margin:8px 0;">Sin resultados externos.</div>`;
+      return;
+    }
+    const haveIds = new Set(state.library.map(b => b.videoId));
+    const haveLvIds = new Set(state.library.filter(b => b.source === 'librivox').map(b => 'lv:' + b.librivoxId));
+    let html = '';
+    if (lvBooks.length) {
+      html += `<div style="font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.05em; margin:14px 0 6px;">🎧 LIBRIVOX</div>`;
+      html += lvBooks.slice(0, 4).map((b, i) => {
+        const already = haveLvIds.has('lv:' + b.id);
+        const btnLabel = already ? '✓ Añadido' : '+ Añadir';
+        const btnClass = already ? 'add added' : 'add';
+        return `<div class="catalog-card">
+          <div class="cat-thumb" style="background:linear-gradient(135deg,#1c2a40,#2a1f40); display:flex;align-items:center;justify-content:center;font-size:28px;">📖</div>
+          <div class="cat-info">
+            <div class="cat-title">${esc(b.title || '')}</div>
+            <div class="cat-meta">${esc((b.authors||[]).slice(0,2).join(', '))} · ${b.sectionsCount} ${b.sectionsCount === 1 ? 'sección' : 'secciones'}</div>
+            <div class="cat-cat">LibriVox</div>
+          </div>
+          <button class="${btnClass}" data-side-lvi="${i}">${btnLabel}</button>
+        </div>`;
+      }).join('');
+    }
+    if (ytItems.length) {
+      html += `<div style="font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:.05em; margin:14px 0 6px;">📺 YOUTUBE</div>`;
+      html += ytItems.slice(0, 8).map((it, i) => {
+        const vid = it.videoId || '';
+        const thumb = it.thumbnail || `https://i.ytimg.com/vi/${vid}/mqdefault.jpg`;
+        const channel = it.author || '';
+        const dur = it.durationLabel || '';
+        const already = vid && haveIds.has(vid);
+        const btnLabel = already ? '✓ Añadido' : '+ Añadir';
+        const btnClass = already ? 'add added' : 'add';
+        return `<div class="catalog-card">
+          <div class="cat-thumb" style="background:url('${esc(thumb)}') center/cover #111;"></div>
+          <div class="cat-info">
+            <div class="cat-title">${esc(it.title || '')}</div>
+            <div class="cat-meta">${esc(channel)}${dur ? ' · ' + esc(dur) : ''}</div>
+            <div class="cat-cat">YouTube</div>
+          </div>
+          <button class="${btnClass}" data-side-yti="${i}">${btnLabel}</button>
+        </div>`;
+      }).join('');
+    }
+    el.innerHTML = html;
+    // Wire YouTube buttons
+    el.querySelectorAll('button[data-side-yti]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const it = ytItems[parseInt(btn.dataset.sideYti, 10)];
+        const vid = it.videoId || '';
+        if (!vid) return;
+        btn.disabled = true; btn.textContent = '⏳ Añadiendo…';
+        const book = await addBook(`https://www.youtube.com/watch?v=${vid}`, it.title || '', it.author || '', null, activeMediaType);
+        if (book) {
+          btn.classList.add('added'); btn.textContent = '✓ Añadido';
+          if (it.thumbnail) { book.coverUrl = it.thumbnail; save(); }
+          fetchMediaCover(book).then(url => { if (url) { book.coverUrl = url; save(); renderSidebar(); } });
+          renderSidebar();
+          toast('Añadido a tu biblioteca');
+        } else { btn.disabled = false; btn.textContent = '+ Añadir'; }
+      });
+    });
+    // Wire LibriVox buttons
+    el.querySelectorAll('button[data-side-lvi]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const b = lvBooks[parseInt(btn.dataset.sideLvi, 10)];
+        btn.disabled = true; btn.textContent = '⏳ Cargando capítulos…';
+        const full = await fetchLibrivoxBook(b.id);
+        if (!full || !(full.sections || []).length) {
+          btn.disabled = false; btn.textContent = '+ Añadir';
+          toast('No se pudo cargar este audiolibro');
+          return;
+        }
+        const lvBook = addLibrivoxBook(full);
+        if (lvBook) {
+          btn.classList.add('added'); btn.textContent = '✓ Añadido';
+          renderSidebar();
+          toast('Añadido a tu biblioteca');
+        }
+      });
+    });
+  }
 
   /* Sidebar tabs */
   document.querySelectorAll('.side-tab').forEach(t => {
@@ -2446,6 +2564,7 @@
       localStorage.setItem('audiolibros.mediaType', activeMediaType);
       activeCategory = 'Todas';
       $('#search-input').value = '';
+      hideRemoteResults();
       // Update "+ Añadir" button label
       const addBtn = document.getElementById('btn-add');
       if (addBtn) addBtn.textContent = (MEDIA_NOUNS[activeMediaType] || {}).addLabel || '+ Añadir';
