@@ -600,16 +600,12 @@
    * TV MODE — activated when body.tv-mode (Samsung Tizen browser
    * or ?tv=1 in URL). Larger fonts, big focus rings, hidden mouse.
    * ============================================================ */
-  :focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--accent), 0 0 0 6px rgba(255,0,51,0.35) !important;
-    border-radius: var(--radius-sm);
-    z-index: 5;
-    position: relative;
-  }
+  /* Focus ring SOLO se aplica EN MODO TV — fuera de TV usamos el outline default del navegador. */
   body.tv-mode { font-size: 20px; cursor: none; }
   body.tv-mode :focus-visible {
+    outline: none;
     box-shadow: 0 0 0 4px var(--accent), 0 0 0 10px rgba(255,0,51,0.45) !important;
+    border-radius: var(--radius-sm);
     transform: scale(1.03);
     transition: transform 0.12s;
   }
@@ -2758,9 +2754,12 @@
       if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
     });
   }
-  // Run after each render too — new DOM nodes need tabindex
-  const _origRenderLibrary = window.renderLibrary;
-  setInterval(ensureTabbable, 1500); // cheap re-tick to catch dynamic content
+  // Solo en modo TV añadimos tabindex a las cards/chips dinámicas. Fuera de TV
+  // los chips/cards funcionan con click (no necesitan ser focusables) y al añadir
+  // tabindex podían interceptar focus de forma incorrecta en algunos navegadores.
+  if (document.body.classList.contains('tv-mode')) {
+    setInterval(ensureTabbable, 1500);
+  }
 
   // Spatial navigation: pick nearest focusable in the pressed direction
   function focusableEls() {
