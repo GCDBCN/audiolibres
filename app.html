@@ -2375,20 +2375,29 @@
       document.getElementById('preview-time').textContent = `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
     };
   }
-  // Preview bar controls
-  document.getElementById('preview-toggle').addEventListener('click', () => {
-    if (previewState.kind === 'lv') {
-      const aud = document.getElementById('preview-audio');
-      if (aud.paused) { aud.play().catch(()=>{}); document.getElementById('preview-toggle').textContent = '⏸'; }
-      else { aud.pause(); document.getElementById('preview-toggle').textContent = '▶'; }
-    } else if (previewState.kind === 'yt') {
-      // YT iframe preview: simplest is to stop & start
-      stopPreview();
-    }
-  });
-  document.getElementById('preview-close').addEventListener('click', stopPreview);
-  // Stop preview when modal closes
-  document.getElementById('cancel-add').addEventListener('click', stopPreview);
+  // Preview bar controls — wait for DOM (preview-bar lives at end of body, parsed after this script)
+  function wirePreviewControls() {
+    const toggle = document.getElementById('preview-toggle');
+    const close = document.getElementById('preview-close');
+    const cancel = document.getElementById('cancel-add');
+    if (toggle) toggle.addEventListener('click', () => {
+      if (previewState.kind === 'lv') {
+        const aud = document.getElementById('preview-audio');
+        if (!aud) return;
+        if (aud.paused) { aud.play().catch(()=>{}); toggle.textContent = '⏸'; }
+        else { aud.pause(); toggle.textContent = '▶'; }
+      } else if (previewState.kind === 'yt') {
+        stopPreview();
+      }
+    });
+    if (close) close.addEventListener('click', stopPreview);
+    if (cancel) cancel.addEventListener('click', stopPreview);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wirePreviewControls);
+  } else {
+    wirePreviewControls();
+  }
 
   function addLibrivoxBook(full) {
     const sections = (full.sections || []).map(s => ({
