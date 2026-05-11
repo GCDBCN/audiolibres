@@ -1298,6 +1298,23 @@
   function applyState(st) {
     if (st === 1) { ytState.playing = true; setPlayIcon(true); updateMediaPlaybackState(true); }
     else if (st === 2 || st === 0 || st === -1 || st === 5) { ytState.playing = false; setPlayIcon(false); updateMediaPlaybackState(false); }
+    // Video ended (state 0): if it's a YouTube playlist, auto-advance to next chapter
+    if (st === 0) {
+      const b = currentBook();
+      if (b && b.source === 'youtube-playlist') {
+        const next = (b.sectionIndex || 0) + 1;
+        if (next < (b.sections || []).length) {
+          b.sectionIndex = next;
+          b.position = 0;
+          save();
+          loadBook(b.id, true);
+          toast(`Capítulo ${next + 1} de ${b.sections.length}`);
+        } else {
+          b.sectionIndex = 0; b.position = 0; save();
+          toast('Playlist completada 🎉');
+        }
+      }
+    }
   }
 
   function updateFromState() {
@@ -1599,6 +1616,12 @@
       const idx = (b.sectionIndex || 0) + 1;
       const total = (b.sections || []).length;
       $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + `LibriVox · Capítulo ${idx}/${total}`;
+    } else if (b.source === 'youtube-playlist') {
+      const idx = (b.sectionIndex || 0) + 1;
+      const total = (b.sections || []).length;
+      const cap = (b.sections || [])[b.sectionIndex || 0];
+      const capTitle = (cap && cap.title) ? ' · ' + cap.title : '';
+      $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + `Playlist · Capítulo ${idx}/${total}${capTitle}`;
     } else {
       $('#np-sub').textContent = (b.author ? b.author + ' · ' : '') + 'YouTube';
     }
@@ -1665,6 +1688,12 @@
     teardownNativeAudio();
     if (b.source === 'librivox') {
       loadLibrivoxBook(b, autoplay);
+    } else if (b.source === 'youtube-playlist') {
+      // Hide the LV cover overlay if it was up
+      const cov = document.getElementById('lv-cover'); if (cov) cov.style.display = 'none';
+      const idx = Math.max(0, Math.min(b.sectionIndex || 0, (b.sections || []).length - 1));
+      const sec = (b.sections || [])[idx];
+      if (sec && sec.videoId) createYtIframe(sec.videoId, b.position || 0, autoplay);
     } else {
       // Hide the LV cover overlay if it was up
       const cov = document.getElementById('lv-cover'); if (cov) cov.style.display = 'none';
@@ -1792,17 +1821,19 @@
       navigator.mediaSession.setActionHandler('pause', () => togglePlay());
       navigator.mediaSession.setActionHandler('seekbackward', (d) => seekBy(-(d.seekOffset || 15)));
       navigator.mediaSession.setActionHandler('seekforward',  (d) => seekBy(  d.seekOffset || 30));
-      // Section navigation for LibriVox audiobooks
+      // Section navigation for LibriVox audiobooks AND YouTube playlists
       navigator.mediaSession.setActionHandler('previoustrack', () => {
         const cb = currentBook();
-        if (cb && cb.source === 'librivox' && (cb.sectionIndex || 0) > 0) {
-          cb.sectionIndex -= 1; cb.position = 0; save(); loadLibrivoxBook(cb, true);
+        if (!cb || !cb.sections || !cb.sections.length) return;
+        if ((cb.sectionIndex || 0) > 0) {
+          cb.sectionIndex -= 1; cb.position = 0; save(); loadBook(cb.id, true);
         }
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
         const cb = currentBook();
-        if (cb && cb.source === 'librivox' && (cb.sectionIndex || 0) < (cb.sections.length - 1)) {
-          cb.sectionIndex += 1; cb.position = 0; save(); loadLibrivoxBook(cb, true);
+        if (!cb || !cb.sections || !cb.sections.length) return;
+        if ((cb.sectionIndex || 0) < (cb.sections.length - 1)) {
+          cb.sectionIndex += 1; cb.position = 0; save(); loadBook(cb.id, true);
         }
       });
       navigator.mediaSession.setActionHandler('seekto', (d) => {
@@ -1952,6 +1983,68 @@
       return Array.isArray(data?.items) ? data.items : null;
     } catch { return null; }
   }
+
+  // Detect YouTube playlist ID in a pasted URL (?list=...)
+  function parseYouTubeList(url) {
+    if (!url) return '';
+    const m = url.match(/[?&]list=([\w-]+)/);
+    return m ? m[1] : '';
+  }
+
+  // Fetch a YouTube playlist and save it as a single library item with multiple sections
+  async function fetchYouTubePlaylist(listId) {
+    try {
+      const r = await fetch(`/api/ytplaylist?list=${encodeURIComponent(listId)}`);
+      if (!r.ok) return null;
+      const data = await r.json();
+      return data.playlist || null;
+    } catch { return null; }
+  }
+
+  async function addYouTubePlaylist(listId) {
+    const pl = await fetchYouTubePlaylist(listId);
+    if (!pl || !(pl.videos || []).length) {
+      toast('No se pudo cargar la playlist');
+      return null;
+    }
+    // Check for duplicate
+    if (state.library.some(b => b.source === 'youtube-playlist' && b.playlistId === pl.listId)) {
+      toast('Esta playlist ya está en tu biblioteca');
+      return null;
+    }
+    const sections = pl.videos.map(v => ({
+      title: v.title || '',
+      videoId: v.videoId,
+      playtime: v.duration || 0,
+      thumbnail: v.thumbnail || '',
+    }));
+    const totalSecs = sections.reduce((acc, s) => acc + (parseInt(s.playtime, 10) || 0), 0);
+    const book = {
+      id: (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random()),
+      source: 'youtube-playlist',
+      playlistId: pl.listId,
+      videoId: 'pl-' + pl.listId,
+      title: pl.title || 'Playlist',
+      author: pl.author || '',
+      category: null,
+      type: activeMediaType,
+      coverUrl: pl.thumbnail || (sections[0] && sections[0].thumbnail) || '',
+      thumb: pl.thumbnail || '',
+      sections,
+      sectionIndex: 0,
+      duration: totalSecs,
+      position: 0,
+      addedAt: Date.now(),
+      bookmarks: [],
+    };
+    state.library.push(book);
+    save();
+    renderLibrary();
+    toast(`Playlist añadida — ${sections.length} capítulos`);
+    closeModal('add-modal');
+    loadBook(book.id, true);
+    return book;
+  }
   function fmtDuration(sec) {
     if (!sec || sec < 0) return '';
     sec = Math.floor(sec);
@@ -2029,8 +2122,16 @@
       $('#yt-empty').textContent = 'Empieza a escribir para buscar — los resultados aparecen aquí.';
       return;
     }
-    // If user pasted a YouTube URL directly, just add it
+    // If user pasted a YouTube URL: detect playlist first, otherwise single video
     if (/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)/i.test(q)) {
+      const listId = parseYouTubeList(q);
+      if (listId) {
+        $('#yt-empty').style.display = '';
+        $('#yt-empty').textContent = '⏳ Detectada playlist — cargando capítulos…';
+        $('#yt-search').disabled = true;
+        addYouTubePlaylist(listId).finally(() => { $('#yt-search').disabled = false; });
+        return;
+      }
       $('#yt-empty').style.display = '';
       $('#yt-empty').textContent = 'Detectada URL — añadiendo…';
       $('#yt-search').disabled = true;
