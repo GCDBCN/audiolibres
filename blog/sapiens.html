@@ -95,7 +95,32 @@
   .grad-coelho { background:linear-gradient(135deg,#D4A574 0%,#7A4A1F 100%); }
 </style>
 <script defer src="/blog/book-cover.js"></script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+(function(){
+  // audiolibres lightweight analytics — anonymous page view counter (Supabase)
+  try {
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
+    var SUPA_URL = 'https://rjqtakxtamlwnogoueyu.supabase.co';
+    var SUPA_KEY = 'sb_publishable_lwoYecXZJPbt0L6FCKwWWQ_MZUZORvb';
+    // Persistent anon session id (no PII, just to dedupe sessions)
+    var sid = localStorage.getItem('al_sid');
+    if (!sid) {
+      sid = (crypto && crypto.randomUUID ? crypto.randomUUID() : 'sid-' + Date.now() + '-' + Math.random().toString(36).slice(2,8));
+      localStorage.setItem('al_sid', sid);
+    }
+    fetch(SUPA_URL + '/rest/v1/page_views', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        path: location.pathname,
+        referrer: document.referrer || null,
+        user_agent: navigator.userAgent.slice(0, 240),
+        session_id: sid
+      })
+    }).catch(function(){});
+  } catch(e) {}
+})();
+</script>
 </head>
 <body>
 
