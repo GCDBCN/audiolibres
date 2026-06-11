@@ -580,6 +580,30 @@
 
   .speed-chip { font-variant-numeric: tabular-nums; min-width: 46px; }
 
+  /* Sign-up nudge banner */
+  .signup-nudge {
+    display: flex; align-items: center; gap: 14px;
+    background: linear-gradient(135deg, rgba(255,0,51,0.16), rgba(255,107,107,0.10));
+    border: 1px solid rgba(255,0,51,0.35); border-radius: var(--radius);
+    padding: 14px 18px; margin-bottom: 4px;
+  }
+  .signup-nudge-icon { font-size: 28px; flex-shrink: 0; }
+  .signup-nudge-text { flex: 1; min-width: 0; }
+  .signup-nudge-title { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 2px; }
+  .signup-nudge-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .signup-nudge .btn.primary { padding: 8px 16px; font-size: 13px; flex-shrink: 0; }
+  .signup-nudge-close {
+    background: transparent; border: 0; color: var(--text-muted);
+    font-size: 16px; cursor: pointer; padding: 4px 8px;
+    border-radius: 6px; transition: background 0.12s, color 0.12s;
+  }
+  .signup-nudge-close:hover { background: var(--bg-elev-2); color: var(--text); }
+  @media (max-width: 540px) {
+    .signup-nudge { flex-wrap: wrap; }
+    .signup-nudge-text { flex-basis: 100%; order: 2; }
+    .signup-nudge .btn.primary { flex: 1; }
+  }
+
   .sleep-banner {
     background: linear-gradient(90deg, rgba(255,209,102,.15), rgba(255,107,107,.15));
     border: 1px solid #3d3319;
@@ -723,6 +747,16 @@
   </aside>
 
   <main class="panel main">
+    <!-- Sign-up nudge (shown only to anonymous users with 3+ items in library) -->
+    <div id="signup-nudge" class="signup-nudge" style="display:none;">
+      <div class="signup-nudge-icon">☁️</div>
+      <div class="signup-nudge-text">
+        <div class="signup-nudge-title">¿Te gusta lo que ves?</div>
+        <div class="signup-nudge-sub">Crea cuenta gratis y tu biblioteca te sigue en móvil y PC. Tus marcadores también.</div>
+      </div>
+      <button class="btn primary" id="signup-nudge-btn">Crear cuenta</button>
+      <button class="signup-nudge-close" id="signup-nudge-close" title="Cerrar">✕</button>
+    </div>
     <div id="sleep-banner" class="sleep-banner">
       <span>💤 Se detendrá en <b id="sleep-countdown">--:--</b></span>
       <button class="btn ghost" id="cancel-sleep" style="padding:4px 8px;font-size:12px;">Cancelar</button>
@@ -1452,6 +1486,8 @@
   }
 
   function renderLibrary() {
+    // Re-evaluate signup nudge each time library count changes
+    if (typeof maybeShowSignupNudge === 'function') maybeShowSignupNudge();
     const q = ($('#search-input').value || '').toLowerCase();
     const typeMatches = b => (b.type || 'audiobook') === activeMediaType;
     const ofType = state.library.filter(typeMatches);
@@ -2803,6 +2839,27 @@
     t.addEventListener('click', () => switchAuthMode(t.dataset.mode));
   });
   $('#btn-signin').addEventListener('click', openAuth);
+
+  /* Sign-up nudge — shown to anonymous users with 3+ library items */
+  function maybeShowSignupNudge() {
+    const nudge = document.getElementById('signup-nudge');
+    if (!nudge) return;
+    if (currentUser) { nudge.style.display = 'none'; return; }
+    if (localStorage.getItem('audiolibros.nudgeDismissed') === '1') { nudge.style.display = 'none'; return; }
+    const itemCount = (state.library || []).length;
+    nudge.style.display = itemCount >= 3 ? '' : 'none';
+  }
+  // Wire close + signup buttons
+  const _nudgeBtn = document.getElementById('signup-nudge-btn');
+  const _nudgeClose = document.getElementById('signup-nudge-close');
+  if (_nudgeBtn) _nudgeBtn.addEventListener('click', () => {
+    authMode = 'signup';
+    openAuth();
+  });
+  if (_nudgeClose) _nudgeClose.addEventListener('click', () => {
+    localStorage.setItem('audiolibros.nudgeDismissed', '1');
+    document.getElementById('signup-nudge').style.display = 'none';
+  });
   $('#cancel-auth').addEventListener('click', () => closeModal('auth-modal'));
   $('#confirm-auth').addEventListener('click', async () => {
     const email = $('#auth-email').value.trim();
@@ -2877,6 +2934,7 @@
     const prevUser = currentUser;
     currentUser = session ? session.user : null;
     updateAuthUI();
+    maybeShowSignupNudge();
     if (currentUser && (!prevUser || prevUser.id !== currentUser.id)) {
       await loadFromCloud();
     }
