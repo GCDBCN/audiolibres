@@ -545,6 +545,36 @@
     border-radius: var(--radius-sm); padding: 8px 12px; margin-bottom: 12px;
   }
   /* Floating variant: fixed at bottom of viewport, shown when previewing from anywhere */
+  /* Share modal */
+  .share-target {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-elev-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px; margin-bottom: 18px;
+  }
+  .share-target-thumb {
+    width: 56px; height: 56px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(135deg, #1c2a40, #2a1f40) center/cover #111;
+  }
+  .share-target-text { flex: 1; min-width: 0; }
+  .share-target-title { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .share-target-author { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .share-buttons {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .share-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    background: var(--bg-elev-2); border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; font-size: 13px; font-weight: 600; transition: background 0.12s;
+  }
+  .share-btn:hover { background: #2a2a2a; }
+  .share-btn .share-ico { font-size: 16px; }
+  .share-btn.share-copy { grid-column: 1 / -1; background: var(--accent); color: #fff; border-color: transparent; }
+  .share-btn.share-copy:hover { background: #d10027; }
+  @media (max-width: 480px) {
+    .share-buttons { grid-template-columns: 1fr; }
+  }
+
   .preview-bar.floating {
     position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
     z-index: 100; max-width: 540px; width: calc(100% - 32px);
@@ -797,6 +827,7 @@
             <button class="btn icon" id="btn-fwd30" title="Avanzar 30s">30⏩</button>
             <button class="btn speed-chip" id="btn-speed" title="Velocidad">1×</button>
             <button class="btn icon" id="btn-bookmark" title="Añadir marcador">🔖</button>
+            <button class="btn icon" id="btn-share" title="Compartir">↗</button>
           </div>
           <div class="scrubber">
             <div class="timeline" id="timeline"><div class="fill" id="timeline-fill"></div></div>
@@ -2840,6 +2871,54 @@
   });
   $('#btn-signin').addEventListener('click', openAuth);
 
+  /* ===== SHARE ===== */
+  function shareLinkFor(book) {
+    if (!book) return location.origin + '/';
+    const params = new URLSearchParams();
+    if (book.source === 'librivox') {
+      params.set('librivox', book.librivoxId);
+    } else if (book.source === 'youtube-playlist') {
+      params.set('list', book.playlistId);
+    } else if (book.videoId) {
+      params.set('add', book.videoId);
+    }
+    if (book.title) params.set('title', book.title);
+    if (book.author) params.set('author', book.author);
+    if (book.category) params.set('category', book.category);
+    if (book.type) params.set('type', book.type);
+    return location.origin + '/app?' + params.toString();
+  }
+  function openShareModal(book) {
+    if (!book) return;
+    const url = shareLinkFor(book);
+    document.getElementById('share-target-title').textContent = book.title || '';
+    document.getElementById('share-target-author').textContent = book.author || '';
+    const thumb = document.getElementById('share-target-thumb');
+    if (thumb) thumb.style.backgroundImage = book.coverUrl ? `url('${book.coverUrl}')` : '';
+    const message = `🎧 Te paso este audiolibro en audiolibres.com — "${book.title}"${book.author ? ' de ' + book.author : ''}. Sin anuncios, suena con la pantalla bloqueada. Aquí lo tienes listo: ${url}`;
+    const shortMessage = `🎧 "${book.title}"${book.author ? ' de ' + book.author : ''} en audiolibres.com (sin anuncios): ${url}`;
+    $('#share-whatsapp').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(message), '_blank');
+    $('#share-telegram').onclick = () => window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(shortMessage), '_blank');
+    $('#share-twitter').onclick = () => window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shortMessage), '_blank');
+    $('#share-email').onclick = () => window.open('mailto:?subject=' + encodeURIComponent('Audiolibro: ' + book.title) + '&body=' + encodeURIComponent(message));
+    $('#share-copy-link').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        document.getElementById('share-copy-label').textContent = '✓ Enlace copiado';
+        setTimeout(() => { document.getElementById('share-copy-label').textContent = 'Copiar enlace'; }, 1800);
+      } catch {
+        toast('No se pudo copiar — copia manual: ' + url);
+      }
+    };
+    openModal('share-modal');
+  }
+  $('#share-close').addEventListener('click', () => closeModal('share-modal'));
+  $('#btn-share').addEventListener('click', () => {
+    const b = currentBook();
+    if (b) openShareModal(b);
+    else toast('Selecciona un audiolibro primero');
+  });
+
   /* Sign-up nudge — shown to anonymous users with 3+ library items */
   function maybeShowSignupNudge() {
     const nudge = document.getElementById('signup-nudge');
@@ -3138,6 +3217,46 @@
   })();
 })();
 </script>
+
+<!-- Share modal — open when clicking ↗ on a book -->
+<div class="modal-backdrop" id="share-modal">
+  <div class="modal">
+    <h2>Compartir audiolibro</h2>
+    <p style="font-size:13px; color:var(--text-muted); margin: 0 0 16px;">Pásalo a quien creas que le interesa. El enlace abre <b>audiolibres.com</b> directamente con este audiolibro listo para escuchar.</p>
+    <div class="share-target" id="share-target-info">
+      <div class="share-target-thumb" id="share-target-thumb"></div>
+      <div class="share-target-text">
+        <div class="share-target-title" id="share-target-title">—</div>
+        <div class="share-target-author" id="share-target-author">—</div>
+      </div>
+    </div>
+    <div class="share-buttons">
+      <button class="share-btn share-wa" id="share-whatsapp">
+        <span class="share-ico">💬</span>
+        <span>WhatsApp</span>
+      </button>
+      <button class="share-btn share-tg" id="share-telegram">
+        <span class="share-ico">✈️</span>
+        <span>Telegram</span>
+      </button>
+      <button class="share-btn share-tw" id="share-twitter">
+        <span class="share-ico">𝕏</span>
+        <span>Twitter / X</span>
+      </button>
+      <button class="share-btn share-em" id="share-email">
+        <span class="share-ico">✉️</span>
+        <span>Email</span>
+      </button>
+      <button class="share-btn share-copy" id="share-copy-link">
+        <span class="share-ico">🔗</span>
+        <span id="share-copy-label">Copiar enlace</span>
+      </button>
+    </div>
+    <div class="row" style="margin-top:14px;">
+      <button class="btn" id="share-close">Cerrar</button>
+    </div>
+  </div>
+</div>
 
 <!-- Global preview bar — shown when user clicks ▶ Probar from sidebar or modal -->
 <div id="preview-bar" class="preview-bar floating" style="display:none;">
