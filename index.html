@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Audiolibres — Escucha audiolibros, música y vídeos de YouTube sin anuncios. Tu biblioteca personal con marcadores, sincronizada en tus dispositivos. Gratis." />
+<meta name="description" content="Audiolibros gratis de YouTube sin anuncios. Tu biblioteca personal con marcadores, sincronizada en tus dispositivos. Sin registro." />
 <meta name="keywords" content="audiolibros gratis, audiolibros youtube, audiolibros español, escuchar audiolibros sin anuncios, biblioteca audiolibros, librivox español" />
 <meta name="author" content="audiolibres" />
 <meta name="robots" content="index, follow" />
-<title>Audiolibres — Audiolibros, música y vídeos sin anuncios</title>
+<title>Audiolibres — Audiolibros gratis sin anuncios desde YouTube</title>
 <link rel="alternate" hreflang="es" href="https://audiolibres.com/" />
 <link rel="alternate" hreflang="en" href="https://audiolibres.com/en/" />
 <link rel="alternate" hreflang="x-default" href="https://audiolibres.com/" />
@@ -587,6 +587,62 @@
   } catch(e) {}
 })();
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿De verdad es gratis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, completamente. No cobramos nada, no hay pago oculto, no pedimos tu tarjeta. Audiolibres reproduce contenido de YouTube directamente — el audiolibro en sí es gratis porque lo es en YouTube."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Es legal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Audiolibres solo reproduce videos públicos de YouTube que sus autores han hecho disponibles. No alojamos ni descargamos nada. Es equivalente a compartir un enlace de YouTube con un amigo — legal y normal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Necesito crear una cuenta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Tu biblioteca se guarda localmente en tu navegador (localStorage). Opcionalmente puedes crear cuenta gratis si quieres sincronizar biblioteca y marcadores entre móvil y PC."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Y si cambio de dispositivo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Si has creado cuenta gratis, tu biblioteca, marcadores y progreso se sincronizan entre todos tus dispositivos automáticamente."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué YouTube?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Porque hay miles de audiolibros completos, gratis y legales en YouTube. LibriVox los sube en dominio público, editoriales hacen promos, locutores independientes comparten su trabajo. Audiolibres te los da como una experiencia de audio en condiciones."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Y los anuncios de YouTube?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "YouTube inserta ads en algunos videos. Audiolibres usa el modo embed que es mucho más limpio, sin sugerencias, sin distracciones. Para máximo control, usa los audiolibros de LibriVox que añadimos: 100% sin anuncios."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -858,6 +914,43 @@
         <summary>¿Y los anuncios de YouTube?</summary>
         <p>YouTube inserta ads en algunos videos. Audiolibres los minimiza usando el modo embed que es mucho más limpio, y trabajamos en mejoras continuas para ofrecerte la escucha más fluida posible.</p>
       </details>
+    </div>
+  </div>
+</section>
+
+
+<!-- LATEST REVIEWS — internal links to blog (added for SEO) -->
+<section class="block" id="latest-reviews" style="background: var(--gray-50); padding: 80px 0;">
+  <div class="container">
+    <div class="section-header" style="text-align:center; margin-bottom:48px;">
+      <div class="section-eyebrow" style="color: var(--yt-red); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px;">Del blog</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(28px, 4vw, 40px); font-weight:800; letter-spacing:-0.02em; margin:0 0 12px;">Reseñas recientes de audiolibros</h2>
+      <p style="color:var(--gray-700); font-size:17px; max-width:580px; margin:0 auto;">Audiolibros joya en YouTube que merece la pena escuchar — con análisis del autor, del contenido y de la calidad del narrador.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px;">
+      <a href="/blog/meditaciones" style="display:block; background:white; border:1px solid var(--gray-100); border-radius:14px; padding:24px; transition:transform .2s, box-shadow .2s; color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; color:var(--yt-red); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Filosofía</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 8px;">Meditaciones — Marco Aurelio</h3>
+        <p style="font-size:14px; color:var(--gray-700); margin:0;">El diario filosófico del emperador estoico, narrado completo y gratis en YouTube.</p>
+      </a>
+      <a href="/blog/sapiens" style="display:block; background:white; border:1px solid var(--gray-100); border-radius:14px; padding:24px; color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; color:var(--yt-red); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Historia</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 8px;">Sapiens — Yuval Harari</h3>
+        <p style="font-size:14px; color:var(--gray-700); margin:0;">70.000 años de historia humana resumidos. Reseña del audiolibro completo de Harari.</p>
+      </a>
+      <a href="/blog/el-acto-de-crear" style="display:block; background:white; border:1px solid var(--gray-100); border-radius:14px; padding:24px; color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; color:var(--yt-red); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Creatividad</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 8px;">El Acto de Crear — Rick Rubin</h3>
+        <p style="font-size:14px; color:var(--gray-700); margin:0;">El productor detrás de Johnny Cash y Adele sobre proceso creativo y escucha.</p>
+      </a>
+      <a href="/blog/el-alquimista" style="display:block; background:white; border:1px solid var(--gray-100); border-radius:14px; padding:24px; color:var(--ink);">
+        <div style="font-size:12px; font-weight:600; color:var(--yt-red); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Novela</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 8px;">El Alquimista — Paulo Coelho</h3>
+        <p style="font-size:14px; color:var(--gray-700); margin:0;">El clásico de Coelho sobre el viaje del héroe, narrado completo gratis.</p>
+      </a>
+    </div>
+    <div style="text-align:center; margin-top:32px;">
+      <a href="/blog" style="display:inline-flex; align-items:center; gap:6px; color:var(--yt-red); font-weight:700; font-size:15px; text-decoration:none;">Ver todas las reseñas →</a>
     </div>
   </div>
 </section>
