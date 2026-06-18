@@ -1,0 +1,670 @@
+{
+  "version": 1,
+  "created": "2026-06-18",
+  "domain": "audiolibres.com",
+  "audience": "Hispanohablantes que quieren escuchar audiolibros gratis sin anuncios. Padres, profesionales, estudiantes, gente que conduce o hace deporte. Niveles: principiantes (nunca han probado audiolibros) hasta entusiastas con biblioteca grande.",
+  "pillars": {
+    "filosofia": "Estoicismo, filosofía clásica, Marco Aurelio, Séneca, Nietzsche, Platón. Intent informacional + navegacional.",
+    "novela_clasica": "Don Quijote, Cervantes, Tolstói, Dostoievski, Kafka, García Márquez. Intent navegacional.",
+    "autoayuda": "Hábitos atómicos, Carnegie, Robbins, Covey, Tolle. Intent comercial (alta conversión).",
+    "finanzas": "Padre Rico Padre Pobre, Piense y Hágase Rico, Inteligencia financiera. Intent comercial.",
+    "divulgacion": "Sapiens, Harari, Sagan, Hawking, libros de ciencia narrados. Intent informacional.",
+    "librivox": "Dominio público, clásicos gratis legales en castellano. Diferencial nuestro vs YouTube. Intent comercial.",
+    "ninos": "Audiolibros infantiles, cuentos para dormir, padres. Intent comercial alta intención.",
+    "situaciones": "Para dormir, conducir, correr, cocinar, gym, viajar. Intent comercial + emocional.",
+    "dispositivos": "Samsung TV, iPhone, Android, Carplay, PWA. Intent how-to técnico.",
+    "comparativas": "vs Audible, vs Storytel, vs Spotify audiolibros, vs YouTube directo. Intent comparison alta.",
+    "listas_curadas": "Mejores X, Top 10 Y, Top audiolibros de Z. Intent informacional.",
+    "metodos_uso": "Marcadores, playlists, biblioteca, sincronización. Intent how-to / tutorial."
+  },
+  "topics": [
+    {
+      "slug": "audiolibros-gratis-sin-anuncios-2026",
+      "title": "Audiolibros gratis sin anuncios en 2026: la guía completa",
+      "pillar": "comparativas",
+      "kw": "audiolibros gratis sin anuncios",
+      "intent": "comparison",
+      "brief": "Pillar page central. Explicar el panorama de audiolibros gratis en castellano (YouTube directo, Audible trial, Spotify audiolibros, LibriVox, Audiolibres) con tabla comparativa real: precio, anuncios, registro, calidad. Argumentar honestamente por qué audiolibres es la mejor opción para 95% de casos. Internal links a posts de Marco Aurelio, Sapiens, Habitos Atomicos. ~2000 palabras.",
+      "status": "pending"
+    },
+    {
+      "slug": "los-30-mejores-audiolibros-gratis-en-espanol",
+      "title": "Los 30 mejores audiolibros gratis en español (lista 2026)",
+      "pillar": "listas_curadas",
+      "kw": "mejores audiolibros gratis español",
+      "intent": "list",
+      "brief": "Lista mega-curada de 30 audiolibros divididos por categoría: filosofía (5), novela clásica (8), autoayuda (5), finanzas (4), divulgación (5), niños (3). Cada uno con: título, autor, duración, link a audiolibres.com/app?add=VIDEOID, breve descripción de 50 palabras explicando por qué este audiolibro merece la pena. Pillar para enlazar internal links desde otros posts. 2500+ palabras.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-dormir-gratis",
+      "title": "12 audiolibros para dormir gratis (con sleep timer)",
+      "pillar": "situaciones",
+      "kw": "audiolibros para dormir gratis",
+      "intent": "list",
+      "brief": "Lista de 12 audiolibros con voces calmadas ideal antes de dormir. Filosofía estoica (Marco Aurelio en voz pausada), narraciones lentas, meditaciones guiadas, cuentos clásicos. Explicar feature sleep timer de audiolibres.com (5/15/30/60 min). Para cada uno: por qué funciona para dormir. Cerrar con CTA a /app y mencionar que se sigue oyendo con pantalla bloqueada en iPhone (LibriVox).",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-ninos-gratis-en-espanol",
+      "title": "Audiolibros para niños gratis en español (de 3 a 12 años)",
+      "pillar": "ninos",
+      "kw": "audiolibros niños gratis español",
+      "intent": "list",
+      "brief": "Listado por edades. 3-6: cuentos cortos clásicos (Patito Feo, Caperucita), Las Mil y Una Noches. 6-9: El Principito, Roald Dahl. 9-12: Tom Sawyer, La Isla del Tesoro. Para cada uno: edad recomendada, duración, autor, link. Explicar sleep timer y ventaja sin-anuncios para no exponer niños a publicidad random.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-correr-y-gimnasio",
+      "title": "Audiolibros para correr y gimnasio: 10 opciones gratis",
+      "pillar": "situaciones",
+      "kw": "audiolibros para correr",
+      "intent": "list",
+      "brief": "Audiolibros con narración enérgica y temas que motivan. Hábitos Atómicos, Mindset (Dweck), Can't Hurt Me (Goggins), Padre Rico Padre Pobre, El Monje que Vendió su Ferrari. Feature: velocidad 1.25x o 1.5x para escuchar más en menos km. Explicar background play (PWA).",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-conducir-largas-distancias",
+      "title": "Audiolibros para conducir 4+ horas: 15 imprescindibles",
+      "pillar": "situaciones",
+      "kw": "audiolibros para conducir",
+      "intent": "list",
+      "brief": "Audiolibros largos (>5h) que se disfrutan en viajes. Crónicas marcianas, Don Quijote, Sapiens, biografías largas. Explicar integración con Android Auto / CarPlay (Media Session API: aparecen título, autor, controles en pantalla del coche). Sin tocar el móvil.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-marco-aurelio-meditaciones",
+      "title": "Meditaciones de Marco Aurelio: el audiolibro completo gratis",
+      "pillar": "filosofia",
+      "kw": "audiolibro marco aurelio meditaciones",
+      "intent": "profile",
+      "brief": "Reseña + acceso al audiolibro. Quién era Marco Aurelio (emperador romano estoico). Las 12 partes que componen Meditaciones. Por qué es relevante en 2026 (ansiedad, redes sociales, vida digital). Citas memorables. Link a /app?librivox=18163 (versión LibriVox 5h45min en castellano). Diferenciarlo de versión YouTube. Internal link a otros estoicos.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-seneca-cartas-lucilio",
+      "title": "Cartas a Lucilio de Séneca: audiolibro y guía de lectura",
+      "pillar": "filosofia",
+      "kw": "seneca cartas lucilio audiolibro",
+      "intent": "profile",
+      "brief": "Quién es Lucilio (amigo de Séneca al que escribe). Las 124 cartas como manual de vida estoica. Las 10 mejores cartas para empezar. Audiolibros disponibles en YouTube. Cómo escucharlas en orden con marcadores de audiolibres. Internal link a Meditaciones, a Estoicismo general.",
+      "status": "pending"
+    },
+    {
+      "slug": "habitos-atomicos-audiolibro-completo-resumen",
+      "title": "Hábitos Atómicos audiolibro completo + resumen por capítulos",
+      "pillar": "autoayuda",
+      "kw": "habitos atomicos audiolibro completo",
+      "intent": "profile",
+      "brief": "Resumen del libro de James Clear capítulo a capítulo. 4 leyes del cambio de hábitos. Las técnicas más útiles. Por qué funciona. Link al audiolibro completo en YouTube. Cómo usar audiolibres para crear marcadores en los conceptos clave. 1800-2200 palabras.",
+      "status": "pending"
+    },
+    {
+      "slug": "sapiens-yuval-harari-audiolibro-completo",
+      "title": "Sapiens de Yuval Harari: el audiolibro completo en español",
+      "pillar": "divulgacion",
+      "kw": "sapiens audiolibro completo español",
+      "intent": "profile",
+      "brief": "Las 4 revoluciones de Sapiens (cognitiva, agrícola, unificadora, científica). Los conceptos más impactantes. Por qué Harari acertó y dónde se equivoca según críticos. Versión audiolibro YouTube. Internal link a Homo Deus, 21 Lecciones.",
+      "status": "pending"
+    },
+    {
+      "slug": "don-quijote-audiolibro-completo-cervantes",
+      "title": "Don Quijote audiolibro completo en español (gratis)",
+      "pillar": "novela_clasica",
+      "kw": "don quijote audiolibro completo gratis",
+      "intent": "profile",
+      "brief": "La obra cumbre de la lengua española. Cómo leer (escuchar) los 126 capítulos sin abandonar. Versiones audiolibros recomendadas en YouTube. Capítulos clave para empezar. Feature de audiolibres: playlist con auto-advance. Internal link a Cervantes, a otros clásicos españoles.",
+      "status": "pending"
+    },
+    {
+      "slug": "cien-anos-de-soledad-audiolibro-completo",
+      "title": "Cien Años de Soledad de García Márquez: audiolibro completo",
+      "pillar": "novela_clasica",
+      "kw": "cien años soledad audiolibro completo",
+      "intent": "profile",
+      "brief": "La novela del boom latinoamericano. Macondo, los Buendía, realismo mágico. Cómo seguir el árbol genealógico mientras escuchas (descargable PDF). Audiolibros recomendados en YouTube. Feature marcadores audiolibres para anotar momentos clave.",
+      "status": "pending"
+    },
+    {
+      "slug": "librivox-en-espanol-mejores-audiolibros",
+      "title": "LibriVox en español: 20 audiolibros gratis del dominio público",
+      "pillar": "librivox",
+      "kw": "librivox español",
+      "intent": "list",
+      "brief": "Qué es LibriVox (voluntarios narrando clásicos en dominio público). Por qué es 100% legal y gratis. Top 20 audiolibros LibriVox en castellano: Meditaciones, La Celestina, Don Quijote, El Lazarillo, etc. Cómo añadirlos a audiolibres con un click. Diferencial vs YouTube: background play en iPhone.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibres-vs-audible-comparativa-honesta",
+      "title": "Audiolibres vs Audible: comparativa honesta (2026)",
+      "pillar": "comparativas",
+      "kw": "audiolibres vs audible",
+      "intent": "comparison",
+      "brief": "Tabla comparativa real: precio (Audible 14,95€/mes vs Audiolibres gratis), catálogo (Audible 200k+ vs Audiolibres infinito vía YouTube), calidad de narración, exclusivos. Cuándo conviene cada uno. Honestidad: si te interesan estrenos Best Sellers narrados profesionalmente, Audible. Si te valen clásicos y mainstream, Audiolibres.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibres-vs-spotify-audiolibros",
+      "title": "Audiolibres vs Spotify audiolibros: ¿cuál elegir en 2026?",
+      "pillar": "comparativas",
+      "kw": "spotify audiolibros gratis",
+      "intent": "comparison",
+      "brief": "Spotify lanzó audiolibros (en Premium, 15h/mes). Comparativa: catálogo, integración, sin anuncios, biblioteca. Pros/contras honestos. Conclusión: complementarios, no excluyentes.",
+      "status": "pending"
+    },
+    {
+      "slug": "como-escuchar-audiolibros-en-samsung-tv",
+      "title": "Cómo escuchar audiolibros en Samsung Smart TV (gratis)",
+      "pillar": "dispositivos",
+      "kw": "audiolibros samsung tv",
+      "intent": "how-to",
+      "brief": "Tutorial: abrir navegador Tizen, ir a audiolibres.com/app?tv=1, modo TV con navegación D-pad. Capturas reales. Casos de uso: poner audiolibro de fondo mientras cocinas. Background audio. Cómo sincronizar con tu cuenta para que la biblioteca sea la misma del móvil.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-iphone-pantalla-bloqueada",
+      "title": "Audiolibros en iPhone con pantalla bloqueada: cómo hacerlo gratis",
+      "pillar": "dispositivos",
+      "kw": "audiolibros iphone pantalla bloqueada",
+      "intent": "how-to",
+      "brief": "Problema: YouTube embebido se para al bloquear iPhone. Solución: usar LibriVox vía audiolibres (audio nativo HTML, sigue sonando). Tutorial paso a paso con capturas. Instalar como PWA. Caso de uso real: paseo de perro / metro.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-en-carplay-android-auto",
+      "title": "Audiolibros en CarPlay y Android Auto: tutorial completo",
+      "pillar": "dispositivos",
+      "kw": "audiolibros carplay",
+      "intent": "how-to",
+      "brief": "Media Session API: cómo audiolibres aparece en la pantalla del coche con título, autor, controles. Saltar capítulo desde el volante. PWA en móvil + AUX/Bluetooth = setup ideal para viajes largos. Compatibilidad confirmada.",
+      "status": "pending"
+    },
+    {
+      "slug": "como-crear-biblioteca-personal-audiolibros",
+      "title": "Cómo crear tu biblioteca personal de audiolibros (sincronizada)",
+      "pillar": "metodos_uso",
+      "kw": "biblioteca personal audiolibros sincronizada",
+      "intent": "how-to",
+      "brief": "Tutorial: registro gratis en audiolibres, añadir 5 primeros audiolibros, usar marcadores, sincronización móvil-PC automática. Por qué crear cuenta (vs sin registro). Privacidad (cero anuncios, no rastreo).",
+      "status": "pending"
+    },
+    {
+      "slug": "padre-rico-padre-pobre-audiolibro-resumen",
+      "title": "Padre Rico, Padre Pobre: audiolibro completo y resumen",
+      "pillar": "finanzas",
+      "kw": "padre rico padre pobre audiolibro",
+      "intent": "profile",
+      "brief": "Resumen del clásico de Kiyosaki. 4 cuadrantes del flujo de dinero. Activo vs pasivo. Críticas legítimas al libro. Versión audiolibro YouTube. Internal link a Piense y Hágase Rico, El Hombre más Rico de Babilonia.",
+      "status": "pending"
+    },
+    {
+      "slug": "piense-y-hagase-rico-audiolibro-napoleon-hill",
+      "title": "Piense y Hágase Rico (Napoleon Hill): audiolibro completo",
+      "pillar": "finanzas",
+      "kw": "piense y hagase rico audiolibro",
+      "intent": "profile",
+      "brief": "El clásico de 1937. Los 13 principios del éxito según Hill. Crítica honesta: dónde envejeció el libro y dónde sigue siendo útil. Versión audiolibro en YouTube. Marcadores recomendados.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-tolstoi-en-espanol",
+      "title": "Audiolibros de Tolstói en español: 8 obras completas gratis",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros tolstoi español",
+      "intent": "list",
+      "brief": "Anna Karenina, Guerra y Paz, La Muerte de Iván Ilich, Resurrección, Hadji Murat. Versiones en castellano + LibriVox. Por qué Tolstói en 2026. Orden recomendado para empezar.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-dostoievski-en-espanol",
+      "title": "Audiolibros de Dostoievski: 6 obras esenciales gratis",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros dostoievski español",
+      "intent": "list",
+      "brief": "Crimen y Castigo, Los Hermanos Karamázov, El Idiota, Notas del Subsuelo, Memorias de la Casa de los Muertos. Versiones recomendadas. Pequeña guía: por dónde empezar.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-platon-republica-banquete",
+      "title": "Audiolibros de Platón: La República, El Banquete y más",
+      "pillar": "filosofia",
+      "kw": "audiolibros platon",
+      "intent": "list",
+      "brief": "Los diálogos platónicos en audio. La República completa. El Banquete. Apología de Sócrates. Versiones en castellano y en LibriVox. Por qué Platón sigue siendo lectura imprescindible.",
+      "status": "pending"
+    },
+    {
+      "slug": "como-ganar-amigos-influir-personas-audiolibro",
+      "title": "Cómo Ganar Amigos e Influir sobre las Personas: audiolibro",
+      "pillar": "autoayuda",
+      "kw": "como ganar amigos audiolibro",
+      "intent": "profile",
+      "brief": "El clásico de Carnegie de 1936. Las 6 reglas para caer bien. Crítica honesta. Versión audiolibro YouTube. Casos de uso reales en 2026.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-cuentos-cortos-gratis",
+      "title": "Audiolibros de cuentos cortos gratis (15 colecciones)",
+      "pillar": "ninos",
+      "kw": "audiolibros cuentos cortos gratis",
+      "intent": "list",
+      "brief": "Para niños y adultos. Mil y Una Noches selección. Cuentos de Grimm. Cuentos de Andersen. Cuentos de Poe (adultos). Cuentos de Quiroga. Cuentos de Borges. Recomendaciones de versión por edad.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-cortos-bajo-30-minutos",
+      "title": "Audiolibros cortos (menos de 30 minutos) gratis",
+      "pillar": "situaciones",
+      "kw": "audiolibros cortos gratis",
+      "intent": "list",
+      "brief": "Para el trayecto al trabajo o pausa de café. Discursos famosos (Steve Jobs Stanford), cuentos breves, charlas TED en audio. Lista de 20.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-mindfulness-y-meditacion",
+      "title": "Audiolibros de mindfulness y meditación guiada (gratis)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros mindfulness gratis",
+      "intent": "list",
+      "brief": "El Poder del Ahora (Tolle), Mindfulness en la Vida Cotidiana (Kabat-Zinn), Donde Quiera que Vayas (Kornfield), meditaciones guiadas YouTube. Diferencias entre mindfulness y meditación.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-stephen-king-en-espanol",
+      "title": "Audiolibros de Stephen King en español: dónde escucharlos",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros stephen king español",
+      "intent": "list",
+      "brief": "Honestidad: la mayoría requiere Audible. Lo que sí está gratis en YouTube. Recomendaciones de versiones. Resúmenes detallados de IT, El Resplandor, La Niebla.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-divulgacion-cientifica",
+      "title": "Audiolibros de divulgación científica gratis (12 opciones)",
+      "pillar": "divulgacion",
+      "kw": "audiolibros divulgacion cientifica gratis",
+      "intent": "list",
+      "brief": "Cosmos (Sagan), Historia del Tiempo (Hawking), El Gen Egoísta (Dawkins), Origen de las Especies, La Cuchara Menguante (Kean). Pequeños documentales narrados en YouTube.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-1984-orwell-completo",
+      "title": "1984 de George Orwell: audiolibro completo gratis",
+      "pillar": "novela_clasica",
+      "kw": "1984 orwell audiolibro completo",
+      "intent": "profile",
+      "brief": "Resumen de la distopía. Por qué 1984 sigue siendo relevante. Big Brother, Newspeak, doublethink. Versiones audiolibro recomendadas (LibriVox + YouTube). Internal link a Rebelión en la Granja.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-cervantes-completos",
+      "title": "Audiolibros de Cervantes: Don Quijote, Novelas Ejemplares y más",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros cervantes gratis",
+      "intent": "list",
+      "brief": "Obra completa de Cervantes en audio. Don Quijote I y II. Novelas Ejemplares (12 novelas cortas). El Persiles. Trabajos de Persiles y Segismunda. Versiones en castellano.",
+      "status": "pending"
+    },
+    {
+      "slug": "el-alquimista-paulo-coelho-audiolibro",
+      "title": "El Alquimista de Paulo Coelho: audiolibro completo y reseña",
+      "pillar": "autoayuda",
+      "kw": "el alquimista audiolibro completo",
+      "intent": "profile",
+      "brief": "La novela espiritual más vendida de los últimos 50 años. Resumen, críticas (sí, hay muchas). Versión audiolibro. Qué se llevará el lector. Internal link a Las Once Minutos, El Peregrino.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-aprender-historia",
+      "title": "Audiolibros para aprender historia gratis (10 imprescindibles)",
+      "pillar": "divulgacion",
+      "kw": "audiolibros historia gratis",
+      "intent": "list",
+      "brief": "Historia de España, de Europa, del mundo. Sapiens, Civilización, El Infinito en un Junco, Historia del Tiempo. Pillars temáticos.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-aprender-ingles",
+      "title": "Audiolibros para aprender inglés (con texto a la vez)",
+      "pillar": "metodos_uso",
+      "kw": "audiolibros aprender ingles gratis",
+      "intent": "how-to",
+      "brief": "Estrategia: empezar con cuentos cortos en inglés con narración lenta. The Old Man and the Sea, Animal Farm, cuentos infantiles. Cómo usar marcadores para palabras nuevas. Velocidad 0.75x para principiantes.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-feministas-en-espanol",
+      "title": "10 audiolibros feministas en español (gratis)",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros feministas español",
+      "intent": "list",
+      "brief": "Simone de Beauvoir (El Segundo Sexo), Adrienne Rich, Roxane Gay, Chimamanda Adichie, Mary Wollstonecraft. Dónde está gratis cada uno.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-zen-y-budismo",
+      "title": "Audiolibros de zen y budismo gratis (8 opciones)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros budismo gratis",
+      "intent": "list",
+      "brief": "El Dhammapada, Mente Zen Mente de Principiante (Suzuki), El Arte de la Felicidad (Dalai Lama), El Tao Te King. Pequeñas reseñas.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-emprendedores",
+      "title": "12 audiolibros para emprendedores (gratis en YouTube)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros para emprendedores",
+      "intent": "list",
+      "brief": "Padre Rico Padre Pobre, La Semana Laboral de 4 Horas, Lean Startup, Pensar Rápido Pensar Despacio. Cuáles realmente aplican y cuáles son hype.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-poesia-en-espanol",
+      "title": "Audiolibros de poesía en español: 15 imprescindibles",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros poesia español",
+      "intent": "list",
+      "brief": "Neruda, Lorca, Bécquer, Machado, Mistral. Voz del autor cuando exista. Diferencias con leer poesía en papel.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-amor-y-romance",
+      "title": "Audiolibros de amor y romance gratis (10 selección)",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros romance gratis",
+      "intent": "list",
+      "brief": "Orgullo y Prejuicio, Cumbres Borrascosas, Anna Karenina, El Amor en los Tiempos del Cólera. Versiones gratis online.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-misterio-y-suspense",
+      "title": "10 audiolibros de misterio y suspense gratis",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros misterio gratis",
+      "intent": "list",
+      "brief": "Sherlock Holmes (Conan Doyle), Agatha Christie selección, Wilkie Collins, Poe. Disponibilidad en castellano e inglés.",
+      "status": "pending"
+    },
+    {
+      "slug": "como-funciona-audiolibres-tutorial",
+      "title": "Cómo funciona audiolibres.com (tutorial paso a paso)",
+      "pillar": "metodos_uso",
+      "kw": "como usar audiolibres",
+      "intent": "how-to",
+      "brief": "Tutorial visual: registro opcional, añadir primer audiolibro vía buscador YouTube/LibriVox, marcadores, sincronización, sleep timer, modo theater, compartir. Capturas reales del UI.",
+      "status": "pending"
+    },
+    {
+      "slug": "marcadores-en-audiolibros-como-usar",
+      "title": "Cómo usar marcadores en audiolibros (estilo YouTube)",
+      "pillar": "metodos_uso",
+      "kw": "marcadores audiolibros",
+      "intent": "how-to",
+      "brief": "Por qué los marcadores son la killer feature. Cómo audiolibres los gestiona como comentarios YouTube. Casos de uso: estudiantes, profesionales, frases inspiradoras. Tutorial con capturas.",
+      "status": "pending"
+    },
+    {
+      "slug": "playlists-de-youtube-como-audiolibros",
+      "title": "Convertir playlists de YouTube en audiolibros (con capítulos)",
+      "pillar": "metodos_uso",
+      "kw": "playlist youtube audiolibro",
+      "intent": "how-to",
+      "brief": "Tutorial: pegar URL de playlist en audiolibres → se convierte en audiolibro multi-capítulo con auto-advance. Casos reales: El Camino del Artista (18 cap), cursos largos.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-nietzsche-en-espanol",
+      "title": "Audiolibros de Nietzsche en español (gratis)",
+      "pillar": "filosofia",
+      "kw": "audiolibros nietzsche español",
+      "intent": "list",
+      "brief": "Así Habló Zaratustra, Más Allá del Bien y del Mal, La Genealogía de la Moral, El Anticristo. Versiones disponibles. Orden recomendado para principiantes.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-clasicos-rusos-gratis",
+      "title": "Audiolibros de clásicos rusos gratis (Tolstói, Dostoievski, Chéjov)",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros clasicos rusos",
+      "intent": "list",
+      "brief": "Selección de los rusos del XIX. Tolstói, Dostoievski, Chéjov, Pushkin, Turguénev. Por qué los rusos son lecturas imprescindibles.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-existencialismo-camus-sartre",
+      "title": "Audiolibros de existencialismo: Camus, Sartre, Kierkegaard",
+      "pillar": "filosofia",
+      "kw": "audiolibros existencialismo",
+      "intent": "list",
+      "brief": "El Extranjero, La Peste, El Mito de Sísifo (Camus), La Náusea (Sartre), Temor y Temblor (Kierkegaard). Disponibilidad de audiolibros.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-cosmologia-astronomia-sagan",
+      "title": "Audiolibros de cosmología y astronomía gratis",
+      "pillar": "divulgacion",
+      "kw": "audiolibros astronomia gratis",
+      "intent": "list",
+      "brief": "Cosmos (Sagan), Historia del Tiempo (Hawking), El Universo Elegante (Greene), Pálido Punto Azul. Audiolibros + documentales en audio.",
+      "status": "pending"
+    },
+    {
+      "slug": "kafka-audiolibros-completos-en-espanol",
+      "title": "Audiolibros de Kafka completos: La Metamorfosis, El Proceso",
+      "pillar": "novela_clasica",
+      "kw": "kafka audiolibros español",
+      "intent": "list",
+      "brief": "La Metamorfosis, El Proceso, El Castillo, Carta al Padre. Análisis del kafkiano. Versiones audiolibro.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-cocina-recetas",
+      "title": "Audiolibros sobre cocina y gastronomía (gratis)",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros cocina",
+      "intent": "list",
+      "brief": "Salt Fat Acid Heat, Cocina con Cariño, biografías de chefs (Bourdain). Audiolibros disponibles. Nicho pero con buscado.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-biografias-famosos",
+      "title": "10 biografías en audiolibro gratis (Steve Jobs, Einstein, más)",
+      "pillar": "listas_curadas",
+      "kw": "biografias audiolibros gratis",
+      "intent": "list",
+      "brief": "Steve Jobs (Isaacson), Einstein, Da Vinci, Benjamin Franklin, Michelle Obama, Phil Knight (Shoe Dog). Disponibilidad en castellano.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-velocidad-1-5x-2x-pros-contras",
+      "title": "Escuchar audiolibros a 1.5x o 2x: pros y contras (estudio)",
+      "pillar": "metodos_uso",
+      "kw": "audiolibros velocidad 1.5x",
+      "intent": "how-to",
+      "brief": "Estudios científicos sobre comprensión a velocidades altas. Pros (más libros por hora) y contras (menos retención profunda). Recomendaciones por género: ficción slow, no-ficción 1.5x. Cómo usar la velocidad en audiolibres.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-bebes-y-embarazo",
+      "title": "Audiolibros para bebés y embarazo: música y cuentos gratis",
+      "pillar": "ninos",
+      "kw": "audiolibros bebes embarazo",
+      "intent": "list",
+      "brief": "Música clásica para bebés, cuentos cortos pre-sueño, audiolibros para acompañar el embarazo. Lista curada con duración corta (5-10 min cada uno).",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-para-adolescentes",
+      "title": "12 audiolibros gratis para adolescentes (13-17 años)",
+      "pillar": "ninos",
+      "kw": "audiolibros adolescentes gratis",
+      "intent": "list",
+      "brief": "Lecturas escolares + lecturas que enganchen. Tom Sawyer, Huckleberry Finn, Hobbit, Harry Potter (limitado gratis), El Guardián entre el Centeno.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-yoga-y-respiracion",
+      "title": "Audiolibros de yoga, pranayama y respiración (gratis)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros yoga gratis",
+      "intent": "list",
+      "brief": "Light on Yoga (Iyengar), El Yoga Sutra (Patanjali), Pranayama (Saraswati), Wim Hof. Audios para sesiones guiadas.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-podcasts-largos-recomendados",
+      "title": "8 podcasts largos para escuchar como audiolibros",
+      "pillar": "listas_curadas",
+      "kw": "podcasts largos audiolibros",
+      "intent": "list",
+      "brief": "Joe Rogan con autores (Sam Harris, Jordan Peterson), Tim Ferriss long-form, Lex Fridman, Tertulia, etc. Cómo añadirlos a audiolibres con marcadores.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-frances-aprender",
+      "title": "Audiolibros en francés gratis para aprender el idioma",
+      "pillar": "metodos_uso",
+      "kw": "audiolibros frances gratis",
+      "intent": "list",
+      "brief": "El Principito (Le Petit Prince), Madame Bovary, Los Miserables. Lecturas lentas para B1-B2. Cómo activar subtítulos en YouTube. Velocidad 0.75x.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-economia-finanzas-personales",
+      "title": "10 audiolibros de finanzas personales gratis (mejor inversión)",
+      "pillar": "finanzas",
+      "kw": "audiolibros finanzas personales gratis",
+      "intent": "list",
+      "brief": "El Hombre más Rico de Babilonia, Padre Rico Padre Pobre, Psicología del Dinero (Housel), Más Rápido que el Sonido. Aplicable al mercado español.",
+      "status": "pending"
+    },
+    {
+      "slug": "el-poder-del-ahora-eckhart-tolle-audiolibro",
+      "title": "El Poder del Ahora de Eckhart Tolle: audiolibro completo",
+      "pillar": "autoayuda",
+      "kw": "el poder del ahora audiolibro",
+      "intent": "profile",
+      "brief": "Resumen + reseña. Conceptos clave de Tolle. Crítica honesta. Audiolibro en YouTube. Internal link a Un Nuevo Mundo Ahora.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-mujeres-empresarias",
+      "title": "Audiolibros de mujeres empresarias y líderes (gratis)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros mujeres empresarias",
+      "intent": "list",
+      "brief": "Lean In (Sandberg), Becoming (Michelle Obama), Bossypants (Tina Fey), The Confidence Code, Year of Yes. Disponibilidad audio.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-historia-de-espana",
+      "title": "Audiolibros de historia de España (gratis y completos)",
+      "pillar": "divulgacion",
+      "kw": "audiolibros historia españa",
+      "intent": "list",
+      "brief": "Reconquista, Imperio Español, Guerra Civil, Transición. Voces de Pérez Reverte, Arturo Pérez-Reverte, Antonio Muñoz Molina. Documentales narrados.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-revolucion-francesa-napoleon",
+      "title": "Audiolibros sobre la Revolución Francesa y Napoleón",
+      "pillar": "divulgacion",
+      "kw": "audiolibros revolucion francesa",
+      "intent": "list",
+      "brief": "Historia de la Revolución Francesa (Carlyle), Napoleón biografías, Robespierre. Audio en castellano.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-segunda-guerra-mundial",
+      "title": "10 audiolibros sobre la Segunda Guerra Mundial gratis",
+      "pillar": "divulgacion",
+      "kw": "audiolibros segunda guerra mundial",
+      "intent": "list",
+      "brief": "El Diario de Ana Frank, Sin Novedad en el Frente, El Hombre en Busca de Sentido (Frankl), Hitler biografía Kershaw. Disponibles en castellano.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibres-en-tu-tv",
+      "title": "Audiolibres en tu TV: tutorial Samsung, LG, Sony, Roku",
+      "pillar": "dispositivos",
+      "kw": "audiolibros tv",
+      "intent": "how-to",
+      "brief": "Por marca de TV. Samsung Tizen, LG webOS, Sony Google TV, Apple TV, Roku. Cómo abrir audiolibres en cada uno. Modo TV automático.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-pwa-instalar-movil",
+      "title": "Cómo instalar audiolibres como app en tu móvil (PWA)",
+      "pillar": "dispositivos",
+      "kw": "audiolibros pwa android iphone",
+      "intent": "how-to",
+      "brief": "Tutorial 'Añadir a pantalla de inicio' en iPhone Safari y Android Chrome. Ventajas: icono, splash screen, sin barra navegador. Funciona offline limitado.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-vs-podcasts-diferencias",
+      "title": "Audiolibros vs podcasts: ¿cuál es mejor en cada situación?",
+      "pillar": "comparativas",
+      "kw": "audiolibros vs podcasts",
+      "intent": "comparison",
+      "brief": "Diferencias clave. Cuándo cada uno. Por qué audiolibres mezcla ambos (audiolibros largos + podcasts en su catálogo de Películas/Charlas).",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-en-catalan-gratis",
+      "title": "Audiolibros en catalán gratis: dónde encontrarlos",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros catala gratis",
+      "intent": "list",
+      "brief": "Audiolibros narrados en catalán. Joanot Martorell, Mercè Rodoreda, Salvador Espriu. Versions YouTube. Internal link a audiolibres.com (interfaz multi-idioma futura).",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-libros-prohibidos-controversiales",
+      "title": "10 audiolibros de libros 'prohibidos' o controversiales",
+      "pillar": "listas_curadas",
+      "kw": "audiolibros libros prohibidos",
+      "intent": "list",
+      "brief": "Trópico de Cáncer (Miller), Lolita (Nabokov), Mi Lucha (con contexto histórico), Versos Satánicos. Disponibilidad y contexto histórico.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-clasicos-griegos-romanos",
+      "title": "Audiolibros de clásicos griegos y romanos (Homero, Virgilio, más)",
+      "pillar": "filosofia",
+      "kw": "audiolibros clasicos griegos romanos",
+      "intent": "list",
+      "brief": "La Odisea, La Ilíada (Homero), La Eneida (Virgilio), Edipo Rey (Sófocles), Antígona, Diálogos (Platón). Versiones LibriVox + YouTube.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibres-precio-modelo-negocio",
+      "title": "¿Cómo puede ser gratis audiolibres.com? El modelo explicado",
+      "pillar": "comparativas",
+      "kw": "audiolibres gratis modelo",
+      "intent": "definicion",
+      "brief": "Honestidad total: por qué la app es gratis. No usamos anuncios, no vendemos datos, sin freemium. Costos: dominio + Vercel (gratis a este volumen) + Supabase (gratis tier). El producto es de pasión, no monetización agresiva. Open source mindset.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-de-paulo-coelho-todos",
+      "title": "Todos los audiolibros de Paulo Coelho gratis (8 libros)",
+      "pillar": "autoayuda",
+      "kw": "audiolibros paulo coelho gratis",
+      "intent": "list",
+      "brief": "El Alquimista, Once Minutos, La Bruja de Portobello, Brida, A Orillas del Río Piedra. Disponibilidad en castellano. Orden recomendado.",
+      "status": "pending"
+    },
+    {
+      "slug": "audiolibros-bukowski-poesia",
+      "title": "Audiolibros de Charles Bukowski (gratis, voz real)",
+      "pillar": "novela_clasica",
+      "kw": "audiolibros bukowski",
+      "intent": "list",
+      "brief": "Cartero, Mujeres, La Senda del Perdedor. Poemas con voz del propio Bukowski. Audios YouTube. Por qué Bukowski sigue siendo lectura imprescindible para muchos.",
+      "status": "pending"
+    }
+  ]
+}

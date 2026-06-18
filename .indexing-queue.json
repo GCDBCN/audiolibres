@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "description": "URLs en cola para enviar manualmente a Google Search Console. El bot diario añade aquí los slugs nuevos. Tú entras a GSC cada mañana e indexas 10-12 con el botón Solicitar indexación.",
+  "pending_priority": [],
+  "submitted_today": [],
+  "submitted_history": []
+}
