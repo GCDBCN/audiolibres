@@ -8,7 +8,10 @@
 set -e
 cd "$(dirname "$0")"
 
-GH_PAT="${GH_PAT:-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}"
+if [ -z "$GH_PAT" ]; then
+  echo "ERROR: GH_PAT not set. Export it before running this script." >&2
+  exit 1
+fi
 REPO="github.com/GCDBCN/audiolibres.git"
 
 echo "── Pre-flight checks ──"

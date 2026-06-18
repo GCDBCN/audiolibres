@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.local
+.audiolibres-secrets
+*.log
+.DS_Store
